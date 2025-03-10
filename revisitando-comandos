@@ -1,0 +1,50 @@
+Metadados 
+
+exiftool
+https://exiftool.org/
+
+exiftool -copyright='escola Fiap' file.pdf
+exiftool "-DateTimeOriginal=2005:03:14 18:55:10" file.jpg
+
+
+Magic Number
+
+hexyl file.jpg
+hexyl -n 10 file.jpg
+
+
+
+https://drive.google.com/drive/folders/1xm3xGw6MY-sfud2tlkkKVSvyEAbGPIeN?usp=sharing
+
+pcaps = Usar filtros 
+
+    PDF. http contains "%PDF" ou http contains "\x25\x50\x44\x46"
+    GIF. http contains "GIF89a" ou http contains "\x47\x49\x46\x38"
+    PNG. http contains "\x89\x50\x4E\x47"
+    MIME. smtp contains "/9j/4AAQSkZJRgA"
+    SMTP email. smtp matches "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]"
+    SMTP número de cartão de crédito Visa. smtp matches "5\\d{3}(\\s|-)?\\d{4}(\\s|-)?\\d{4}(\\s|-)?\\d{4}"
+
+Hashes
+
+md5sum file.txt
+sha1sum file.txt 
+sha256 file.txt
+
+echo texto | md5sum
+
+Estenografia
+
+Steghide
+
+steghide embed -cf fia.jpeg -ef aa.txt
+steghide extract -sf fia.jpeg -xf seg.txt
+
+Stegsolve
+
+wget http://www.caesum.com/handbook/Stegsolve.jar -O stegsolve.jar
+chmod +x stegsolve.jar
+mkdir bin
+mv stegsolve.jar bin/
+cd bin
+java -jar stegsolve.jar
