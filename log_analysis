@@ -129,7 +129,6 @@ Antes de perguntar onde há arquivos de log. Busque na internet alguns exemplos 
 
 5. Explique se há diferenças entre os resultados (saídas dos comandos)
 
-
 6. grep: para filtrar entrada especifica:
 
 	grep "189.22.221.61" /tmp/parsed_consolidatedg.log > /tmp/filtered_consolidatedg.log
@@ -146,5 +145,152 @@ Antes de perguntar onde há arquivos de log. Busque na internet alguns exemplos 
 
 	http://MACHINE_IP:8111/log?path=%2Ftmp%2Funiq_sort_parsed_consolidated.log
 
+
+----
+Seção 5: Locais comuns de arquivos de log
+----
+
+Um aspecto crucial da análise de log é entender onde localizar os arquivos de log gerados por vários aplicativos e sistemas. Embora os caminhos dos arquivos de log possam variar devido às configurações do sistema, versões de software e configurações personalizadas, conhecer os locais comuns dos arquivos de log é essencial para uma investigação eficiente e detecção de ameaças.
+
+    Web Servers:
+        Nginx:
+            Access Logs: /var/log/nginx/access.log
+            Error Logs: /var/log/nginx/error.log
+        Apache:
+            Access Logs: /var/log/apache2/access.log
+            Error Logs: /var/log/apache2/error.log
+
+    Databases:
+        MySQL:
+            Error Logs: /var/log/mysql/error.log
+        PostgreSQL:
+            Error and Activity Logs: /var/log/postgresql/postgresql-{version}-main.log
+
+    Web Applications:
+        PHP:
+            Error Logs: /var/log/php/error.log
+
+    Operating Systems:
+        Linux:
+            General System Logs: /var/log/syslog
+            Authentication Logs: /var/log/auth.log
+
+    Firewalls and IDS/IPS:
+        iptables:
+            Firewall Logs: /var/log/iptables.log
+        Snort:
+            Snort Logs: /var/log/snort/
+
+Tarefa: 
+	Em sua VM Linux
+
+1. Verifique o conteúdo dos arquivos mencionados anteriormente (* dos existentes)
+
+2. Existe um padrão dos dados armazenados nos logs?
+
+----
+Seção 6
+Pratica: Log Analysis Tools: Command Line
+---
+
+Utilize o arquivo: apache-ex.log
+
+1. cat
+2. less
+3. tail
+4. wc
+5. cut
+6. sort
+7. uniq
+8. sed
+Para substituir todas as ocorrências de "31/Jul/2023" por "July 31, 2023"
+	sed 's/31\/Jul\/2023/July 31, 2023/g' apache-ex.log
+
+9. awk
+Para imprimir entradas de log onde o código de resposta HTTP é maior ou igual a 400 (o que indicaria status de erro HTTP), podemos usar o seguinte comando:
+	awk '$9 >= 400' apache-ex.log
+
+10. grep
+Entrada de log que atinja a página /admin.php no servidor, podemos procurar por "admin" para retornar quaisquer resultados relevantes:
+	grep "admin" apache-ex.log
+
+Número de ocorrencias
+	grep -c "admin" apache-ex.log
+
+Número da linha
+	grep -n "admin" apache-ex.log
+
+Não contém um padrão (-v invert)
+	grep -v "/index.php" apache-ex.log | grep "203.64.78.90"
+
+Tarefa: 
+	Analise o arquivo access.log e descubra se houve tentativa de bruteforce
+
+
+----
+Seção 7: Log Analysis Tools: Regular Expressions
+----
+
+Regular Expressions usando grep
+
+Utilize o arquivo: apache-ex2.log
+
+Este arquivo de log contém entradas de log de um site de blog. O site é estruturado para que cada postagem de blog tenha seu ID exclusivo, obtido do banco de dados dinamicamente por meio do parâmetro de URL da postagem. 
+
+1. Se estivermos interessados ​​apenas nas postagens de blog específicas com um ID entre 10-19, podemos executar o seguinte padrão de expressão regular grep no arquivo de log:
+
+	grep -E 'post=1[0-9]' apache-ex2.log
+
+Opção -E para indicar que estamos pesquisando um padrão e não apenas uma string.
+
+Tarefa: 
+	Usando o arquivo apache-ex2.log, crie 3 regex com grep
+
+
+----
+Regular Expressions para Log Parsing
+---
+
+Expressões regulares também desempenham um papel crucial na análise de log, que é o processo de dividir entradas de log em componentes estruturados e extrair informações relevantes deles. 
+
+Considere a seguinte entrada de log bruto e não estruturado:
+
+----------------------------------------           
+126.47.40.189 - - [28/Jul/2023:15:30:45 +0000] "GET /admin.php HTTP/1.1" 200 1275 "" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36"
+----------------------------------------
+
+Do ponto de vista da segurança, vários campos seriam benéficos para extrair e utilizar em um SIEM. Alguns deles incluem:
+
+- IP address
+- timestamp
+- HTTP method (POST, GET, or PUT, for example)
+- URL
+- user-agent
+
+RegExr (https://regexr.com/) é uma ferramenta online para ajudar a ensinar, construir e testar padrões de expressões regulares.
+
+Como exemplo básico, se quisermos extrair apenas o endereço IP remoto deste log, podemos pensar na estrutura do endereço IP logicamente.
+
+```diff
++ \b([0-9]{1,3}\.){3}[0-9]{1,3}\b
+```
+
+Quebrando esse padrão, ele começa e termina com uma âncora de limite de palavra \b para garantir que correspondamos a endereços IP completos. Entre eles, definimos o seguinte:
+
+[0-9]{1,3} - Corresponde a um a três dígitos para corresponder a números de 0 a 999.
+\. - Escape corresponde a um caractere literal . no endereço IP.
+{3} - Especifica que o grupo de captura anterior ([0-9]{1,3}\.) deve ser repetido três vezes.
+[0-9]{1,3} - Novamente, isso corresponde a números de 0 a 999, completando o quarto octeto do endereço IP.
+
+
+Tarefa: usando uma linha do arquivo log, crie 3 regex para Log Parsing
+
+---
+Regex com CyberChef
+---
+
+https://cyberchef.org
+
+\b([0-9]{1,3}\.){3}[0-9]{1,3}\b
 
 
