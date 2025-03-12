@@ -1,17 +1,49 @@
 ----
-Seção 1
-Prática: Log Collection com rsyslog
+Seção 1: Locais comuns de arquivos de log
 ----
 
+Um aspecto crucial da análise de log é entender onde localizar os arquivos de log gerados por vários aplicativos e sistemas. Embora os caminhos dos arquivos de log possam variar devido às configurações do sistema, versões de software e configurações personalizadas, conhecer os locais comuns dos arquivos de log é essencial para uma investigação eficiente e detecção de ameaças.
 
-```diff
-- texto em vermelho
-+ texto em verde
-! texto em laranja
-# texto em cinza
-@@ texto em roxo (e negrito)@@
-```
+    Web Servers:
+        Nginx:
+            Access Logs: /var/log/nginx/access.log
+            Error Logs: /var/log/nginx/error.log
+        Apache:
+            Access Logs: /var/log/apache2/access.log
+            Error Logs: /var/log/apache2/error.log
 
+    Databases:
+        MySQL:
+            Error Logs: /var/log/mysql/error.log
+        PostgreSQL:
+            Error and Activity Logs: /var/log/postgresql/postgresql-{version}-main.log
+
+    Web Applications:
+        PHP:
+            Error Logs: /var/log/php/error.log
+
+    Operating Systems:
+        Linux:
+            General System Logs: /var/log/syslog
+            Authentication Logs: /var/log/auth.log
+
+    Firewalls and IDS/IPS:
+        iptables:
+            Firewall Logs: /var/log/iptables.log
+        Snort:
+            Snort Logs: /var/log/snort/
+
+Tarefa: 
+	Em sua VM Linux
+
+1. Verifique o conteúdo dos arquivos mencionados anteriormente (* dos existentes)
+
+2. Existe um padrão dos dados armazenados nos logs?
+
+----
+Seção 2
+Prática: Log Collection com rsyslog
+----
 
 1. Ver status do rsyslog
 	sudo systemctl status rsyslog
@@ -50,7 +82,7 @@ Perguntas
 
 
 ----
-Seção 2
+Seção 3
 Pratica: Log Management com logrotate
 ----
 
@@ -99,9 +131,10 @@ Perguntas:
 
 
 ----
-Seção 3
-Prática: Prabalhando com logs - LogViewer
+Seção 4
+Prática: Trabalhando com logs - LogViewer
 ----
+
 LogViewer é um aplicativo da Web para monitorar logs do servidor em tempo real no navegador.
 
 1. Download da aplicação
@@ -115,91 +148,7 @@ LogViewer é um aplicativo da Web para monitorar logs do servidor em tempo real 
 	Selecionar um log do sistema de arquivos.
 
 ----
-Seção 4
-Prática: análise de logs
-----
-
-Criação de arquivo de log analisado e consolidado usando ferramentas Unix como cat, grep, sed, sort, uniq e awk
-
-Antes de perguntar onde há arquivos de log. Busque na internet alguns exemplos e faça download:
-	filetype:log access.log
-	filetype: log inurl:"access.log" 
-
-1. Processando nginx access.log
-	awk -F'[][]' '{print "[" $2 "]", "--- /var/log/nginx/access.log ---", "\"" $0 "\""}' /var/log/nginx/access.log  | sed "s/ +0000//g" > /tmp/parsed_consolidatedn.log
-
-2. Processando rsyslog_cron.log
-	awk '{ original_line = $0; gsub(/ /, "/", $1); printf "[%s/%s/2023:%s] --- /var/log/websrv-02/rsyslog_cron.log --- \"%s\"\n", $2, $1, $3, original_line }' /var/log/websrv-02/rsyslog_cron.log >> /tmp/parsed_consolidatedr.log
-
-3. Processando rsyslog_sshd.log
-	awk '{ original_line = $0; gsub(/ /, "/", $1); printf "[%s/%s/2023:%s] --- /var/log/websrv-02/rsyslog_sshd.log --- \"%s\"\n", $2, $1, $3, original_line }' /var/log/websrv-02/rsyslog_sshd.log >> /tmp/parsed_consolidateds.log
-
-4. Processando api_json.log
-	awk -F'"' '{timestamp = $4; converted = strftime("[%d/%b/%Y:%H:%M:%S]", mktime(substr(timestamp, 1, 4) " " substr(timestamp, 6, 2) " " substr(timestamp, 9, 2) " " substr(timestamp, 12, 2) " " substr(timestamp, 15, 2) " " substr(timestamp, 18, 2) " 0 0")); print converted, "--- /var/log/api_json.log ---", "\""$0"\""}' /var/log/api_json.log >> /tmp/parsed_consolidateda.log
-
-5. Explique se há diferenças entre os resultados (saídas dos comandos)
-
-6. grep: para filtrar entrada especifica:
-
-	grep "189.22.221.61" /tmp/parsed_consolidatedg.log > /tmp/filtered_consolidatedg.log
-
-7. sort: para classificar todas as entradas de log por data e hora:
-
-	sort /tmp/parsed_consolidated.log > /tmp/sort_parsed_consolidated.log
-
-8. uniq: para remover entradas duplicadas:
-
-	uniq /tmp/sort_parsed_consolidated.log > /tmp/uniq_sort_parsed_consolidated.log
-
-9. Accessar arquivo log parsedo and consolidado, por meio da ferramenta Log Viewer, usando a URL:
-
-	http://MACHINE_IP:8111/log?path=%2Ftmp%2Funiq_sort_parsed_consolidated.log
-
-
-----
-Seção 5: Locais comuns de arquivos de log
-----
-
-Um aspecto crucial da análise de log é entender onde localizar os arquivos de log gerados por vários aplicativos e sistemas. Embora os caminhos dos arquivos de log possam variar devido às configurações do sistema, versões de software e configurações personalizadas, conhecer os locais comuns dos arquivos de log é essencial para uma investigação eficiente e detecção de ameaças.
-
-    Web Servers:
-        Nginx:
-            Access Logs: /var/log/nginx/access.log
-            Error Logs: /var/log/nginx/error.log
-        Apache:
-            Access Logs: /var/log/apache2/access.log
-            Error Logs: /var/log/apache2/error.log
-
-    Databases:
-        MySQL:
-            Error Logs: /var/log/mysql/error.log
-        PostgreSQL:
-            Error and Activity Logs: /var/log/postgresql/postgresql-{version}-main.log
-
-    Web Applications:
-        PHP:
-            Error Logs: /var/log/php/error.log
-
-    Operating Systems:
-        Linux:
-            General System Logs: /var/log/syslog
-            Authentication Logs: /var/log/auth.log
-
-    Firewalls and IDS/IPS:
-        iptables:
-            Firewall Logs: /var/log/iptables.log
-        Snort:
-            Snort Logs: /var/log/snort/
-
-Tarefa: 
-	Em sua VM Linux
-
-1. Verifique o conteúdo dos arquivos mencionados anteriormente (* dos existentes)
-
-2. Existe um padrão dos dados armazenados nos logs?
-
-----
-Seção 6
+Seção 5
 Pratica: Log Analysis Tools: Command Line
 ---
 
@@ -236,6 +185,50 @@ Não contém um padrão (-v invert)
 Tarefa: 
 	Analise o arquivo access.log e descubra se houve tentativa de bruteforce
 
+----
+Seção 6
+Prática: análise de logs
+----
+
+Criação de arquivo de log analisado e consolidado usando ferramentas Unix como cat, grep, sed, sort, uniq e awk
+
+Para obter arquivos, utilize o repositório do Teams ou busque na internet alguns exemplos e faça download:
+	filetype:log access.log
+	filetype: log inurl:"access.log" 
+
+Tarefa:
+	Execute cada um dos exemplos a seguir e explique sua saída:
+
+1. Processando nginx access.log
+	awk -F'[][]' '{print "[" $2 "]", "--- /var/log/nginx/access.log ---", "\"" $0 "\""}' /var/log/nginx/access.log  | sed "s/ +0000//g" > /tmp/parsed_consolidatedn.log
+
+2. Processando rsyslog_cron.log
+	awk '{ original_line = $0; gsub(/ /, "/", $1); printf "[%s/%s/2023:%s] --- /var/log/websrv-02/rsyslog_cron.log --- \"%s\"\n", $2, $1, $3, original_line }' /var/log/websrv-02/rsyslog_cron.log >> /tmp/parsed_consolidatedr.log
+
+3. Processando rsyslog_sshd.log
+	awk '{ original_line = $0; gsub(/ /, "/", $1); printf "[%s/%s/2023:%s] --- /var/log/websrv-02/rsyslog_sshd.log --- \"%s\"\n", $2, $1, $3, original_line }' /var/log/websrv-02/rsyslog_sshd.log >> /tmp/parsed_consolidateds.log
+
+4. Processando api_json.log
+	awk -F'"' '{timestamp = $4; converted = strftime("[%d/%b/%Y:%H:%M:%S]", mktime(substr(timestamp, 1, 4) " " substr(timestamp, 6, 2) " " substr(timestamp, 9, 2) " " substr(timestamp, 12, 2) " " substr(timestamp, 15, 2) " " substr(timestamp, 18, 2) " 0 0")); print converted, "--- /var/log/api_json.log ---", "\""$0"\""}' /var/log/api_json.log >> /tmp/parsed_consolidateda.log
+
+5. Explique se há diferenças entre os resultados (saídas dos comandos)
+
+6. grep: para filtrar entrada especifica:
+
+	grep "189.22.221.61" /tmp/parsed_consolidatedg.log > /tmp/filtered_consolidatedg.log
+
+7. sort: para classificar todas as entradas de log por data e hora:
+
+	sort /tmp/parsed_consolidated.log > /tmp/sort_parsed_consolidated.log
+
+8. uniq: para remover entradas duplicadas:
+
+	uniq /tmp/sort_parsed_consolidated.log > /tmp/uniq_sort_parsed_consolidated.log
+
+9. Accessar arquivo log parsedo and consolidado, por meio da ferramenta Log Viewer, usando a URL:
+
+	http://MACHINE_IP:8111/log?path=%2Ftmp%2Funiq_sort_parsed_consolidated.log
+
 
 ----
 Seção 7: Log Analysis Tools: Regular Expressions
@@ -245,7 +238,7 @@ Regular Expressions usando grep
 
 Utilize o arquivo: apache-ex2.log
 
-Este arquivo de log contém entradas de log de um site de blog. O site é estruturado para que cada postagem de blog tenha seu ID exclusivo, obtido do banco de dados dinamicamente por meio do parâmetro de URL da postagem. 
+O  arquivo de log apache-ex2.log, contém entradas de log de um site de blog. O site é estruturado para que cada postagem de blog tenha seu ID exclusivo, obtido do banco de dados dinamicamente por meio do parâmetro de URL da postagem. 
 
 1. Se estivermos interessados ​​apenas nas postagens de blog específicas com um ID entre 10-19, podemos executar o seguinte padrão de expressão regular grep no arquivo de log:
 
@@ -255,7 +248,6 @@ Opção -E para indicar que estamos pesquisando um padrão e não apenas uma str
 
 Tarefa: 
 	Usando o arquivo apache-ex2.log, crie 3 regex com grep
-
 
 ----
 Regular Expressions para Log Parsing
@@ -281,9 +273,11 @@ RegExr (https://regexr.com/) é uma ferramenta online para ajudar a ensinar, con
 
 Como exemplo básico, se quisermos extrair apenas o endereço IP remoto deste log, podemos pensar na estrutura do endereço IP logicamente.
 
-```diff
-+ \b([0-9]{1,3}\.){3}[0-9]{1,3}\b
-```
+----------------------------------------           
+126.47.40.189 - - [28/Jul/2023:15:30:45 +0000] "GET /admin.php HTTP/1.1" 200 1275 "" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36"
+----------------------------------------
+
+\b([0-9]{1,3}\.){3}[0-9]{1,3}\b
 
 Quebrando esse padrão, ele começa e termina com uma âncora de limite de palavra \b para garantir que correspondamos a endereços IP completos. Entre eles, definimos o seguinte:
 
@@ -300,6 +294,10 @@ Regex com CyberChef
 ---
 
 https://cyberchef.org
+
+----------------------------------------           
+126.47.40.189 - - [28/Jul/2023:15:30:45 +0000] "GET /admin.php HTTP/1.1" 200 1275 "" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36"
+----------------------------------------
 
 \b([0-9]{1,3}\.){3}[0-9]{1,3}\b
 
