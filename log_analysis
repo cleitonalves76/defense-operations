@@ -3,6 +3,16 @@ Seção 1
 Prática: Log Collection com rsyslog
 ----
 
+
+```diff
+- texto em vermelho
++ texto em verde
+! texto em laranja
+# texto em cinza
+@@ texto em roxo (e negrito)@@
+```
+
+
 1. Ver status do rsyslog
 	sudo systemctl status rsyslog
 
