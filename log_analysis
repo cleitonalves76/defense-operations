@@ -235,8 +235,7 @@ Seção 7: Log Analysis Tools: Regular Expressions
 ----
 
 Regular Expressions usando grep
-
-Utilize o arquivo: apache-ex2.log
+	Utilize o arquivo: apache-ex2.log
 
 O  arquivo de log apache-ex2.log, contém entradas de log de um site de blog. O site é estruturado para que cada postagem de blog tenha seu ID exclusivo, obtido do banco de dados dinamicamente por meio do parâmetro de URL da postagem. 
 
@@ -250,7 +249,7 @@ Tarefa:
 	Usando o arquivo apache-ex2.log, crie 3 regex com grep
 
 ----
-Regular Expressions para Log Parsing
+Seção 8: Regular Expressions para Log Parsing
 ---
 
 Expressões regulares também desempenham um papel crucial na análise de log, que é o processo de dividir entradas de log em componentes estruturados e extrair informações relevantes deles. 
@@ -289,9 +288,9 @@ Quebrando esse padrão, ele começa e termina com uma âncora de limite de palav
 
 Tarefa: usando uma linha do arquivo log, crie 3 regex para Log Parsing
 
----
-Regex com CyberChef
----
+----
+Seção 8: Regex com CyberChef
+----
 
 https://cyberchef.org
 
@@ -299,6 +298,122 @@ https://cyberchef.org
 126.47.40.189 - - [28/Jul/2023:15:30:45 +0000] "GET /admin.php HTTP/1.1" 200 1275 "" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36"
 ----------------------------------------
 
-\b([0-9]{1,3}\.){3}[0-9]{1,3}\b
+Escolha uma das opções de regex existentes
 
+----
+Seção 9: Anatomia do Log de Eventos do Windows
+----
+
+Os logs de eventos do Windows fornecem informações detalhadas sobre o sistema, a segurança e os aplicativos instalados em um sistema operacional Windows. 
+
+Default formato/extenção:
+	.evt
+	.evtx
+Podem ser extraídos nos formatos:
+	.xml
+	.csv
+	.txt
+Localidade dos arquivos:
+	C:\WINDOWS\System32\winevt\Logs
+
+Ferramenta de visualização: Event Viewer 
+	Execute: eventvwr.msc
+
+Categorias
+Windows Logs
+	Application
+	Security
+	Setup
+	System
+	Fowarded Events
+Applications and Services Logs
+	Hardware Events
+	Microsoft
+	OpenSSH
+	Windows PowerShell
+
+ULogViewer: suporte para ler, parsear e analisar vários tipos de arquivos de log.
+	Fazer download e executar ULogViewer
+	https://github.com/carina-studio/ULogViewer
+
+Tarefa: Abrir e analisar arquivos (repositório do Teams)
+	Apache-Access.log
+	Apache-Error.log
+	linux.log
+
+Os dados PID e TID são benéficos para rastreamento de processos, correlação e compreensão do fluxo natural de eventos durante a análise de logs.
+
+Aprender a anatomia dos arquivos de log do Windows é essencial, mas você também precisará saber os IDs e detalhes indicativos do log de eventos. Portanto, você poderá rastrear e entender os detalhes de uma anomalia potencial ou uma tentativa de intrusão. Alguns IDs úteis do log de eventos do Windows estão listados abaixo:
+
+Account Management	
+	4720: User account creation.
+	4722: User account enabled.
+	4723: Attempt to change an account password.
+	The user attempts to change their password.
+	4724: Attempt to reset the account password.
+The user attempts to reset the password of another account.
+	4725: Account disable.
+	4726: Account removal.
+	Account Logon	
+	4624: Successful logon.
+	4625: Failed logon.
+	4634 and 4647: Logoff.
+	4779: Session disconnect.
+Scheduled Tasks	
+	4698: Scheduled task creation.
+	4702: Scheduled task updated.
+	4699: Scheduled task deletion.
+Security	
+	1100: Logging service disabled.
+	1102: Log deletion.
+	1116: Malware detection.
+
+----
+Seção 10: logs de eventos CLI
+----
+Ferramentas para consultar logs de eventos por meio da linha de comando e/ou PowerShell.
+
+1. wevtutil.exe: permite recuperar informações sobre logs de eventos e publicadores. (também pode usado para instalar e desinstalar manifestos de eventos, executar consultas e exportar, arquivar e limpar logs).
+
+No PowerShell, execute:
+
+Help do comando wevtutil.exe
+	wevtutil.exe /?
+
+Exibe os três eventos mais recentes do log do aplicativo em formato textual:
+	wevtutil qe Application /c:3 /rd:true /f:text
+
+Mais exemplos:
+	https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
+
+2. Get-WinEvent: obtém eventos de logs de eventos e arquivos de log de rastreamento de eventos em computadores locais e remotos.
+
+No PowerShell, execute:
+
+Obter todos os logs de um computador
+	Get-WinEvent -ListLog *
+
+Obter provedores de log de eventos e nomes de log
+	Get-WinEvent -ListProvider *
+
+Filtragem de log
+	Get-WinEvent -LogName Application | Where-Object { $_.ProviderName -Match 'WLMS' }
+
+Obter logs de eventos de um servidor
+	Get-WinEvent -ListLog * -ComputerName localhost | Where-Object { $_.RecordCount }
+
+Mais exemplos:
+	https://learn.microsoft.com/pt-br/powershell/module/microsoft.powershell.diagnostics/get-winevent?view=powershell-7.4
+
+----
+Seção: 11
+----
+
+Sysmon
+Monitorar e registrar endpoints e ambientes.
+
+Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-config (https://github.com/SwiftOnSecurity/sysmon-config)
+
+Iniciando o Sysmon
+	Sysmon.exe -accepteula -i swift.xml
 
