@@ -368,6 +368,10 @@ Security
 	1102: Log deletion.
 	1116: Malware detection.
 
+Mais informações sobre IDs:
+https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx
+https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor
+
 ----
 Seção 10: logs de eventos CLI
 ----
@@ -417,3 +421,25 @@ Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-con
 Iniciando o Sysmon
 	Sysmon.exe -accepteula -i swift.xml
 
+	O log de eventos (Event Viewer) está localizado em  Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
+
+----------------
+Sysmon Config
+
+
+Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente em um esforço para identificar ameaças.
+
+Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
+
+Baixar arquivos do respositório do Teams
+
+Exemplo de uso de Get-WinEvent para procurar conexões de rede vindas da porta 4444.
+
+	Get-WinEvent -Path Filtering.evtx -FilterXPath '*/System/EventID=3 and */EventData/Data[@Name="DestinationPort"] and */EventData/Data=4444'
+
+Perguntas:
+	Quantos eventos ID 3 estão em Filtering.evtx?
+		(Get-WinEvent -Path Filtering.evtx -FilterXPath '*/System/EventID=3').count
+
+	Qual é o horário UTC do primeiro evento de rede no mesmo arquivo de log?
+		Get-WinEvent -Path Filtering.evtx -FilterXPath '*/System/EventID=3' -Oldest -MaxEvents 1 | Select-Object -Property *
