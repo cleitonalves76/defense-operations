@@ -428,6 +428,8 @@ Sysmon Config
 
 Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente em um esforço para identificar ameaças.
 
+Vamos entender Sysmon Event ID: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001
+
 Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
 
 Baixar arquivos do respositório do Teams
@@ -478,25 +480,45 @@ Tarefa
 
 Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github.
 
+ Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
+
 Investigação 1 - ESSE É O USB ERRADO!
-	Nesta investigação, você recebeu relatórios de que um arquivo malicioso foi inserido em um host por um USB malicioso. Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
+	Nesta investigação, você recebeu informação de que um arquivo malicioso foi inserido em um host por um USB malicioso.
 	Arquivo de log: Investigation-1.evtx
-	Qual é a chave de registro completa do dispositivo USB chamando svchost.exe na Investigação 1?
-	Qual é o nome do dispositivo quando é chamado por RawAccessRead na Investigação 1? (EventID para RawAccessRead é 9)
-	Qual é o primeiro exe que o processo executa na Investigação 1?
+	- Qual é a chave de registro completa do dispositivo USB chamando svchost.exe na Investigação 1?
+	- Qual é o nome do dispositivo quando é chamado por RawAccessRead na Investigação 1? (EventID para RawAccessRead é 9)
+	- Qual é o primeiro exe que o processo executa na Investigação 1?
 
 Investigação 2 - Este não é um arquivo HTML?
-	Outro arquivo suspeito apareceu em seus logs e conseguiu executar um código se mascarando como um arquivo HTML, evitando suas detecções antivírus. Abra os logs e investigue o arquivo suspeito.
-	Arquivo de logs: Investigação-2.evtx
+	Outro arquivo suspeito apareceu em seus logs e conseguiu executar um código se mascarando como um arquivo HTML, evitando suas detecções antivírus.
+	Arquivo de logs: Investigation-2.evtx
 		Dica: A tag CommandLine pode dizer o payload que foi executado para disparar o evento.
+	- Qual é o caminho completo do payload na Investigação 2?
+	- Qual é o caminho completo do arquivo que o payload mascarou na Investigação 2?
+	- Qual binário assinado executou o payload na Investigação 2?
+		Mshta.exe: https://attack.mitre.org/techniques/T1218/005/
+	- Qual é o IP do adversário na Investigação 2?
+	- Qual porta de conexão de retorno é usada na Investigação 2?
 
-Investigação 3.1 - 3.2 - Onde está o segurança quando você precisa dele
+Investigação 3.1 - 3.2 - Onde está o segurança quando você precisa
 
-Sua equipe informou que o adversário conseguiu configurar a persistência em seus endpoints enquanto eles continuam a se mover pela sua rede. Descubra como o adversário conseguiu obter persistência usando os logs fornecidos.
+	Sua equipe informou que o adversário conseguiu configurar a persistência em seus endpoints enquanto eles continuam a se mover pela sua rede. Descubra como o adversário conseguiu obter persistência usando os logs fornecidos.
+	Arquivo de logs Investigation-3.1.evtx e Investigation-3.2.evtx
+	- Qual é o IP do adversário suspeito na Investigação 3.1?
+	- Qual é o nome do host do endpoint afetado na Investigação 3.1?
+	- Qual é o nome do host do servidor C2 que se conecta ao endpoint na Investigação 3.1?
+	- Onde no registro do payload foi armazenada na Investigação 3.1?
+		Sabe o que fazer com esse código? 
+		Não... então que tal um decode
+	- Qual código de inicialização do PowerShell foi usado para iniciar o payload na Investigação 3.1?
+	- Qual é o IP do adversário na Investigação 3.2?
+	- Qual é o caminho completo local do payload na Investigação 3.2?
 
-Os logs estão localizados em C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-3.1.evtx
+Qual foi o comando completo usado para criar a tarefa agendada na Investigação 3.2?
 
-e C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-3.2.evtx.
+Qual processo foi acessado por schtasks.exe que seria considerado comportamento suspeito na Investigação 3.2?
+
+
 
 Investigação 4 - Mãe, olha! Eu construí uma botnet!
 
