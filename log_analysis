@@ -426,7 +426,6 @@ Iniciando o Sysmon
 ----------------
 Sysmon Config
 
-
 Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente em um esforço para identificar ameaças.
 
 Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
@@ -443,3 +442,22 @@ Perguntas:
 
 	Qual é o horário UTC do primeiro evento de rede no mesmo arquivo de log?
 		Get-WinEvent -Path Filtering.evtx -FilterXPath '*/System/EventID=3' -Oldest -MaxEvents 1 | Select-Object -Property *
+
+No Visualizador de Eventos, abra o arquivo Hunting_Metasploit.evtx, e tente visualizaruma um upload do Metasploit sendo descarregada na máquina.
+	exemplo: DestinationPort: 444
+
+Portas abertas com o PowerShell
+	Get-WinEvent -Path .\Hunting_Metasploit.evtx -FilterXPath '*/System/EventID=3 and */EventData/Data[@Name="DestinationPort"] and */EventData/Data=4444'
+
+Detectando Mimikatz
+
+Mimikatz é bem conhecido e comumente usado para "despejar" credenciais da memória em Windows
+
+Podemos usar o ID do evento ProcessAccess para identificar comportamento anormal de Local Security Authority Subsystem Service (LSASS). Este evento, junto com o LSASS, mostraria um potencial abuso do LSASS que geralmente conecta de volta ao Mimikatz ou algum outro tipo de ferramenta de dumping de credenciais.
+Mais informações em: https://www.microsoft.com/en-us/security/blog/2022/10/05/detecting-and-preventing-lsass-credential-dumping-attacks/?msockid=07a20ce48b07644f23131c558ad26504
+
+Plus: Além das técnicas na memória, a memória do processo LSASS pode ser despejada do host de destino e analisada em um sistema local:
+	procdump -ma lsass.exe lsass_dump
+	rundll32.exe C:\Windows\System32\comsvcs.dll MiniDump PID lsass.dmp
+
+
