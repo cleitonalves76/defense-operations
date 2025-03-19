@@ -456,8 +456,50 @@ Mimikatz é bem conhecido e comumente usado para "despejar" credenciais da memó
 Podemos usar o ID do evento ProcessAccess para identificar comportamento anormal de Local Security Authority Subsystem Service (LSASS). Este evento, junto com o LSASS, mostraria um potencial abuso do LSASS que geralmente conecta de volta ao Mimikatz ou algum outro tipo de ferramenta de dumping de credenciais.
 Mais informações em: https://www.microsoft.com/en-us/security/blog/2022/10/05/detecting-and-preventing-lsass-credential-dumping-attacks/?msockid=07a20ce48b07644f23131c558ad26504
 
+Para detectar comportamento anormal do LSASS com o PowerShell:
+	Get-WinEvent -Path Practice\Hunting_Mimikatz.evtx -FilterXPath '*/System/EventID=10 and */EventData/Data[@Name="TargetImage"] and */EventData/Data="C:\Windows\system32\lsass.exe"'
+
 Plus: Além das técnicas na memória, a memória do processo LSASS pode ser despejada do host de destino e analisada em um sistema local:
 	procdump -ma lsass.exe lsass_dump
 	rundll32.exe C:\Windows\System32\comsvcs.dll MiniDump PID lsass.dmp
 
+Hunting Malware
+O malware tem muitas formas e variações com diferentes objetivos finais. Os dois tipos de malware nos quais nos concentraremos são Remote Access Trojans (RATs) e backdoors. 
 
+No Visualizador de Eventos, abra o arquivo Hunting_Rats.evtx e tente visualizar o evento.
+	exemplo: rat.exe
+Para detectar comportamento via PS 
+	Get-WinEvent -Path .\Hunting_Rats.evtx -FilterXPath '*/System/EventID=3 and */EventData/Data[@Name="DestinationPort"] and */EventData/Data=8080'
+
+
+----
+Tarefa
+----
+
+Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github.
+
+Investigação 1 - ESSE É O USB ERRADO!
+
+Nesta investigação, você recebeu relatórios de que um arquivo malicioso foi inserido em um host por um USB malicioso. Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
+
+Os logs estão localizados em C:\Users\THM-Analyst\Desktop\Scenarios\Investigations\Investigation-1.evtx.
+
+Investigação 2 - Este não é um arquivo HTML?
+
+Outro arquivo suspeito apareceu em seus logs e conseguiu executar um código se mascarando como um arquivo HTML, evitando suas detecções antivírus. Abra os logs e investigue o arquivo suspeito.
+
+Os logs estão localizados em C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-2.evtx.
+
+Investigação 3.1 - 3.2 - Onde está o segurança quando você precisa dele
+
+Sua equipe informou que o adversário conseguiu configurar a persistência em seus endpoints enquanto eles continuam a se mover pela sua rede. Descubra como o adversário conseguiu obter persistência usando os logs fornecidos.
+
+Os logs estão localizados em C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-3.1.evtx
+
+e C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-3.2.evtx.
+
+Investigação 4 - Mãe, olha! Eu construí uma botnet!
+
+Como o adversário ganhou uma posição sólida em sua rede, foi trazido à sua atenção que ele pode ter sido capaz de configurar comunicações C2 em alguns dos endpoints. Colete os logs e continue sua investigação.
+
+Os logs estão localizados em C:\Users\THM-Analyst\Desktop\Scenarios\Investigations\Investigation-4.evtx.
