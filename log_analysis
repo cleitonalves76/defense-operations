@@ -479,16 +479,16 @@ Tarefa
 Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github.
 
 Investigação 1 - ESSE É O USB ERRADO!
-
-Nesta investigação, você recebeu relatórios de que um arquivo malicioso foi inserido em um host por um USB malicioso. Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
-
-Os logs estão localizados em C:\Users\THM-Analyst\Desktop\Scenarios\Investigations\Investigation-1.evtx.
+	Nesta investigação, você recebeu relatórios de que um arquivo malicioso foi inserido em um host por um USB malicioso. Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
+	Arquivo de log: Investigation-1.evtx
+	Qual é a chave de registro completa do dispositivo USB chamando svchost.exe na Investigação 1?
+	Qual é o nome do dispositivo quando é chamado por RawAccessRead na Investigação 1? (EventID para RawAccessRead é 9)
+	Qual é o primeiro exe que o processo executa na Investigação 1?
 
 Investigação 2 - Este não é um arquivo HTML?
-
-Outro arquivo suspeito apareceu em seus logs e conseguiu executar um código se mascarando como um arquivo HTML, evitando suas detecções antivírus. Abra os logs e investigue o arquivo suspeito.
-
-Os logs estão localizados em C:\Usuários\THM-Analyst\Desktop\Cenários\Investigações\Investigação-2.evtx.
+	Outro arquivo suspeito apareceu em seus logs e conseguiu executar um código se mascarando como um arquivo HTML, evitando suas detecções antivírus. Abra os logs e investigue o arquivo suspeito.
+	Arquivo de logs: Investigação-2.evtx
+		Dica: A tag CommandLine pode dizer o payload que foi executado para disparar o evento.
 
 Investigação 3.1 - 3.2 - Onde está o segurança quando você precisa dele
 
