@@ -132,10 +132,10 @@ Perguntas:
 
 ----
 Seção 4
-Prática: Trabalhando com logs - LogViewer
+Prática: Trabalhando com logs - LogViewer e ULogViewer
 ----
 
-LogViewer é um aplicativo da Web para monitorar logs do servidor em tempo real no navegador.
+LogViewer é um aplicativo Web para monitorar logs do servidor em tempo real no navegador.
 
 1. Download da aplicação
 	https://github.com/sevdokimov/log-viewer?tab=readme-ov-file
@@ -146,6 +146,15 @@ LogViewer é um aplicativo da Web para monitorar logs do servidor em tempo real 
 3. Abrir no navegador
 	http://localhost:8111
 	Selecionar um log do sistema de arquivos.
+
+ULogViewer é um aplicativo Web que dá suporte para ler, parsear e analisar vários tipos de arquivos de log.
+	Fazer download e executar ULogViewer
+	https://github.com/carina-studio/ULogViewer
+
+Tarefa: Abrir e analisar arquivos (repositório do Teams)
+	Apache-Access.log
+	Apache-Error.log
+	linux.log
 
 ----
 Seção 5
@@ -279,12 +288,10 @@ Como exemplo básico, se quisermos extrair apenas o endereço IP remoto deste lo
 \b([0-9]{1,3}\.){3}[0-9]{1,3}\b
 
 Quebrando esse padrão, ele começa e termina com uma âncora de limite de palavra \b para garantir que correspondamos a endereços IP completos. Entre eles, definimos o seguinte:
-
-[0-9]{1,3} - Corresponde a um a três dígitos para corresponder a números de 0 a 999.
-\. - Escape corresponde a um caractere literal . no endereço IP.
-{3} - Especifica que o grupo de captura anterior ([0-9]{1,3}\.) deve ser repetido três vezes.
-[0-9]{1,3} - Novamente, isso corresponde a números de 0 a 999, completando o quarto octeto do endereço IP.
-
+	[0-9]{1,3} - Corresponde a um a três dígitos para corresponder a números de 0 a 999.
+	\. - Escape corresponde a um caractere literal . no endereço IP.
+	{3} - Especifica que o grupo de captura anterior ([0-9]{1,3}\.) deve ser repetido três vezes.
+	[0-9]{1,3} - Novamente, isso corresponde a números de 0 a 999, completando o quarto octeto do endereço IP.
 
 Tarefa: usando uma linha do arquivo log, crie 3 regex para Log Parsing
 
@@ -298,7 +305,7 @@ https://cyberchef.org
 126.47.40.189 - - [28/Jul/2023:15:30:45 +0000] "GET /admin.php HTTP/1.1" 200 1275 "" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36"
 ----------------------------------------
 
-Escolha uma das opções de regex existentes
+No cyberchef, escolha uma das opções de regex existentes e analise a saída
 
 ----
 Seção 9: Anatomia do Log de Eventos do Windows
@@ -306,7 +313,7 @@ Seção 9: Anatomia do Log de Eventos do Windows
 
 Os logs de eventos do Windows fornecem informações detalhadas sobre o sistema, a segurança e os aplicativos instalados em um sistema operacional Windows. 
 
-Default formato/extenção:
+Default formato/extensão:
 	.evt
 	.evtx
 Podem ser extraídos nos formatos:
@@ -331,15 +338,6 @@ Applications and Services Logs
 	Microsoft
 	OpenSSH
 	Windows PowerShell
-
-ULogViewer: suporte para ler, parsear e analisar vários tipos de arquivos de log.
-	Fazer download e executar ULogViewer
-	https://github.com/carina-studio/ULogViewer
-
-Tarefa: Abrir e analisar arquivos (repositório do Teams)
-	Apache-Access.log
-	Apache-Error.log
-	linux.log
 
 Os dados PID e TID são benéficos para rastreamento de processos, correlação e compreensão do fluxo natural de eventos durante a análise de logs.
 
@@ -410,27 +408,24 @@ Mais exemplos:
 	https://learn.microsoft.com/pt-br/powershell/module/microsoft.powershell.diagnostics/get-winevent?view=powershell-7.4
 
 ----
-Seção: 11
+Seção 11: Sysmon
 ----
-
-Sysmon
-Monitorar e registrar endpoints e ambientes.
-
-Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-config (https://github.com/SwiftOnSecurity/sysmon-config)
+	Monitorar e registrar endpoints e ambientes - Ambientes Windows
+	Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-config (https://github.com/SwiftOnSecurity/sysmon-config)
 
 Iniciando o Sysmon
-	Sysmon.exe -accepteula -i swift.xml
-
-	O log de eventos (Event Viewer) está localizado em  Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
-
-----------------
-Sysmon Config
+	Sysmon.exe -accepteula -i sysmonconfig-export.xml
+	O log de eventos do Sysmon está localizado em: Event Viewer | Applications and Services Logs/Microsoft/Windows/Sysmon/Operational
+----
+Uso do Sysmon
+----
 
 Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente em um esforço para identificar ameaças.
 
 Vamos entender Sysmon Event ID: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001
 
 Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
+
 
 Baixar arquivos do respositório do Teams
 
@@ -478,12 +473,12 @@ Para detectar comportamento via PS
 Tarefa
 ----
 
-Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github.
+Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github. E também estão disponíveis no repositório do Teams.
 
- Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
+Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
 
-Investigação 1 - ESSE É O USB ERRADO!
-	Nesta investigação, você recebeu informação de que um arquivo malicioso foi inserido em um host por um USB malicioso.
+Investigação 1 - E esse USB!
+	Há informação de que um arquivo malicioso foi inserido em um host por um USB malicioso.
 	Arquivo de log: Investigation-1.evtx
 	- Qual é a chave de registro completa do dispositivo USB chamando svchost.exe na Investigação 1?
 	- Qual é o nome do dispositivo quando é chamado por RawAccessRead na Investigação 1? (EventID para RawAccessRead é 9)
@@ -513,15 +508,12 @@ Investigação 3.1 - 3.2 - Onde está o segurança quando você precisa
 	- Qual código de inicialização do PowerShell foi usado para iniciar o payload na Investigação 3.1?
 	- Qual é o IP do adversário na Investigação 3.2?
 	- Qual é o caminho completo local do payload na Investigação 3.2?
+	- Qual foi o comando completo usado para criar a tarefa agendada na Investigação 3.2?
+	- Qual processo foi acessado por schtasks.exe que seria considerado comportamento suspeito na Investigação 3.2?
 
-Qual foi o comando completo usado para criar a tarefa agendada na Investigação 3.2?
-
-Qual processo foi acessado por schtasks.exe que seria considerado comportamento suspeito na Investigação 3.2?
-
-
-
-Investigação 4 - Mãe, olha! Eu construí uma botnet!
-
-Como o adversário ganhou uma posição sólida em sua rede, foi trazido à sua atenção que ele pode ter sido capaz de configurar comunicações C2 em alguns dos endpoints. Colete os logs e continue sua investigação.
-
-Os logs estão localizados em C:\Users\THM-Analyst\Desktop\Scenarios\Investigations\Investigation-4.evtx.
+Investigação 4 - Construiram uma botnet!
+	Como o adversário ganhou uma posição sólida em sua rede, foi trazido à sua atenção que ele pode ter sido capaz de configurar comunicações C2 em alguns dos endpoints.
+	Arquivo de logs Investigation-4.evtx.
+	- Qual é o IP do adversário na Investigação 4?
+	- Em qual porta o adversário está operando na Investigação 4?
+	- Qual C2 o adversário está utilizando na Investigação 4?
