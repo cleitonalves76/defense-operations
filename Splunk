@@ -37,33 +37,7 @@ As fontes de dados podem ser logs de eventos, logs de sites, logs de firewall, e
   https://docs.splunk.com/Documentation/Splunk/9.4.1/SearchTutorial/AboutgettingdataintoSplunk
 
 
----
-segunda
-Primeira ação: Upload do arquivo de dados
-
-A partir da tela inicial do Splunk, opção Upload ou clique em Settings > Add Data, para carregar os dados da nossa máquina local. 
-Baixe o arquivo de log VPN-logs.json (Teams) e carregue-o no Splunk.
-
-Select Source: Selecionamos a fonte do Log (VPN-logs.json).
-Select Source Type: Selecione que tipo de logs estão sendo ingeridos.
-Input Settings: Selecione o índice onde esses logs serão despejados e o hostName a ser associado aos logs.
-  - Host filed value: VPN_Connection
-  - Create a new index: vpn_logs
-Review: Revise as entradas
-Done: Etapa final, onde os dados são carregados e estão prontos para serem analisados.
-
-Tarefa: 
-  Carregue os dados VPN_Logs e responda: 
-
-  - Quantos eventos estão presentes no arquivo de log?
-  - Quantos eventos de log do usuário Maleena são capturados?
-  - Qual é o nome associado ao IP 107.14.182.38?
-  - Qual é o número de eventos originados de todos os países, exceto França?
-  - Quantos eventos VPN foram observados pelo IP 107.3.206.58?
-
-
----
-Primeira ação: Upload do arquivo de dados compactado
+Primeira parte: Upload do arquivo de dados compactado
 
 Carregue os dados tutorialdata.zip. O arquivo deve permanecer compactado para que seja carregado com sucesso. 
 As informaçoes inclusas no arquivo compactado são: access.log files, secure.log files e vendor_sales.log de mail servers e web accounts.
@@ -77,7 +51,21 @@ Review
 Done
 
 Para ver os dados no aplicativo Search, clique em Start Searching. O aplicativo Search abre e uma pesquisa é executada automaticamente na fonte de dados do tutorial.
-Digite na pesquisa: source=tutorialdata.zip
+Digite na pesquisa: source="tutorialdata.zip:*"
 Assim que você confirmar a ingestão dos dados, clique no logo Splunk para retornar a página inicial.
 
+Segunda parte: Usando Search App do Splunk
 
+Na página inicial do Splunk, clique em Search & Reporting no painel Apps.
+Em New Seach: source="tutorialdata.zip:./www1/access.log"
+
+Especificando intervalos de tempo
+
+Explorando o Search views
+Restringir ou filtrar seus critérios de pesquisa usando um intervalo de tempo é a maneira mais fácil e eficaz de otimizar suas pesquisas.
+Você pode usar intervalos de tempo para solucionar um problema, se souber o período aproximado em que o problema ocorreu. Restrinja o período de sua pesquisa a esse período. Por exemplo, para investigar um incidente que ocorreu em algum momento na última hora, você pode usar o período padrão Últimas 24 horas, mas uma opção melhor é Últimos 60 minutos.
+
+Vamos explorar os dados da loja online Buttercup Games (case Splunk) usando os diferentes intervalos de tempo.
+
+Para iniciar uma nova pesquisa, clique em Pesquisar na barra de aplicativos.
+Para pesquisar uma palavra-chave em seus eventos, digite buttercupgames na barra de pesquisa e pressione Enter.
