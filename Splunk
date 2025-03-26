@@ -30,17 +30,19 @@ Acessar interface Web:
   http://127.0.0.1:8000
 
 
-Splunk: Iniciando
+----
+Splunk: Iniciando os trabalhos
+----
 
 Conforme a documentação do Splunk, quando dados são adicionados ao Splunk, eles são processados ​​e transformados em uma série de eventos individuais.
 As fontes de dados podem ser logs de eventos, logs de sites, logs de firewall, etc. As fontes de dados são agrupadas em categorias. 
   https://docs.splunk.com/Documentation/Splunk/9.4.1/SearchTutorial/AboutgettingdataintoSplunk
 
+- Primeira parte: Upload do arquivo de dados compactado
 
-Primeira parte: Upload do arquivo de dados compactado
-
-Carregue os dados tutorialdata.zip. O arquivo deve permanecer compactado para que seja carregado com sucesso. 
-As informaçoes inclusas no arquivo compactado são: access.log files, secure.log files e vendor_sales.log de mail servers e web accounts.
+Carregue os dados tutorialdata.zip
+O arquivo deve permanecer compactado para que seja carregado com sucesso. 
+As informaçoes inclusas no arquivo compactado são: access.log files, secure.log files e vendor_sales.log de mail servers e web accounts, coletados da loja online Buttercup Games - Exemplo da Splunk
 
 Clique Settings > Add Data
 Clique em Upload
@@ -54,18 +56,33 @@ Para ver os dados no aplicativo Search, clique em Start Searching. O aplicativo 
 Digite na pesquisa: source="tutorialdata.zip:*"
 Assim que você confirmar a ingestão dos dados, clique no logo Splunk para retornar a página inicial.
 
-Segunda parte: Usando Search App do Splunk
+- Segunda parte: Usando Search App do Splunk
 
 Na página inicial do Splunk, clique em Search & Reporting no painel Apps.
 Em New Seach: source="tutorialdata.zip:./www1/access.log"
 
-Especificando intervalos de tempo
+-- Especificando intervalos de tempo: Search views
 
-Explorando o Search views
 Restringir ou filtrar seus critérios de pesquisa usando um intervalo de tempo é a maneira mais fácil e eficaz de otimizar suas pesquisas.
 Você pode usar intervalos de tempo para solucionar um problema, se souber o período aproximado em que o problema ocorreu. Restrinja o período de sua pesquisa a esse período. Por exemplo, para investigar um incidente que ocorreu em algum momento na última hora, você pode usar o período padrão Últimas 24 horas, mas uma opção melhor é Últimos 60 minutos.
 
 Vamos explorar os dados da loja online Buttercup Games (case Splunk) usando os diferentes intervalos de tempo.
+Para iniciar uma nova pesquisa, clique em Pesquisar na barra de aplicativos, e digite buttercupgames na barra de pesquisa e pressione Enter.
 
-Para iniciar uma nova pesquisa, clique em Pesquisar na barra de aplicativos.
-Para pesquisar uma palavra-chave em seus eventos, digite buttercupgames na barra de pesquisa e pressione Enter.
+-- Intervalos de tempo predefinidos
+
+O seletor de intervalo de tempo tem muitos intervalos de tempo predefinidos que você pode selecionar.
+A opção Predefinições contém intervalos de tempo em tempo real, relativo e outros.
+
+-- Pesquisas básicas e resultados de pesquisa
+
+Como os dados são da loja online Buttercup Games, que vende jogos e outros itens relacionados, como camisetas.
+
+Usando o Assistente de Pesquisa, você pesquisará principalmente os logs de acesso à web do Apache e correlacionará os logs de acesso com os logs de vendas do fornecedor.
+
+Clique em Pesquisar na barra de aplicativos para iniciar uma nova pesquisa, e digite buttercup
+Quando você digita algumas letras na barra de pesquisa, o Assistente de Pesquisa mostra os termos em seus dados que correspondem às letras que você digita.
+Digite categoryid na barra de pesquisa. Exemplo de pesquisa: "categoryid=accessories"
+
+
+
