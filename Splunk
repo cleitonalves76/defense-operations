@@ -102,3 +102,31 @@ Ao pesquisar por campos, você usa a sintaxe field_name=field_value.
 Para pesquisar no campo sourcetype por quaisquer valores que comecem com access_, execute a seguinte pesquisa.
   sourcetype=access_*
 
+Esta pesquisa usa um caractere curinga (*) no valor do campo, access_*, para corresponder a qualquer tipo de fonte de acesso à web do Apache. 
+Os tipos de fonte podem ser access_common, access_combined ou access_combined_wcookie.
+
+-- Especificar campos selecionados adicionais
+Você pode designar outros campos para aparecerem na lista Selected Fields. Quando você adiciona um campo à lista Selected Fields, o nome do campo e o valor do campo são incluídos nos resultados da pesquisa.
+Para adicionar campos à lista Selected Fields, clique em All Fields na parte superior da barra lateral Fields.
+
+-- Execute pesquisas direcionadas
+Os exemplos a seguir são pesquisas que usam campos.
+
+Inicie uma nova pesquisa.
+  sourcetype=access_* status=200 action=purchase
+
+Esta pesquisa usa o campo status, que contém códigos de status HTTP, para encontrar eventos bem-sucedidos status=200 e restringe esses eventos usando o campo action para pesquisar apenas ações de compra.
+Você também pode pesquisar compras com falha de maneira semelhante usando status!=200, que procura todos os eventos em que o código de status HTTP não é igual a 200.
+Altere a parte de status da pesquisa para status!=200 e execute a pesquisa novamente.
+  sourcetype=access_* status!=200 action=purchase
+
+-- Pesquisar erros
+A maneira como os erros são projetados em eventos varia de fonte para fonte. Para pesquisar erros, sua pesquisa deve especificar essas diferentes designações.
+Use operadores booleanos para especificar diferentes critérios de erro. Use parênteses para agrupar partes da sua sequência de pesquisa.
+
+(error OR fail* OR severe) OR (status=404 OR status=500 OR status=503)
+
+Clique em fonte na lista Campos selecionados.
+Esta pesquisa não especifica um tipo de fonte. A pesquisa recupera eventos dos arquivos de log seguros e dos arquivos de log de acesso à web.
+
+
