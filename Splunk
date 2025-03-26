@@ -82,7 +82,23 @@ Usando o Assistente de Pesquisa, você pesquisará principalmente os logs de ace
 
 Clique em Pesquisar na barra de aplicativos para iniciar uma nova pesquisa, e digite buttercup
 Quando você digita algumas letras na barra de pesquisa, o Assistente de Pesquisa mostra os termos em seus dados que correspondem às letras que você digita.
-Digite categoryid na barra de pesquisa. Exemplo de pesquisa: "categoryid=accessories"
+Digite categoryid na barra de pesquisa. 
+Exemplos de pesquisas: 
+  "categoryid=accessories"
+  buttercupgames (error OR fail* OR severe)
+    O caractere asterisco (*) é usado como um caractere curinga para corresponder a fail, failure, failed, failing e assim por diante.
 
+-- Campos para pesquisar
 
+Um campo é um valor com uma posição fixa e delimitada em uma linha
+  Exemplos de campos são clientip para endereços IP acessando seu servidor Web, _time para o registro de data e hora de um evento e host para o nome de domínio de um servidor.
+
+-- Pesquisar com campos
+Ao pesquisar por campos, você usa a sintaxe field_name=field_value.
+  - Os nomes de campo diferenciam maiúsculas de minúsculas, mas os valores de campo não.
+  - Você pode usar curingas em valores de campo.
+  - Aspas são necessárias quando os valores de campo incluem espaços.
+
+Para pesquisar no campo sourcetype por quaisquer valores que comecem com access_, execute a seguinte pesquisa.
+  sourcetype=access_*
 
