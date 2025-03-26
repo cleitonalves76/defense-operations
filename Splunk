@@ -1,0 +1,38 @@
+Splunk: Configurando Laboratório
+
+Na VM com Linux, acesse: https://www.splunk.com/
+Botão: Trials & Downloads
+Crie uma conta e valide via e-mail
+
+Quando logar, acessar link: Free Trials and Downloads page
+
+Splunk Enterprise -> Get My Free Trial
+
+Quando terminar o download do arquivo. Instalar Splunk Enterprise 9.x via Terminal
+
+sudo tar xvzf splunk-9<xx>.tgz -C /opt
+
+cd /opt/splunk/bin
+
+Splunk CLI commands
+  ./splunk start
+  ./splunk stop
+  ./splunk restart
+  ./splunk help
+
+sudo ./splunk start --accept-license
+
+Definir credencial:
+  administrator username:
+  password:
+
+Acessar interface Web:
+  http://127.0.0.1:8000
+
+
+Splunk: Iniciando
+
+Conforme a documentação do Splunk, quando dados são adicionados ao Splunk, eles são processados ​​e transformados em uma série de eventos individuais.
+As fontes de dados podem ser logs de eventos, logs de sites, logs de firewall, etc.
+As fontes de dados são agrupadas em categorias. Abaixo está uma lista de gráficos da documentação do Splunk detalhando cada categoria de fonte de dados.
+
