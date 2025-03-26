@@ -36,6 +36,9 @@ Conforme a documentação do Splunk, quando dados são adicionados ao Splunk, el
 As fontes de dados podem ser logs de eventos, logs de sites, logs de firewall, etc. As fontes de dados são agrupadas em categorias. 
   https://docs.splunk.com/Documentation/Splunk/9.4.1/SearchTutorial/AboutgettingdataintoSplunk
 
+
+---
+segunda
 Primeira ação: Upload do arquivo de dados
 
 A partir da tela inicial do Splunk, opção Upload ou clique em Settings > Add Data, para carregar os dados da nossa máquina local. 
@@ -58,9 +61,12 @@ Tarefa:
   - Qual é o número de eventos originados de todos os países, exceto França?
   - Quantos eventos VPN foram observados pelo IP 107.3.206.58?
 
-Segunda ação: Upload do arquivo de dados compactado
+
+---
+Primeira ação: Upload do arquivo de dados compactado
 
 Carregue os dados tutorialdata.zip. O arquivo deve permanecer compactado para que seja carregado com sucesso. 
+As informaçoes inclusas no arquivo compactado são: access.log files, secure.log files e vendor_sales.log de mail servers e web accounts.
 
 Clique Settings > Add Data
 Clique em Upload
