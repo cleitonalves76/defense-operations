@@ -70,3 +70,8 @@ Input Settings
 Review
 Done
 
+Para ver os dados no aplicativo Search, clique em Start Searching. O aplicativo Search abre e uma pesquisa é executada automaticamente na fonte de dados do tutorial.
+Digite na pesquisa: source=tutorialdata.zip
+Assim que você confirmar a ingestão dos dados, clique no logo Splunk para retornar a página inicial.
+
+
