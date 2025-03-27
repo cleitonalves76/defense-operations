@@ -129,4 +129,57 @@ Use operadores booleanos para especificar diferentes critérios de erro. Use par
 Clique em fonte na lista Campos selecionados.
 Esta pesquisa não especifica um tipo de fonte. A pesquisa recupera eventos dos arquivos de log seguros e dos arquivos de log de acesso à web.
 
+-- Pesquisar vendas de um produto específico
+Pesquise quantos jogos de simulação foram comprados ontem.
+  sourcetype=access_* status=200 action=purchase categoryId=simulation
 
+Tarefa:
+  - Encontre o número de compras para cada tipo de produto vendido na loja online da Buttercup Games.
+  - Remova categoryId=simulation dos seus critérios de pesquisa e execute a pesquisa novamente.
+  - Localize os valores exclusivos categoryId clicando no campo categoryId na lista Selected Fields.
+  - Clique em categoryId,  ACCESSORIES.
+  - Para o número de compras feitas a cada dia da semana anterior, execute a pesquisa novamente para cada intervalo de tempo.
+
+-- Matching Searches
+
+  sourcetype=access_* status=200 action=purchase
+Depois de action=purchase, use o caracter pipe (|) na barra de pesquisa.
+  sourcetype=access_* status=200 action=purchase | top categoryId
+
+-- Visualizar e formatar resultados na aba Visualization
+Você também pode visualizar os resultados de pesquisas de transformação na aba Visualization, onde você pode formatar o tipo de gráfico.
+
+-- Mais exemplos:
+
+Pesquise  o comprador que mais acessou a loja virtual:
+  sourcetype=access_* status=200 action=purchase | top limit=1 clientip
+
+Pesquisa para determinar quantos produtos diferentes o comprador VIP comprou. Use o comando stats para contar as compras deste cliente VIP.
+  sourcetype=access_* status=200 action=purchase clientip=87.194.216.51 | stats count, distinct_count(productId), values(productId) by clientip
+
+Esta pesquisa retorna o clientip para o comprador mais frequente
+  sourcetype=access_* status=200 action=purchase | top limit=1 clientip | table clientip
+
+Como o comando top retorna os campos count e percent, o comando table é usado para manter apenas o valor clientip.
+  sourcetype=access_* status=200 action=purchase [search sourcetype=access_* status=200 action=purchase | top limit=1 clientip | table clientip] | stats count, distinct_count(productId), values(productId) by clientip
+
+-- Salve e compartilhe relatórios
+Os relatórios são criados sempre que você salva uma pesquisa.
+
+Defina o intervalo de tempo como Últimos 7 dias e execute a seguinte pesquisa.
+Acima da barra de pesquisa, clique em Salvar como e selecione Relatório.
+
+-- Crie um gráfico básico
+Neste exemplo, você compara as contagens de ações do usuário calculando informações sobre as ações que os clientes realizaram no site da loja online.
+  O número de vezes que cada produto é visualizado
+  O número de vezes que cada produto é adicionado ao carrinho
+  O número de vezes que cada produto é comprado
+
+Etapas
+
+  Inicie uma nova pesquisa.
+  Defina o intervalo de tempo como Todo o tempo.
+  Execute a seguinte pesquisa.
+    sourcetype=access_* status=200 | chart count AS views count(eval(action="addtocart")) AS addtocart count(eval(action="purchase")) AS purchases by productName | rename productName AS "Product Name", views AS "Views", addtocart AS "Adds to Cart", purchases AS "Purchases"
+  Clique na aba Visualization. 
+  Altere a exibição para um gráfico de colunas.
