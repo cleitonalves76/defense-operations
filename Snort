@@ -15,5 +15,18 @@ Mais em:
   https://docs.snort.org/start/
   https://snort-org-site.s3.amazonaws.com/production/document_files/files/000/012/147/original/Snort_3.1.8.0_on_Ubuntu_18_and_20.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAU7AK5ITMMOXGB2W5%2F20250402%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250402T173010Z&X-Amz-Expires=172800&X-Amz-SignedHeaders=host&X-Amz-Signature=36e71f5ad5c53794c6c3f97193639200ed0601e4999f701a02726ca5ef8609d5
 
-A ação padrão realizar dump no formato tcpdump em /var/log/snort
+A ação padrão realiza dump no formato tcpdump em /var/log/snort
 
+
+ICMP
+tcpreplay -v --mbps=0.005 -i eth0 icmp-test.pcap
+HTTP 
+tcpreplay -v --mbps=0.03 -i eth0 mx-1.pcap
+TASK-6
+tcpreplay -v --mbps=0.03 -i eth0 mx-1.pcap
+TASK-7 
+tcpreplay -v --mbps=0.03 -i eth0 mx-1.pcap
+TASK-10 IPS Exercise - Port 4444 Traffic
+tcpreplay -v --mbps=0.007 -i eth0 44m.pcap
+TASK-10 IPS Exercise - Torrent Traffic
+tcpreplay -v --mbps=0.009 -i eth0 torrent.pcap
