@@ -1,3 +1,19 @@
 Snort
+Open Source Intrusion Prevention System (IPS) 
+Utilizado para detectar ameaças em tempo real, analisar arquivos de tráfego e identificar anomalias.
 
-Snort pode ser utilizado para detectar ameaças em tempo real, analisar arquivos de tráfego registrados e identificar anomalias.
+Instalação da aplicação:
+  sudo apt install snort
+  snort -h
+  snort -V  #version
+  snort -c /etc/snort/snort.conf -T
+  snort -c /etc/snort/snort.lua
+  snort -v  #Verbose
+  snort -d start   #ICMP/HTTP traffic
+
+Mais em: 
+  https://docs.snort.org/start/
+  https://snort-org-site.s3.amazonaws.com/production/document_files/files/000/012/147/original/Snort_3.1.8.0_on_Ubuntu_18_and_20.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAU7AK5ITMMOXGB2W5%2F20250402%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250402T173010Z&X-Amz-Expires=172800&X-Amz-SignedHeaders=host&X-Amz-Signature=36e71f5ad5c53794c6c3f97193639200ed0601e4999f701a02726ca5ef8609d5
+
+A ação padrão realizar dump no formato tcpdump em /var/log/snort
+
