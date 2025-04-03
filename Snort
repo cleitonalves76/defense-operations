@@ -2,21 +2,69 @@ Snort
 Open Source Intrusion Prevention System (IPS) 
 Utilizado para detectar ameaças em tempo real, analisar arquivos de tráfego e identificar anomalias.
 
-Instalação da aplicação:
-  sudo apt install snort
+VM - UbutuServer-IDS
+Configurações no arquivo snort.conf
+  vi /etc/snort/snort.conf
+
+Opções importantes:
   snort -h
   snort -V  #version
   snort -c /etc/snort/snort.conf -T
   snort -c /etc/snort/snort.lua
   snort -v  #Verbose
-  snort -d start   #ICMP/HTTP traffic
-
+  
 Mais em: 
   https://docs.snort.org/start/
   https://snort-org-site.s3.amazonaws.com/production/document_files/files/000/012/147/original/Snort_3.1.8.0_on_Ubuntu_18_and_20.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAU7AK5ITMMOXGB2W5%2F20250402%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250402T173010Z&X-Amz-Expires=172800&X-Amz-SignedHeaders=host&X-Amz-Signature=36e71f5ad5c53794c6c3f97193639200ed0601e4999f701a02726ca5ef8609d5
 
 A ação padrão realiza dump no formato tcpdump em /var/log/snort
 
+Aplicando a configuração:
+  snort -c /etc/snort/snort.conf -T -i ens33
+
+Snort em modo Sniffer:
+  snort -d
+
+Aplicando parâmetros para verificação de camada de enlace:
+  snort -de
+
+Despejo de pacotes completos:
+  snort -X
+
+Gerando logs no diretório local:
+  snort -v -l .
+
+Lendo logs
+  snort -r snort.log.xxxxx
+
+----
+Rule Header                                                                                                      	Options
+----
+Rule Action	| Protocol	| Source IP Address	| Source Port	| Flow	| Destination IP Address	| Destination Port	| Message
+alert		    | top		    | any			          | 21		      | >	    | 10.199.12.8		          | any			          | (msg: “TCP Packet Detected” nd: 1000:610)
+
+----
+Criando regras
+----
+
+vi /etc/snort/snort.conf
+  include RULE_PATH/myrules.rules
+
+vi /etc/snort/rules/myrules.rules
+  #Idenfificação de ping
+  alert icmp any any -> any any (msg: "Ping Executando"; sid:10000001; rev:1;)
+
+Restart snort
+  service snort restart
+
+Outras regras
+identificação de acesso FTP
+  alert tc any any -> any 21 (msg: "FTP Alerta"; sid:1000001; rev:1;)
+
+Detectando o ping e logando no diretório local
+  snort -q -c regraping -A full l .
+
+  
 
 ICMP
 tcpreplay -v --mbps=0.005 -i eth0 icmp-test.pcap
