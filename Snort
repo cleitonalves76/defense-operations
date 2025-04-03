@@ -62,9 +62,23 @@ identificação de acesso FTP
   alert tc any any -> any 21 (msg: "FTP Alerta"; sid:1000001; rev:1;)
 
 Detectando o ping e logando no diretório local
-  snort -q -c regraping -A full l .
+  snort -q -c /etc/snort/rules/myrules.rules -A full -l .
 
-  
+
+----
+Desafio
+----
+Artefato: snort.log
+
+Você é um especialista em DFIR (Digital Forensics and Incident Response) e foi chamado para avaliar uma possível intrusão na rede corporativa de uma empresa. O sistema de detecção de
+intrusões Snort gerou um log, denominado snort.log , que precisa ser analisado para identificar detalhes específicos sobre o tráfego da rede.
+Seu objetivo é analisar o log e responder a duas perguntas cruciais:
+1. ID do Décimo Pacote:
+2. Referer do Quarto Pacote:
+Formato da resposta para o referer do quarto pacote: FIAP{id_referer}
+
+
+
 
 ICMP
 tcpreplay -v --mbps=0.005 -i eth0 icmp-test.pcap
