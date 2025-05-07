@@ -1,0 +1,112 @@
+Aula - pcaps - 
+  dcpdump - Tshark - Wireshark
+
+-------------------------------------------------------------------------
+Estrutura - Cabeçalhos dos protocolos
+-------------------------------------------------------------------------
+MAC 6 bytes = 6*8=48 bits ou 12 hexad
+IP 4 bytes = 4*8=32 bits
+IPv4
+	cabeçalho 20 bytes (comprimento 32bits x 5 linhas)
+	dados 20 bytes
+TCP
+	cabeçalho 20 bytes (comprimento 32bits x 5 linhas)
+
+Quadro Ethernet
+00 0c 29 76 43 e1 d4 ab 82 45 c4 0c --> MAC destino e origem
+08 00 --> protocolo camada superior = IP
+
+Pacote IP
+45 --> 4 = primeira info do header, indica e indica a versão do protocolo
+   --> 5 = tamanho do header, onde são 5 Linhas, sequencias de 4 bytes de largura= 20 bytes
+00 --> IHL e Type of service (controle de melhorias do serviço)
+00 40 --> Total Length = tamanho do pacote = 64 bytes
+00 00 --> Identificação se há fragmentação 
+40 00   --> Flags = don´t fragment
+40 --> TTL 
+06 --> protocolo que o header IP carrega =  06 = TCP (cat /etc/protocols)(17 UDP)
+b8 94 --> Header Checksum
+c0 a8 00 0b --> IP origem (printf '%d'.'%d'.'%d'.'%d\n' 0xc0 0xa8 0x00 0x0b) 192.168.0.11
+c0 a8 00 c8 --> IP destino (printf '%d'.'%d'.'%d'.'%d\n' 0xc0 0xa8 0x00 0xc8) 192.168.0.200
+
+TCP
+23 82 --> porta de origem TCP (printf '%d\n' 0x2382) 9090
+8f 48 --> porta de destino TCP (printf '%d\n' 0x8f48) = 36680
+00 00 00 00 04 81 18 d0 50 
+14  = Flag (20 = ACK+RST 16+4)
+00 00 4a e6 00 00 00 00 00 00 00 00
+
+-------------------------------------------------------------------------
+Analisadores de protocolos
+-------------------------------------------------------------------------
+
+Os analisadores de protocolos, também conhecidos como "protocol analyzers" ou "sniffers", são ferramentas de software ou hardware usadas para analisar e monitorar o tráfego de rede em um ambiente de rede.
+
+Imprime informações sobre arquivos de captura
+  capinfos file.pcap
+
+Tcpdump
+Tcpdump é uma ferramenta de linha de comando para capturar e analisar o tráfego de rede em sistemas como Linux.
+
+tcpdump -i INTERFACE Captura pacotes em uma interface de rede específica
+tcpdump -w ARQUIVO Grava pacotes capturados em um arquivo
+tcpdump -r ARQUIVO Lê pacotes capturados de um arquivo
+tcpdump -c COUNT Captura um número específico de pacotes
+tcpdump -n Não resolve endereços IP
+tcpdump -nn Não resolve endereços IP e não resolve números de protocolo
+tcpdump -v Exibição detalhada; a verbosidade pode ser aumentada com -vv e -vvv
+
+Exemplos:
+
+Captura e exibe 50 pacotes escutando na interface eth0 e os exibe detalhadamente.
+	tcpdump -i eth0 -c 50 -v 
+Captura pacotes escutando na interface wlo1 (a interface WiFi) e grava os pacotes em data.pcap. A captura continua até que o usuário interrompa a captura pressionando CTRL-C.
+	tcpdump -i wlo1 -w data.pcap 
+Captura pacotes em todas as interfaces e os exibe na tela sem resolução de nome de domínio ou protocolo.
+	tcpdump -i any -nn 
+Captura de tráfego de rede
+	tcpdump -v -i eth0 
+	tcpdump -v -i eth0 -w file.pcap
+Filtro e gerar arquivo
+	tcpdump -v -i eth0 icmp -m file.pcap 
+Ler o arquivo
+	tcpdump -r file.pcap 
+	tcpdump -venr file.pcap 
+Filtro com arquivo existente
+	tcpdump -vnr file.pcap tcp
+	tcpdump -vnr file.pcap tcp
+	tcpdump -vnr file.pcap host 192.168.1.1
+	tcpdump -vnr file.pcap port 21
+	tcpdump -vAnr file.pcap --> A para ascii
+Captura tráfego de um host específico
+	tcpdump -r file.pcap host <IP> 
+Captura tráfego de porta específica
+	tcpdump -i <interface> port 21
+Leitura de arquivo exibindo endereços físicos
+	tcpdump -e -r file.pcap
+Leitura do arquivo e grep no termo "from"
+	tcpdump -r file.pcap | grep -i "from"
+
+Você pode usar tcp[tcpflags] para se referir ao campo de sinalizadores TCP. Os seguintes sinalizadores TCP estão disponíveis para comparação:
+
+	tcp-syn TCP SYN (Synchronize) [S]
+	tcp-ack TCP ACK (Acknowledge) [.] 
+	tcp-fin TCP FIN (Finish) [F]
+	tcp-rst TCP RST (Reset) [R]
+	tcp-push TCP Push [P]
+		SynAcK [S.]
+Exemplos:
+
+Capturar pacotes TCP com apenas o sinalizador SYN (Sincronizar) definido, enquanto todos os outros sinalizadores estão desativados.
+	tcpdump "tcp[tcpflags] == tcp-syn" 
+Capturar pacotes TCP com pelo menos o sinalizador SYN (Sincronizar) definido.
+	tcpdump "tcp[tcpflags] & tcp-syn != 0" 
+Capturar pacotes TCP com pelo menos os sinalizadores SYN (Sincronizar) ou ACK (Confirmar) definidos.
+	tcpdump "tcp[tcpflags] & (tcp-syn|tcp-ack) != 0" 
+
+
+
+
+
+
+
