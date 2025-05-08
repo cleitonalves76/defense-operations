@@ -126,7 +126,8 @@ e)Qual é a senha de acesso ao servidor?
 f) Quantos pacotes foram capturados?
 h)Qual é a flag ativa no (décimo sexto pacote)?
 
-
-
+-------------------------------------------------------------------------
+Tshark 
+O Tshark é uma ferramenta de linha de comando que permite capturar e analisar o tráfego de rede em tempo real ou a partir de arquivos de captura previamente gravados. Ele é parte do conjunto de ferramentas Wireshark e é projetado para ser usado em ambientes onde é necessário automatizar a análise de tráfego de rede, ou quando a interface gráfica do usuário (GUI) do Wireshark não é uma opção.
 
 
