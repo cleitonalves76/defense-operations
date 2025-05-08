@@ -103,8 +103,28 @@ Capturar pacotes TCP com pelo menos o sinalizador SYN (Sincronizar) definido.
 	tcpdump "tcp[tcpflags] & tcp-syn != 0" 
 Capturar pacotes TCP com pelo menos os sinalizadores SYN (Sincronizar) ou ACK (Confirmar) definidos.
 	tcpdump "tcp[tcpflags] & (tcp-syn|tcp-ack) != 0" 
+Leitura de arquivo buscando por e-mail específico por GREP
+	tcpdump -Ar imap.cap | grep -i -E "turner@umr.edu"
+Leitura de arquivo e busca por usuário e senha FTP utilizando o GREP
+	 tcpdump -Ar ftp.cap | grep -i -E "user|pass"
+Leitura e filtro por user-agent
+	tcpdump -Ar http.pcap | grep -i -E 'User-Agent'
+Leitura e filtro por requisições GET
+	tcpdump -Ar pop.cap | grep -i -E 'GET'
+Leitura e filtro por host
+	tcpdump -Ar pop.cap | grep -i -E 'host'
 
+-------------------------------------------------------------------------
+Desafio 1 - tcpdump
+Utilizar arquivo ftp1.cap 
 
+a)Qual é o endereço físico do servidor?
+b)Qual é a versão do servidor?
+c)Qual é o horário de acesso ao servidor?
+d)Qual o hostname do servidor?
+e)Qual é a senha de acesso ao servidor?
+f) Quantos pacotes foram capturados?
+h)Qual é a flag ativa no (décimo sexto pacote)?
 
 
 
