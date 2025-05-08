@@ -130,4 +130,79 @@ h)Qual é a flag ativa no (décimo sexto pacote)?
 Tshark 
 O Tshark é uma ferramenta de linha de comando que permite capturar e analisar o tráfego de rede em tempo real ou a partir de arquivos de captura previamente gravados. Ele é parte do conjunto de ferramentas Wireshark e é projetado para ser usado em ambientes onde é necessário automatizar a análise de tráfego de rede, ou quando a interface gráfica do usuário (GUI) do Wireshark não é uma opção.
 
+Captura pacotes de rede da interface especificada
+	tshark -i <interface>
+Analisa um arquivo de captura previamente gravado.
+	shark -r <arquivo>
+Filtra pacotes de acordo com o filtro especificado
+	tshark -f <filtro>
+Exibe o valor de um campo específico dos pacotes capturados.
+	tshark -T fields -e <campo>
+Grava a captura de rede em um arquivo
+	tshark -w <arquivo>
+Exibe detalhes completos dos pacotes capturados
+	tshark -V 
+Executa uma estatística ou análise específica, como resumo estatístico ou histograma.
+	tshark -z <opção>
+Filtra pacotes com base em uma expressão que pode incluir vários campos e operadores lógicos.
+tshark -Y <expressão>
 
+Exemplos:
+
+Captura 3 pacotes por meio da interface eth0
+	tshark -i eth0 -c 3
+Exibe horário absoluto
+	tshark -r ftp.cap -t ad 
+Filtro por consulta DNS
+	tshark -i 1 -f '(dst host 8.8.8.8) and (dst port 53)'
+Verificar hierarquia de protocolos
+	tshark -r brute.pcapng -q -z io,phs 
+Verificar endpoints
+	tshark -r brute.pcapng -q -z endpoints,ip
+Utilizando filtros
+	tshark -r brute.pcapng | grep -i -E 'pass|user' | head -3
+Exportando objetos
+	tshark -r http_obj.cap --export-objects http,objetos -q
+	tshark -r http_with_jpegs.cap --export-objects http,objetos -q
+Filtro por IP 
+	tshark -r http_with_jpegs.cap -Y '(ip.addr ==10.1.1.101)' | head -n 3 
+Contabilizr total de user-agent
+	tshark -r http_with_jpegs.cap -T fields -e http.user_agent | sort | uniq -c | sort -nr
+
+-------------------------------------------------------------------------
+Desafio 2
+
+Utilizar arquivo http_obj.cap
+a) Em que data e hora foi feito o download da imagem sydney.jpg ? **b) Qual é o hash SHA256 do arquivo de captura?
+c)Quanto tempo demorou a captura?
+d)Qual é o user-agent do host que mais fez requisições ?
+e) Qual o ip do host que menos transferiu pacotes?
+f) Quantos hosts estão envolvidos na captura?
+
+-------------------------------------------------------------------------
+Desafio 3
+Você recebeu um arquivo attack.pcap contendo uma série de pacotes capturados da rede. Com isso, sua tarefa é analisar o pcap e descobrir a mensagem secreta trocada entre dois hosts.
+
+-------------------------------------------------------------------------
+Desafio 4
+Você recebeu um arquivo insider.7z contendo o tráfego de rede de uma comunicação suspeita. Acredita-se que um ID específico esteja sendo transferido de forma clandestina, oculto dentro de uma imagem  transmitida. Sua tarefa é analisar o arquivo pcap e identificar o ID oculto na imagem.
+
+-------------------------------------------------------------------------
+Desafio 5
+Houve um incidente onde realizou-se download de um software de site falso. Seu desafio é analisar o arquivo: infected_20250122-traffic-analysis.pcap.zip com senha: infected_20250122 e responder as perguntas para o seu relatório de incidente:
+
+Esse dados podem ajudar:
+	Segmento da LAN para o pcap
+	LAN segment range:  10.1.17[.]0/24   (10.1.17[.]0 through 10.1.17[.]255)
+	Domain:  bluemoontuesday[.]com
+	Active Directory (AD) domain controller:  10.1.17[.]2 - WIN-GSH54QLW48D
+	AD environment name:  BLUEMOONTUESDAY
+	LAN segment gateway:  10.1.17[.]1
+	LAN segment broadcast address:  10.1.17[.]255
+
+a) Qual é o endereço IP do cliente Windows infectado?
+b) Qual é o endereço MAC do cliente Windows infectado?
+c) Qual é o nome do host do cliente Windows infectado?
+d) Qual é o nome da conta de usuário do cliente Windows infectado?
+e) Qual é o provável nome de domínio da página falsa do Google Authenticator?
+f) Quais são os endereços IP usados ​​pelos servidores C2 para esta infecção?
