@@ -1,16 +1,16 @@
 O Wireshark é uma das ferramentas de análise de tráfego mais potentes disponíveis no mercado. Seu uso atende a diversas finalidades:
 
-Detectar e solucionar problemas de rede, como pontos de falha de carga da rede e congestionamento.
-Detectar anomalias de segurança, como hosts invasores, uso anormal de portas e tráfego suspeito.
-Investigar e aprender detalhes do protocolo, como códigos de resposta e dados de payload.
+- Detectar e solucionar problemas de rede, como pontos de falha de carga da rede e congestionamento.
+- Detectar anomalias de segurança, como hosts invasores, uso anormal de portas e tráfego suspeito.
+- Investigar e aprender detalhes do protocolo, como códigos de resposta e dados de payload.
 
 GUI e Dados
 
 A GUI do Wireshark abre com uma única página multifuncional, que ajuda os usuários a investigar o tráfego de diversas maneiras. 
 
 Loading PCAP Files
-	View --> Coloring Rules
-
+	File --> Open
+		http1.cap
 Traffic Sniffing
 	Botão "shark button"
 
@@ -20,55 +20,47 @@ Merge PCAP Files
 View File Details
 	Statistics --> Capture File Properties
 
+--------------------
+Treino
+--------------------
+
 Use o arquivo "Exercise.pcapng" para responder as perguntas.
-
-Leia os "comentários do arquivo de captura". Qual é o flag?
-
+Leia os "comentários do arquivo de captura". Qual é a flag?
 Qual é o número total de pacotes?
-
 Qual é o valor de hash SHA256 do arquivo de captura?
 
-
+--------------------
 Packet Details
 
 Os pacotes consistem camadas, com base no modelo OSI. Analisaremos todas elas em um pacote HTTP a partir de uma captura de exemplo. 
 
-Captura: 27
+	Captura: 27
 
-Frame: Mostra qual quadro/pacote você está visualizando os detalhes específicos da camada Física do modelo OSI.
-
-Source [MAC] (Camada 2): Isso mostrará os Endereços MAC de origem e destino; da camada de Enlace de Dados do modelo OSI.
-
-Source [IP] (Camada 3): Isso mostrará os Endereços IPv4 de origem e destino; da camada de Rede do modelo OSI.
-
-Protocol (Camada 4): Isso mostrará detalhes do protocolo utilizado (UDP/TCP) e das portas de origem e destino da camada de Transporte do modelo OSI.
-
-Protocol Errors: A continuação da quarta camada mostra segmentos específicos do TCP que precisaram ser remontados.
-
-Application Protocol (Camada 7): Isso mostrará detalhes específicos do protocolo utilizado, como HTTP, FTP e SMB. Da camada de Aplicação do modelo OSI.
-
-Application Data: Esta extensão da camada 7 pode mostrar os dados específicos da aplicação.
+- Frame: Mostra qual quadro/pacote você está visualizando os detalhes específicos da camada Física do modelo OSI.
+- Source [MAC] (Camada 2): Isso mostrará os Endereços MAC de origem e destino; da camada de Enlace de Dados do modelo OSI.
+- Source [IP] (Camada 3): Isso mostrará os Endereços IPv4 de origem e destino; da camada de Rede do modelo OSI.
+- Protocol (Camada 4): Isso mostrará detalhes do protocolo utilizado (UDP/TCP) e das portas de origem e destino da camada de Transporte do modelo OSI.
+- Protocol Errors: A continuação da quarta camada mostra segmentos específicos do TCP que precisaram ser remontados.
+- Application Protocol (Camada 7): Isso mostrará detalhes específicos do protocolo utilizado, como HTTP, FTP e SMB. Da camada de Aplicação do modelo OSI.
+- Application Data: Esta extensão da camada 7 pode mostrar os dados específicos da aplicação.
 
 Agora que entendemos a composição de um pacote geral, vamos analisar os vários protocolos de aplicação e seus detalhes específicos.
 
+--------------------
+Treino
+--------------------
 Responda as seguintes perguntas:
 
 Use o arquivo "Exercise.pcapng" e responda:
-
 Veja o pacote número 38. Qual linguagem de marcação é usada no protocolo HTTP?
-
 Qual é a data de chegada do pacote? (Formato da resposta: Mês/Dia/Ano)
-
 Qual é o valor TTL?
-
 Qual é o tamanho do payload TCP?
-
 Qual é o valor da e-tag? (a unique identifier for a specific version of a resource, is typically found within the HTTP.
 
 
-
+--------------------
 Packet Numbers
-
 
 O Wireshark calcula o número de pacotes investigados e atribui um número exclusivo para cada pacote.
 
@@ -91,20 +83,19 @@ Export Objects (Files)
 Time Display Format
 	View --> Time Display Format
 
+--------------------
+Treino
+--------------------
 
 Use o arquivo "Exercise.pcapng" para responder às perguntas.
 
 Pesquise a string "r4w" nos detalhes do pacote. Qual é o nome do artista 1?
-
 Vá para o pacote 12 e leia os comentários. Qual é a resposta?
-
 Há um arquivo ".txt" dentro do arquivo de captura. Encontre o arquivo e leia-o; qual é o nome do alienígena?
-
 Consulte a seção de informações do especialista. Qual é o número de avisos?
 
-
+--------------------
 Packet Numbers
-
 
 O Wireshark calcula o número de pacotes investigados e atribui um número exclusivo para cada pacote.
 
@@ -131,19 +122,18 @@ Time Display Format
 Analyse --> Expert Information
 	Para visualizar todas as informações disponíveis em uma caixa de diálogo. Exibirá o número do pacote, o resumo, o protocolo do grupo e a ocorrência total.
 
-
+--------------------
+Treino
+--------------------
 Use o arquivo "Exercise.pcapng" para responder às perguntas.
 
 Pesquise a string "r4w" nos detalhes do pacote. Qual é o nome do artista 1?
-
 Vá para o pacote 12 e leia os comentários. Qual é a resposta?
-
 Há um arquivo ".txt" dentro do arquivo de captura. Encontre o arquivo e leia-o. Qual é o nome do alienígena?
-
 Consulte a seção de expert info section (informações do especialista). Qual é o número de Warnings (avisos)?
 
+--------------------
 Filtragem de Pacotes
-
 	O Wireshark possui um mecanismo de filtragem que ajuda os analistas a restringir o tráfego e focar no evento de interesse. O Wireshark possui dois tipos de abordagens de filtragem: filtros de captura e filtros de exibição. Os filtros de captura são usados ​​para "capturar" apenas os pacotes válidos para o filtro utilizado. Os filtros de exibição são usados ​​para "visualizar" os pacotes válidos para o filtro utilizado.
 
 Apply as Filter
@@ -151,42 +141,33 @@ Apply as Filter
 	ou Analyse --> Apply as Filter
 
 Conversation filter 
-
 	Ao usar a opção "Apply as a Filter", você filtrará apenas uma entidade do pacote. 
-
 	Essa opção é uma boa maneira de investigar um valor específico nos pacotes. No entanto, suponha que você queira 
-
 	Para investigar um número de pacote específico e todos os pacotes vinculados, concentrando-se em endereços IP e números de porta. Nesse caso, a opção "Conversation Filter" ajuda a visualizar apenas os pacotes relacionados e ocultar facilmente o restante. 
 
-
 Apply as Column
-
 	Por padrão, o painel da lista de pacotes fornece informações básicas sobre cada pacote. Você pode usar o "menu do botão direito" ou "Analyse --> Apply as Column" para adicionar colunas ao painel da lista de pacotes.
 
 Follow Stream
-
 	O Wireshark exibe tudo em tamanho de porção de pacote. No entanto, é possível reconstruir os fluxos e visualizar o tráfego bruto conforme apresentado no nível do aplicativo. Seguindo o protocolo, os fluxos ajudam os analistas a recriar os dados no nível do aplicativo e a entender o evento de interesse. 
-
 	Você pode usar o "menu do botão direito" ou o menu "Analyse --> Follow TCP/UDP/HTTP Stream" para acompanhar os fluxos de tráfego. Os fluxos são exibidos em uma caixa de diálogo separada; os pacotes originados do servidor são destacados em azul e os originados do cliente são destacados em vermelho.
 
-
+--------------------
+Treino
+--------------------
 Use o arquivo "Exercise.pcapng" para responder as perguntas.
 
 Vá para o pacote número 4. Clique com o botão direito do mouse em "Hypertext Transfer Protocol" e aplique-o como filtro. Agora, observe o painel de filtros. Qual é a consulta do filtro?
-
 Qual é o número de pacotes exibidos?
-
 Vá para o pacote número 33790 e escolha follow the stream. Qual é o número total de artistas?
-
 Qual é o nome do segundo artista?
-
 
 ****
 PDF - tipos de ataques - Port Scan
 Arquivo no Teams
 ****
 
-Desafios: 
+Desafios de verdade: 
 
 1. Estudo de caso WEB
 
@@ -203,17 +184,13 @@ h) Qual o primeiro endereço MAIL FROM observado no tráfego?
 
 
 2. Análise pós incidente
-
-Foi notificado que um usuário mal intensionado realizou uma esculta ilegal de tráfego de rede de um arquivo protegido da faculdade fiap, e um dos endereços IPs suspeitos é 172.16.42.145 e acredita-se que ele conseguiu exfiltrar um arquivo do ambiente.
+	Foi notificado que um usuário mal intensionado realizou uma esculta ilegal de tráfego de rede de um arquivo protegido da faculdade fiap, e um dos endereços IPs suspeitos é 172.16.42.145 e acredita-se que ele conseguiu exfiltrar um arquivo do ambiente.
 Diante do exposto, execute uma análise no arquivo cap_rede.pcapng e descubra qual o texto existente no arquivo exfiltrado. 
 
 3. Analisando Malware
- 
-Um estranho rootkit está trafegando pela rede, execute a análise, faça a extração do artefato e tente obter a flag para pontuar.
-
-Arquivo: suspeito.pcapng
+	Um estranho rootkit está trafegando pela rede, execute a análise, faça a extração do artefato e tente obter a flag para pontuar.
+	Arquivo: suspeito.pcapng
 
 4. Falando na rede
-
-Eles estão falando bem baixinho... porém se você tiver um ouvido bom, escutará muita coisa...
-Arquivo: cap1.pcapng
+	Eles estão falando bem baixinho... porém se você tiver um ouvido bom, escutará muita coisa...
+	Arquivo: cap1.pcapng
