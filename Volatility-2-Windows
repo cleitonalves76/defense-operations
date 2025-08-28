@@ -1,0 +1,182 @@
+Volatility 2 – Windows 
+
+Download 
+https://github.com/volatilityfoundation/volatility/releases
+https://github.com/volatilityfoundation/volatility/releases/download/2.6.1/volatility_2.6_win64_standalone.zip
+
+Detalhes sobre os plugins:
+
+volatility.exe --info
+https://github.com/volatilityfoundation/volatility?tab=readme-ov-file
+
+Informações do Sistema
+
+** Informações da imagem / perfil
+
+volatility -f /caminho/imagem imageinfo
+volatility -f <imagem> kdbgscan
+
+Para evitar gravar o perfil e o caminho da imagem em cada comando de volatilidade, você pode definir as variáveis ​​de ambiente VOLATILITY_PROFILE e VOLATILITY_LOCATION da seguinte forma:
+
+export VOLATILITY_PROFILE=<perfil>
+export VOLATILITY_LOCATION=file:///<caminho/absoluto/para/imagem>
+
+Você pode usar:
+
+volatility <comando>
+
+em vez de:
+
+volatility -f "/caminho/para/imagem" --profile <perfil> <comando>
+
+Nome do host
+
+volatility -f "/caminho/para/imagem" --profile <perfil> envars | findstr COMPUTERNAME
+
+comando no Linux:
+vol.py -f "/caminho/para/imagem" --profile <perfil> envars | grep -o -E 'COMPUTERNAME .*' | sort -u
+
+Usuários
+volatility -f "/caminho/para/imagem" --profile <perfil> hashdump
+
+Mostrar registros
+volatility -f "/caminho/para/imagem" --profile <perfil> hivescan
+
+Listar raízes:
+volatility -f "/caminho/para/imagem" --profile <perfil> hivelist
+
+Listar raízes e obter subchaves iniciais:
+volatility -f "/caminho/para/imagem" --profile <perfil> printkey
+
+Listar valores de chave:
+volatility -f "/caminho/para/imagem" --profile <perfil> printkey -K "<caminho-da-chave>"
+
+
+Atividade do sistema
+
+** Encontrar comandos executados
+
+-- Exibir argumentos de linha de comando do processo:
+volatility -f "/caminho/para/imagem" --profile <perfil> cmdline
+volatility -f "/caminho/para/imagem" --profile <perfil> cmdline -p <PID>
+
+Extrair histórico de comandos:
+volatility -f "/caminho/para/imagem" --profile <perfil> cmdscan
+volatility -f "/caminho/para/imagem" --profile <perfil> consoles
+
+Os comandos inseridos em cmd.exe são processados ​​por conhost.exe (csrss.exe antes do Windows 7). Portanto, mesmo que um invasor consiga encerrar o cmd.exe antes de obtermos um despejo de memória, ainda há uma chance de recuperar o histórico da linha de comando da memória do conhost.exe. Se encontrar algo estranho, tente esvaziar a memória do processo associado ao conhost.exe e procurar strings dentro para extrair as linhas de comando.
+
+Listar serviços
+volatility -f "/caminho/para/imagem" --profile <perfil> svcscan --verbose
+
+** Atividade do usuário
+
+-- Área de transferência (clipboard)
+volatility -f "/caminho/para/imagem" --profile <perfil> clipboard
+
+-- Programas executados
+
+Assistência ao usuário
+
+volatility -f "/caminho/para/imagem" --profile <perfil> userassist
+
+Pré-busca
+
+volatility -f "/caminho/para/imagem" --profile <perfil> mftparser | grep \.pf$
+Tela
+volatility -f "/caminho/para/imagem" --profile <perfil> screenshot
+
+Compartilhamentos
+volatility -f "/caminho/para/imagem" --profile <perfil> handles -t Arquivo | grep -E '\\Device\\(LanmanRedirector|Mup)'
+
+** Processos / Programas
+
+Listar processos
+volatility -f "/caminho/para/imagem" --profile <perfil> pslist
+volatility -f "/caminho/para/imagem" --profile <perfil> psscan
+volatility -f "/caminho/para/imagem" --profile <perfil> pstree
+
+Encontrar processos ocultos com várias listagens de processos
+
+volatility -f "/caminho/para/imagem" --profile <perfil> psxview
+
+Despejar (dump) um processo como um arquivo executável exemplo
+volatility -f "/caminho/para/imagem" --profile <perfil> procdump -p <PID> ‑‑dump-dir "/caminho/saída"
+
+Extrair os identificadores (handles) de um processo
+volatility -f "/caminho/para/imagem" --profile <perfil> handles ‑p <PID>
+
+Um identificador (handles) é uma estrutura que permite definir um objeto (arquivo, socket, pipe, área de memória compartilhada, etc.) e, em seguida, manipulá-lo. Os identificadores podem ser compartilhados por vários processos.
+
+Extrai o arquivo mapeado e armazenado em cache da memória de um processo
+volatility -f "/caminho/para/imagem" --profile <perfil> dumpfiles -p <PID> ‑‑dump-dir "/caminho/de/saída"
+
+Extrai as DLLs carregadas por um processo
+volatility -f "/caminho/para/imagem" --profile <perfil> dlllist -p <PID>
+volatility -f "/caminho/para/imagem" --profile <perfil> dlldump -p <PID> ‑‑dir-dump "/caminho/de/saída"
+
+Descarrega a memória endereçável de um processo
+volatility -f "/caminho/para/imagem" --profile <perfil> memdump -p <PID> ‑‑dir-dump "/caminho/de/saída"
+
+Obtém o SID do processo (privilégios)
+volatility -f "/caminho/para/imagem" --profile <perfil> getsids
+volatility -f "/caminho/para/imagem" --profile <perfil> getsids -p <PID>
+
+** Rede
+
+Mostrar conexões de rede
+volatility -f "/caminho/para/imagem" --profile <perfil> netscan
+volatility -f "/caminho/para/imagem" --profile <perfil> netstat
+
+XP/2003:
+
+volatility -f "/caminho/para/imagem" --profile <perfil> connscan
+volatility -f "/caminho/para/imagem" --profile <perfil> conexões
+volatility -f "/caminho/para/imagem" --profile <perfil> sockscan
+volatility -f "/caminho/para/imagem" --profile <perfil> sockets
+
+** Arquivos
+
+Listar arquivos mapeados e armazenados em cache na memória
+volatility -f "/caminho/para/imagem" --profile <perfil> filescan
+
+Extrair arquivos mapeados e armazenados em cache na memória
+Todos os arquivos encontrados:
+volatility -f "/caminho/para/imagem" --profile <perfil> dumpfiles
+
+Todos os arquivos associados a um processo :
+volatility -f "/caminho/para/imagem" --profile <perfil> dumpfiles -p <PID>
+
+Um arquivo de seu deslocamento de memória:
+volatility -f "/caminho/para/imagem" --profile <perfil> dumpfiles -Q <deslocamento>
+
+** Análise de malware
+
+Encontra código oculto e injetado
+(PID, nome do processo, endereço, tags VAD, hexdump e shellcode)
+
+volatility -f "/caminho/para/imagem" --profile <perfil> malfind
+
+YARASCAN - https://github.com/abr4xc/YaraScan
+
+volatility -f "/caminho/para/imagem" --profile <perfil> yarascan -y "/caminho/para/regras.yar"
+
+Extrair segredos (secrets)
+
+Despeja hashes de senhas (LM/NTLM) da memória (somente x86)
+volatility -f "/caminho/para/imagem" --profile <perfil> hashdump
+
+Despeja segredos LSA (descriptografados) do registro
+volatility -f "/caminho/para/imagem" --profile <perfil> lsadump
+
+Extrair chaves privadas e certificados RSA
+volatility -f "/caminho/para/imagem" --profile <perfil> dumpcerts
+
+Despeja hashes de domínio em cache da memória
+volatility -f "/caminho/para/imagem" --profile <perfil> cachedump
+
+Recupera segredos TrueCrypt em cache
+
+volatility -f "/caminho/para/imagem" --profile <perfil> truecryptmaster
+volatility -f "/caminho/para/imagem" --profile <perfil> truecryptpassphrase
+volatility -f "/caminho/para/imagem" --profile <perfil> truecryptsummary
