@@ -4,6 +4,11 @@ Download
 https://github.com/volatilityfoundation/volatility/releases
 https://github.com/volatilityfoundation/volatility/releases/download/2.6.1/volatility_2.6_win64_standalone.zip
 
+----------
+Comandos - referência
+https://github.com/volatilityfoundation/volatility/wiki/Command-Reference
+----------
+
 Detalhes sobre os plugins:
 
 volatility.exe --info
