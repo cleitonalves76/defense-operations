@@ -1,0 +1,197 @@
+Volatility 3 – Windows 
+
+Detalhes sobre os plugins:
+
+vol.py --info
+https://github.com/volatilityfoundation/volatility?tab=readme-ov-file
+https://volatility3.readthedocs.io/en/latest/
+
+** Sistema Operacional
+
+Informações sobre SO
+volatility -f "/caminho/para/imagem" windows.info
+
+Variáveis ​​de ambiente
+volatility -f "/caminho/para/imagem" windows.envars
+
+Usuários conectados
+volatility -f "/caminho/para/imagem" windows.sessions.Sessions
+
+-- Mostrar registros
+volatility -f "/caminho/para/imagem" windows.registry.hivescan
+
+Listar raízes:
+volatility -f "/caminho/para/imagem" windows.registry.hivelist
+
+Listar raízes e obter subchaves iniciais:
+volatility -f "/caminho/para/imagem" windows.registry.printkey.PrintKey
+
+Imprimir chave:
+volatility -f "/caminho/para/imagem" windows.registry.printkey.PrintKey --key "Software\Microsoft\Windows NT\VersãoAtual"
+
+-- Listar serviços
+volatility -f "/caminho/para/imagem" windows.svcscan.SvcScan
+
+Listar tarefas agendadas
+volatility -f "/caminho/para/imagem" windows.registry.scheduled_tasks.ScheduledTasks
+
+Encontrar comandos executados
+volatility -f "/caminho/para/imagem" windows.cmdline
+
+Os comandos inseridos em cmd.exe são processados ​​por conhost.exe (csrss.exe antes do Windows 7). Portanto, mesmo que um invasor consiga encerrar o cmd.exe antes de obtermos um despejo (dump) de memória, ainda há uma chance de recuperar o histórico da linha de comando da memória do conhost.exe. Se encontrar algo estranho, tente despejar (dump) a memória do processo associado ao conhost.exe e procure por strings dentro para extrair as linhas de comando.
+
+** Processos / Programas
+
+-- Listar processos
+volatility -f "/caminho/para/imagem" windows.pslist
+volatility -f "/caminho/para/imagem" windows.psscan
+volatility -f "/caminho/para/imagem" windows.pstree
+
+Variáveis ​​de ambiente
+volatility -f "/caminho/para/imagem" windows.envars --pid <PID>
+
+Despejar a memória do processo
+volatility -f "/caminho/para/imagem" -o "/caminho/de/saída" windows.memmap.Memmap --pid <PID> --dump
+
+Despejar as DLLs e o EXE associados a um processo
+volatility -f "/caminho/para/imagem" -o "/caminho/para/diretório" windows.dumpfiles ‑‑pid <PID>
+
+Extrair as páginas de memória de um processo
+Extrair todas as páginas armazenados na memória em um único arquivo.
+
+volatility -f "/caminho/para/imagem" -o "/caminho/para/diretório" windows.memmap ‑‑dump ‑‑pid <PID>
+
+Extrair os "Handles" de um processo
+volatility -f "/caminho/para/imagem" windows.handles ‑‑pid <PID>
+
+Um handle é uma estrutura que permite definir um objeto (arquivo, socket, pipe, área de memória compartilhada, etc.) e, em seguida, manipulá-lo. Handles podem ser compartilhados por vários processos.
+
+DLLs carregadas por um processo
+volatility -f "/caminho/para/imagem" windows.dlllist ‑‑pid <PID>
+volatility -f "/caminho/para/imagem" windows.ldrmodules.LdrModules --pid <PID>
+
+DLLs descarregadas
+volatility -f "/caminho/para/imagem" windows.unloadedmodules
+
+** Rede
+
+Mostrar conexões de rede
+volatility -f "/caminho/para/imagem" windows.netscan
+volatility -f "/caminho/para/imagem" windows.netstat
+
+** Arquivos
+Listar arquivos
+volatility -f "/caminho/para/imagem" windows.filescan
+
+-- Extrair arquivos
+Todos os arquivos encontrados
+volatility -f "/caminho/para/imagem" -o "/caminho/para/diretório" windows.dumpfiles
+
+Deslocamento da memória virtual:
+
+volatility -f "/caminho/para/imagem" -o "/caminho/para/diretório" windows.dumpfiles ‑‑virtaddr <deslocamento>
+
+Deslocamento da memória física:
+
+volatility -f "/caminho/para/imagem" -o "/caminho/para/diretório" windows.dumpfiles ‑‑physaddr <deslocamento>
+
+** Análise de malware
+
+Espaços de memória suspeitos:
+volatility -f "/caminho/para/imagem" windows.malfind
+
+YARASCAN - https://github.com/abr4xc/YaraScan
+
+volatility -f "/caminho/para/imagem" windows.vadyarascan ‑‑yara-rules <string>
+volatility -f "/caminho/para/imagem" windows.vadyarascan ‑‑yara-file "/caminho/para/arquivo.yar"
+volatility -f "/caminho/para/imagem" yarascan.yarascan ‑‑yara-file "/caminho/para/arquivo.yar"
+
+Chamadas de função
+windows.iat.IAT --pid <PID>
+
+Tabela de chamadas ao sistema
+volatility -f "/caminho/para/imagem" windows.ssdt.SSDT
+
+** Injeção de threads suspeitas
+- Procurar thread com Win32StartAddress = N/A
+- Procurar threads que não tenham um Win32StartAddress nos mesmos espaços de memória que outras
+- Procurar suspeitas Win32StartPath ou StartPath (‘-’, dll suspeita)
+
+volatility -f "/caminho/para/imagem" windows.suspicious_threads --pid <PID>
+volatility -f "/caminho/para/imagem" windows.threads| grep <PID>
+
+Threads suspensos
+volatility -f "/caminho/para/imagem" windows.suspended_threads.SuspendedThreads | grep <PID>
+
+Injeção de DLL
+- Procurar DLLs com MappedPath suspeito
+- Se MappedPath for N/A, a região de memória pode não ter um backup claro no disco (pode ser shellcode injetado ou DLLs mapeadas manualmente).
+- InLoad, InInit e InMem = False (Isso significa que o módulo não está vinculado a nenhuma das listas de DLL esperadas)
+
+volatility -f "/caminho/para/imagem" windows.ldrmodules.LdrModules --pid <PID>
+
+Processos vazios
+volatility -f "/caminho/para/imagem" windows.hollowprocesses
+
+Mutex
+volatility -f "/caminho/para/imagem" windows.mutantscan.MutantScan
+
+Páginas de memória
+volatility -f "/caminho/para/imagem" windows.vadwalk.VadWalk --pid <PID>
+volatility -f "/caminho/para/imagem" windows.vadinfo.VadInfo --pid <PID>
+
+Persistência do kernel
+volatility -f "/caminho/para/imagem" windows.driverscan
+
+# Identificar drivers potenciais ocultos por rootkits
+volatility -f "/caminho/para/imagem" windows.drivermodule.DriverModule
+
+volatility -f "/caminho/para/imagem" windows.callbacks.Callbacks
+
+#Módulos ocultos do kernel
+volatility -f "/caminho/para/imagem" windows.modscan
+
+volatility -f "/caminho/para/imagem" windows.driverirp.DriverIrp
+volatility -f "/caminho/para/imagem" windows.devicetree.DeviceTree
+
+-- Secrets (Segredos)
+
+Extrai hashes do usuário da memória
+volatility -f "/caminho/para/imagem" windows.registry.hashdump.Hashdump
+
+Extrai secrets LSA da memória
+volatility -f "/caminho/para/imagem" windows.registry.cachedump.Cachedump
+volatility -f "/caminho/para/imagem" windows.registry.lsadump.Lsadump
+
+Senha em cache do TrueCrypt
+volatility -f "/caminho/para/imagem" windows.truecrypt.Senha
+
+** Outros
+-- Artefatos
+volatility -f "/caminho/para/imagem" windows.shimcache
+volatility -f "/caminho/para/imagem" windows.registry.amcache.Amcache
+
+# Verifica se há objetos de ARQUIVO MFT presentes na memória
+volatility -f "/caminho/para/imagem" windows.mftscan.MFTScan
+
+# Verifica se há fluxo de dados alternativo
+volatility -f "/caminho/para/imagem" windows.mftscan.ADS
+
+# Verifica e analisa possíveis Registros Mestres de Inicialização (MBRs)
+volatility -f "/caminho/para/imagem" windows.mbrscan.MBRScan
+
+# Verifica se há Registros MFT com Dados Residentes
+volatility -f "/caminho/para/imagem" windows.mftscan.ResidentData
+
+Certificados no Armazenamento de Certificados do registro
+volatility -f "/caminho/para/imagem" windows.registry.certificates.Certificates
+
+Pesquisa de strings
+strings -n <tamanho-min-string> <binário>
+
+
+Mindmap
+
+https://hacktivity.fr/wp-content/uploads/2024/04/Volatility-3-for-Windows-Cheatsheet-scaled.jpg
+
+Fonte: Volatility 3 commands mind map | made with markdown-map.com
