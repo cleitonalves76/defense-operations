@@ -29,6 +29,9 @@ em vez de:
 
 volatility -f "/caminho/para/imagem" --profile <perfil> <comando>
 
+volatility -f C:\Users\faruk\Downloads\memdump.mem --profile WinXPSP2x86 
+
+
 Nome do host
 
 volatility -f "/caminho/para/imagem" --profile <perfil> envars | findstr COMPUTERNAME
@@ -91,7 +94,8 @@ volatility -f "/caminho/para/imagem" --profile <perfil> handles -t Arquivo | gre
 
 ** Processos / Programas
 
-Listar processos
+- Listar processos
+
 volatility -f "/caminho/para/imagem" --profile <perfil> pslist
 volatility -f "/caminho/para/imagem" --profile <perfil> psscan
 volatility -f "/caminho/para/imagem" --profile <perfil> pstree
