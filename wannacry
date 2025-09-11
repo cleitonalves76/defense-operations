@@ -1,0 +1,180 @@
+Introdução
+
+Este documento demonstra a análise de despejo de memória de um sistema infectado pelo malware WannaCry, usando o Volatility. 
+Não abrange a análise do vetor de infecção inicial, propagação e recuperação do sistema infectado. 
+O objetivo é utilizar a análise forense de memória para descobrir e extrair Indicadores de Comprometimento (IoC).
+
+WannaCry
+O WannaCry (ou WannaCrypt, WanaCrypt0r 2.0, Wanna Decryptor) é um programa de ransomware que tem como alvo o sistema operacional Microsoft Windows. Na sexta-feira, 12 de maio de 2017, um grande ataque cibernético foi lançado utilizando-o, infectando mais de 230.000 computadores em 150 países, exigindo pagamentos de resgate na criptomoeda Bitcoin em 28 idiomas. O ataque foi descrito pela Europol como sem precedentes em escala.
+ 
+Aviso importante:
+•	São amostras reais de malware.
+•	Não as exponha a redes internas ou à internet.
+•	Use ambientes controlados (sandboxes) para realizar a análise.
+
+Hash binário
+  sha256sum: 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c
+
+Despejo de Memória (dump)
+  sha256sum: 76e8be1a3761878325fdff39a5ab1ff84922a0b18947e5268dd9175795ad2bf0
+  Arquivo: https://mega.nz/#!Au5xlCAS!KX5ZJKYzQgDHSa72lPFwqKL6CsZS7oQGbyyQrMTH9XY
+
+Análise
+Metodologia investigativa em seis etapas, segundo a SANS:
+•	Identificar processos não autorizados
+•	Analisar DLLs e identificadores de processos
+•	Revisar artefatos de rede
+•	Procurar evidências de injeção de código
+•	Verificar sinais de rootkit
+•	Descartar processos e drivers suspeitos
+
+Como o binário está disponível, é sempre bom fazer uma análise estática rápida para identificar quaisquer indicadores maliciosos ou características anormais. As ferramentas mencionadas abaixo podem ser úteis para uma análise estática rápida
+strings
+virustotal
+
+Remover o binário das strings usando a ferramenta de strings
+
+  file 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c
+  strings –n 6 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c | grep http
+
+A única URL com strings desconhecidas foi encontrada e posteriormente identificada como um killswitch. O Wana Decryptor infecta sistemas por meio de um programa malicioso que primeiro tenta se conectar a um domínio web não registrado. O kill switch parece funcionar da seguinte forma: se o programa malicioso não conseguir se conectar ao domínio, ele prosseguirá com a infecção. Se a conexão for bem-sucedida, o programa interromperá o ataque. 
+
+  strings –n 6 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c | grep .exe
+
+Os indicadores acima apontam que o WannaCry pode instalar binários instantaneamente, para executar diferentes tarefas no sistema, e esperamos ver esse processo na próxima análise de memória.
+
+Podemos ver mais algumas strings interessantes relacionadas à criação de Mutex no sistema infectado e também à concessão ou modificação de controles de acesso discricionários no sistema infectado. 
+
+  strings -n 6 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c.bin | grep -i mutex
+
+Uma análise mais aprofundada das strings mostra vários arquivos com a extensão .wnry. Uma análise dinâmica só pode ajudar a entender esses arquivos.
+
+  strings -n 6 24d004a104d4d54034dbcffc2a4b19a11f39008a575aa614ea04703480b1022c.bin | grep .wnry
+
+Vamos supor que agora temos apenas um dump de memória em mãos e nenhuma outra evidência de indicadores de comprometimento disponível. Usando a Volatility, podemos descobrir artefatos residentes na memória e reconstruir a linha do tempo das atividades realizadas no sistema infectado. 
+Comece com a volatilidade imageinfo:
+  vol.py -f wcry.raw imageinfo
+
+Execute o comando pslist e observe os processos em execução no momento da aquisição de memória. É sempre bom ter conhecimento dos processos nativos relacionados ao Windows para que os outros processos possam ser facilmente identificados.
+  vol.py -f wcry.raw pslist
+
+O PID 1940 iniciou o PID 740 e ambos os processos parecem completamente estranhos, e o tasksche foi detectado em sequências de caracteres do binário wannacry. A execução do plugin psscan também listará todos os processos, incluindo os encerrados, o que pode nos ajudar a identificar a hierarquia dos processos e o cronograma de criação.
+  vol.py if wcry.raw psscan
+
+Como podemos ver os processos finalizados taskdl.exe, taskse.exe junto com o processo pai PID 1940
+  vol.py -f wcry.raw --profile=WinXPSP2x86 psscan | grep 1940
+
+Vamos selecionar os processos com identificação 1940
+  vol.py -f wcry.raw --profile=WinXPSP2x86 psscan | grep 1940 > psscan_1940.txt
+
+Se classificarmos o tempo de criação do processo usando sort, seria fácil entender o cronograma de criação do processo. Abaixo, processos desconhecidos podem ser considerados suspeitos
+  sort -k 7 pssca_1940.txt 
+
+Observando a ordem de criação do processo, o processo taske.exe foi criado antes do processo taskdl.exe, mas ainda não temos ideia do que esses processos fazem.
+
+***
+Pesquisa no Google: taske.exe, taskdl.exe
+***
+Os resultados sobre esses processos, dizem que estão associados ao Wannacry.
+Essas amostras já foram analisadas por grandes empresas de inteligência contra ameaças e fornecedores de antivírus, mas, na realidade, muitos novos indicadores podem ser descobertos em pouco tempo quando se trata de ameaças desconhecidas.
+
+Execute o plugin dlllist para identificar as DLLs do processo e o caminho de onde o processo foi executado. Isso pode fornecer uma compreensão clara dos processos maliciosos, caso sejam executados por binários soltos em pastas incomuns.
+  vol.py -f wcry.raw --profile=WinXPSP2x86 dlllist -p 1904
+
+Identifique o caminho do binário para o processo tasksche.exe, que claramente parece incomum e suspeito. Recomenda-se analisar as DLLs carregadas para entender as características do processo, como criptografia, modificação de registro, criação de socktes etc.
+  vol.py -f wcry.raw --profile=WinXPSP2x86 dlllist -p 740
+
+O processo @WanaDecryptor@ com PID 740 também usa o mesmo caminho do processo tasksche.exe. Com base nas DLLs carregadas pelo processo @WanaDecryptor@, ele pode realizar a criação de soquetes (Ws2_32.dll), comunicações de rede de alto nível (WININET.DLL), consultas ao registro (ADVAPI32.DLL), criptografia (SECURE32.DLL) e interação com navegadores (URLMON.DLL), como o Internet Explorer etc.
+
+Observando os identificadores do PID 1940, ele criou um mutex (os mutexes são usados há muito tempo por autores de malware para impedir que mais de uma instância do malware seja executada na mesma máquina. Um antigo truque antimalware consiste na criação de um mutex específico para impedir a execução de um malware específico) chamado ''MsWinZonesCacheCounterMutexA''
+
+  vol.py -f wcry.raw --profile=WinXPSP2x86 handles -p 1940 -t Key
+  vol.py -f wcry.raw --profile=WinXPSP2x86 handles -p 1940 -t Mutant
+
+***
+Pesquisa no Google: MsWinZonesCacheCounterMutexA
+***
+
+O mutex "MsWinZonesCacheCounterMutexA" pode ser um dos IOCs para identificar sistemas infectados. Assim como o mutex é um dos tipos de identificadores para qualquer processo, o plugin de identificadores de volatilidade também pode identificar arquivos, chaves, eventos, threads e tipos de portas de identificadores para qualquer processo. Uma rápida olhada nos arquivos acessados pelo PID 1940
+  vol.py -f wcry.raw --profile=WinXPSP2x86 handles -p 1940 -t File
+
+Recomenda-se verificar o tipo de identificador de chave para qualquer processo que possa fornecer informações sobre alterações no registro por esse processo. Abaixo estão os tipos de identificador de chave para o processo PID 740.
+  vol.py -f wcry.raw --profile=WinXPSP2x86 handles -p 740 -t Key
+
+Nenhum mecanismo persistente foi encontrado ainda, ele pode ser identificado pelo plugin printkey acessando Run, Runonce, Winlogonkeys, BootExcuteKey, pastas de inicialização e chave de serviços
+
+  vol.py -f wcry.raw --profile=WinXPSP2x86 printkey -K 'Microsoft\Windows\CurrentVersion\Run'
+
+Artefatos relacionados à rede podem ser identificados pelo plugin de connections para conexões ativas 
+  vol.py -f wcry.raw --profile=WinXPSP2x86 connections
+
+e pelo plugin connscan para conexões encerradas
+  vol.py -f wcry.raw --profile=WinXPSP2x86 connscan
+
+** Nenhuma conexão de rede foi encontrada.
+
+Arquivos residentes na memória podem ser pesquisados usando o plugin filescan e podem ser descarregados usando o plugin dumpfiles. Ao procurar pela pasta específica do tasksche.exe, curiosamente, todos os arquivos relacionados ao ransomware foram encontrados em um único local, na pasta ivecuqmanpnirkt615.
+  vol.py -f wcry.raw --profile=WinXPSP2x86 filescan | grep ivecuqmanpnirkt615
+
+Esses arquivos podem ser despejados usando o respectivo endereço físico do arquivo usando o plugin dumpfiles especificando a opção -Q.
+Vamos criar um diretório
+  mkdir dumpfiles
+  vol.py -f wcry.raw --profile=WinXPSP2x86 dumpfiles -Q 0x00000000022ec718 -D dumpfiles
+
+  vol.py -f wcry.raw --profile=WinXPSP2x86 dumpfiles -Q 0x00000000022d2f28 -D dumpfiles
+
+Processo taskse
+  mkdir dumpfiles/taskse
+  vol.py -f wcry.raw --profile=WinXPSP2x86 dumpfiles -Q 0x0000000001fb2278 -D dumpfiles/taskse
+
+É sempre recomendável despejar o espaço de endereço de memória dos processos para verificar entradas suspeitas na memória do processo, em vez de focar apenas no binário em si.
+O plugin de volatilidade memdump foi usado para despejar o espaço de endereço dos processos @WanaDecryptor@ e taskssche.exe em busca de quaisquer indicadores.
+
+  mkdir memdumps
+  vol.py -f wcry.raw --profile=WinXPSP2x86 memdump -p1940,740 -D memdumps
+
+Observando as strings do processo tasksche.exe (PID 1940), foi descoberto que tasksche.exe iniciou o processo @WanaDecryptor@ com argumentos de linha de comando.
+  cd memdumps
+  file *
+  strings 1940.dmp | head -n 100
+
+Uma análise mais aprofundada das sequências revelou como o ransomware executa o processo @WanaDecryptor@ usando o script de operações, configurando a chave de registro para si mesmo na chave de execução para mecanismo de persistência e eliminando alguns serviços como DB, MS Exchange etc.
+  strings 1940.dmp | less
+  strings 1940.dmp | grep MsWinZones
+  strings 1940.dmp | grep cmd.exe
+
+Observando as strings do dump do processo @WanaDecryptor@ (PID 740), foi descoberto que o malware utiliza serviços ocultos do TOR para comando e controle. A lista de domínios .onion contidos é a seguinte:
+12t9YDPgwueZ9NyMgw519p7AA8isjr6SMwgx7ekbenv2riucmf.onion;57g7spgrzlojinas.onion;xxlvbrloxvriy2c5.onion;76jdd2ir2embyv47.onion;cwwnhwhlz52maqm7.onion;
+  strings 740.dmp -n 6 | head -n 20
+
+Os onion domains são:
+•	gx7ekbenv2riucmf.onion
+•	gx7ekbenv2riucmf.onion
+•	57g7spgrzlojinas.onion
+•	xxlvbrloxvriy2c5.onion
+•	76jdd2ir2embyv47.onion
+•	cwwnhwhlz52maqm7.onion
+O endereço de bitcoin é:
+•	12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw
+strings 740.dmp -n 6 | grep bitcoin
+
+IOCs em destaques são:
+
+•	tasksche.exe
+•	taskse.exe
+•	@WanaDecryptor@
+•	taskdl.exe
+•	ivecuqmanpnirkt615 
+•	icacls . /grant Everyone:F /T /C /Q
+•	WNcry@2ol7
+•	MsWinZonesCacheCounterMutexA
+•	MsWinZonesCacheCounterMutexA0 
+•	Global\\MsWinZonesCacheCounterMutexA
+•	13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94
+•	12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw (bitcoin wallet) 
+•	gx7ekbenv2riucmf.onion
+•	57g7spgrzlojinas.onion
+•	xxlvbrloxvriy2c5.onion
+•	76jdd2ir2embyv47.onion
+•	cwwnhwhlz52maqm7.onion
+
