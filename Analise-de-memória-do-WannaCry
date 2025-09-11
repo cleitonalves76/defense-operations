@@ -1,3 +1,5 @@
+Análise de memória do WannaCry Ransomware
+
 Introdução
 
 Este documento demonstra a análise de despejo de memória de um sistema infectado pelo malware WannaCry, usando o Volatility. 
