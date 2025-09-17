@@ -1,0 +1,37 @@
+Caso 001 - Endpoint
+
+Seu SOC informou que coletou um despejo de memória de um endpoint em quarentena que se acredita ter sido comprometido por um trojan bancário disfarçado de documento Adobe. Sua tarefa é usar seu conhecimento em inteligência de ameaças e engenharia reversa para realizar análises forenses de memória no host infectado.
+Você foi informado sobre um IP suspeito em conexão com o arquivo que pode ser útil. 41.168.5.140
+
+O arquivo de memória - Investigation-1.vmem - está localizado em 
+
+Responda às perguntas:
+
+a) Qual é a versão de compilação da máquina host no Caso 001?
+b) Em que horário o arquivo de memória foi adquirido no Caso 001?
+c) Qual processo pode ser considerado suspeito no Caso 001?
+d) Qual é o processo pai do processo suspeito no Caso 001?
+e) Qual é o PID do processo suspeito no Caso 001?
+f) Qual é o PID do processo pai no Caso 001?
+g) Qual agente de usuário foi empregado pelo adversário no Caso 001?
+h) O Chase Bank era um dos domínios bancários suspeitos encontrados no Caso 001? (S/N)
+
+
+Caso 002 - Cadeia de ransomware 
+
+Você foi informado de que sua empresa foi atingida por uma cadeia de ransomware que vem atingindo empresas em todo o mundo. Sua equipe já recuperou a chave de descriptografia e se recuperou do ataque. Ainda assim, sua tarefa é realizar análises pós-incidente e identificar quais agentes estavam envolvidos e o que ocorreu em seus sistemas. Você recebeu um dump de memória bruta da sua equipe para iniciar a análise.
+O arquivo de memória - Investigation-2.raw - está localizado em:
+
+a) Qual processo suspeito está em execução no PID 740 no Caso 002?
+b) Qual é o caminho completo do binário suspeito no PID 740 no Caso 002?
+c) Qual é o processo pai do PID 740 no Caso 002?
+d) Qual é o processo pai do PID 740 no Caso 002?
+e) Qual é o PID do processo pai suspeito conectado ao descriptografador no Caso 002?
+f) Com base em nossas informações atuais, qual malware está presente no sistema no Caso 002?
+g) Qual DLL é carregada pelo descriptografador usado para a criação de soquetes no Caso 002?
+h) Qual mutex pode ser encontrado como um indicador conhecido do malware em questão no Caso 002?
+i) Qual plugin poderia ser usado para identificar todos os arquivos carregados do diretório de trabalho do malware no Caso 002?
+
+
+
+  
