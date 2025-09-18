@@ -21,6 +21,11 @@ De uma perspectiva forense, o Linux fornece acesso direto aos artefatos do proce
 *****
 Prática: Volatility3
 VM: Kali Purple
+
+Artefatos disponíveis em:
+https://drive.proton.me/urls/P6TQ7WZHE8#CKPbUoQ02MYe
+Senha: blueTeam
+arquivo: FS-01.mem
 *****
 
 Vamos começar revisando os processos em execução na máquina no momento da captura.  
