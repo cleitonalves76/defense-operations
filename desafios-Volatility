@@ -2,12 +2,13 @@ Artefatos disponíveis em:
 https://drive.proton.me/urls/P6TQ7WZHE8#CKPbUoQ02MYe
 Senha: blueTeam
 
-Caso 001 - Endpoint
+-----------
+Caso 1 - Endpoint
 
 Seu SOC informou que coletou um despejo de memória de um endpoint em quarentena que se acredita ter sido comprometido por um trojan bancário disfarçado de documento Adobe. Sua tarefa é usar seu conhecimento em inteligência de ameaças e engenharia reversa para realizar análises forenses de memória no host infectado.
 Você foi informado sobre um IP suspeito em conexão com o arquivo que pode ser útil. 41.168.5.140
 
-O arquivo de memória - Investigation-1.vmem - está localizado em 
+Arquivo de memória - Investigation-1.vmem
 
 Responda às perguntas:
 
@@ -19,12 +20,12 @@ e) Qual é o PID do processo suspeito no Caso 001?
 f) Qual é o PID do processo pai no Caso 001?
 g) Qual agente de usuário foi empregado pelo adversário no Caso 001?
 h) O Chase Bank era um dos domínios bancários suspeitos encontrados no Caso 001? (S/N)
+-----------
 
-
-Caso 002 - Cadeia de ransomware 
+Caso 2 - Cadeia de ransomware 
 
 Você foi informado de que sua empresa foi atingida por uma cadeia de ransomware que vem atingindo empresas em todo o mundo. Sua equipe já recuperou a chave de descriptografia e se recuperou do ataque. Ainda assim, sua tarefa é realizar análises pós-incidente e identificar quais agentes estavam envolvidos e o que ocorreu em seus sistemas. Você recebeu um dump de memória bruta da sua equipe para iniciar a análise.
-O arquivo de memória - Investigation-2.raw - está localizado em:
+Arquivo de memória - Investigation-2.raw
 
 a) Qual processo suspeito está em execução no PID 740 no Caso 002?
 b) Qual é o caminho completo do binário suspeito no PID 740 no Caso 002?
@@ -35,7 +36,22 @@ f) Com base em nossas informações atuais, qual malware está presente no siste
 g) Qual DLL é carregada pelo descriptografador usado para a criação de soquetes no Caso 002?
 h) Qual mutex pode ser encontrado como um indicador conhecido do malware em questão no Caso 002?
 i) Qual plugin poderia ser usado para identificar todos os arquivos carregados do diretório de trabalho do malware no Caso 002?
+-----------
 
+Caso 3 - Incidente
 
+A equipe de resposta a incidentes alertou você sobre alguma atividade suspeita em um dos servidores de banco de dados Linux.
+Um dump de memória do servidor foi gerado e fornecido a você para análise. Você informará à equipe que estão faltando informações cruciais do servidor, mas ele já foi colocado offline. Eles apenas dificultaram um pouco o seu trabalho, mas não o impossibilitaram de fazê-lo.
 
+Arquivo de memória: linux.mem (evidence-linux.zip)
+
+Recomendo usar o Volatility 2.6 para executar esse desafio
+
+Responda às perguntas:
+
+Qual é a senha de root exposta?
+a) E a que horas aproximadamente o arquivo users.db foi acessado? O formato é AAAA-MM-DD HH:MM:SS
+b) Qual é o hash MD5 do arquivo malicioso encontrado?
+c) Qual é o endereço IP e a porta do agente malicioso? O formato é IP:Porta
+d) Qual é o caminho completo do arquivo cronjob e seu número de inode? O formato é nome do arquivo:número de inode
   
