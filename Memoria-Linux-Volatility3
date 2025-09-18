@@ -35,12 +35,12 @@ Plugins do Linux
 Podemos usar o comando grep para listar os plugins disponíveis para a imagem do Linux, usando o comando
 
   cd /opt/volatility3
-  vol.py --help | grep linux
+  ./vol.py --help | grep linux
 
 Identificar o Banner Linux Correto
 Antes de começar a trabalhar com o Volatility, é importante observar que a versão 2 do Volatility é necessária para identificar o perfil correto. O Volatility 3, que estamos usando nesta aula, precisa ter a tabela de símbolos da versão do Sistema Operacional que você está analisando para entender a estrutura do dump de memória.
 
-  vol.py -f FS-01.mem banners.Banners
+  ./vol.py -f FS-01.mem banners.Banners
 
 Como o processamento levará algum tempo, a saída do comando será armazenada no arquivo linux_banner.
 Listar Todos os Processos em Execução
