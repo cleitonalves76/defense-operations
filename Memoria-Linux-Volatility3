@@ -1,0 +1,233 @@
+Como o Linux Gerencia a Memória
+
+Memória Física vs. Virtual: Cada processo recebe um espaço de endereço virtual. Usando tabelas de páginas, a MMU (Unidade de Gerenciamento de Memória) os traduz em endereços físicos.
+Arquivos Mapeados na Memória: Bibliotecas e arquivos compartilhados são carregados na memória usando mmap(). Isso ajuda no compartilhamento eficiente entre processos.
+Memória do Kernel: Gerenciada separadamente dos programas normais.
+Swap: Quando a RAM se esgota, as páginas de memória menos utilizadas são movidas para a swap, liberando espaço.
+Linux e Windows usam memória virtual, mas suas estruturas internas e exposição a ferramentas forenses são diferentes. O Linux fornece acesso mais direto às visualizações de memória ativa por meio do sistema de arquivos /proc, enquanto o Windows depende de estruturas em nível de kernel, como Descritores de Endereço Virtual (VADs), para gerenciar a memória.
+
+
+Anatomia de um Processo Linux
+
+O Linux oferece acesso transparente às informações do processo ativo por meio do pseudosistema de arquivos /proc. Por exemplo:
+
+/proc/<pid>/cmdline fornece argumentos de linha de comando.
+/proc/<pid>/status exibe metadados como UID, uso de memória e contagem de threads.
+/proc/<pid>/exe é um link simbólico para o binário executado.
+/proc/<pid>/maps revela o layout da memória.
+/proc/<pid>/fd/ lista os descritores de arquivos abertos.
+
+De uma perspectiva forense, o Linux fornece acesso direto aos artefatos do processo ativo por meio do sistema de arquivos /proc. Analistas podem verificar mapas de memória, abrir arquivos, carregar bibliotecas e até mesmo inspecionar um binário em execução por meio de links simbólicos. Essa transparência é um recurso poderoso do Linux para análise de sistemas ativos.
+
+
+Prática: Volatility3
+VM: Kali Purple
+
+Vamos começar revisando os processos em execução na máquina no momento da captura.  
+Nosso objetivo é procurar processos suspeitos que possam indicar comprometimento. Isso inclui a verificação de nomes de processos incomuns, relacionamentos pai-filho, usuários anômalos, processos ocultos e tentativas de escalonamento de privilégios.
+
+
+O arquivo de memória - FS-01.mem - localizado em ******
+
+
+Verificando o Hash
+md5sum FS-01.mem
+
+
+Plugins do Linux
+Podemos usar o comando grep para listar os plugins disponíveis para a imagem do Linux, usando o comando
+
+cd /opt/volatility3
+vol.py --help | grep linux
+
+Identificar o Banner Linux Correto
+
+Antes de começar a trabalhar com o Volatility, é importante observar que a versão 2 do Volatility é necessária para identificar o perfil correto. O Volatility 3, que estamos usando nesta aula, precisa ter a tabela de símbolos da versão do Sistema Operacional que você está analisando para entender a estrutura do dump de memória.
+
+vol.py -f FS-01.mem banners.Banners
+
+Como o processamento levará algum tempo, a saída do comando será armazenada no arquivo linux_banner.
+
+Listar Todos os Processos em Execução
+
+Lista os processos ativos, conforme armazenados na lista de tarefas do kernel do sistema operacional. Isso fornece um instantâneo do que estava em execução no momento da captura.
+
+Observação: Como o processamento levará algum tempo, a saída do comando já estará armazenada no arquivo pslist_output.
+
+./vol.py -f FS-01.mem linux.pslist.PsList
+
+Também podemos salvar a saída em um arquivo e, em seguida, lê-lo para análise posterior, conforme mostrado abaixo:
+
+./vol.py -f FS-01.mem linux.pslist.PsList > ps_output
+
+
+Valor Forense
+
+- Exibe todos os processos vinculados atualmente na lista de tarefas do kernel.
+- Reflete o que os comandos ps ou top do sistema ativo mostrariam.
+- Ajuda a estabelecer a linha de base dos processos visíveis no momento da captura.
+- Valida serviços, daemons, shells e ferramentas em execução.
+- Pode ajudar a identificar ferramentas suspeitas em execução (por exemplo, nc, python, wget).
+
+PsScan
+
+Podemos usar o plugin PsScan para permitir que o Volatility escaneie a memória em busca de processos com base na assinatura e recupere os processos ocultos que o plugin PsList pode ter perdido.
+
+Observação: O comando levará cerca de 2 minutos para ser executado completamente.
+
+./vol.py -f FS-01.mem linux.psscan.PsScan
+
+A saída do comando já está armazenada no arquivo psscan_output. Examine a saída e veja se consegue encontrar mais processos suspeitos. Essa varredura é útil, especialmente para recuperar processos ocultos ou encerrados com rastros ainda na memória.
+
+Valor Forense
+
+- Detecta processos ocultos ou desvinculados, rootkits, etc.
+- Revela processos encerrados ou órfãos ainda na memória.
+- O cruzamento de referências do psscan com o pslist ajuda a encontrar malware furtivo.
+- Crítico para investigações pós-comprometimento, onde invasores tentam ocultar atividades.
+
+Processos com Argumentos
+
+Outro plugin interessante é o psaux, que nos ajuda a recuperar processos com argumentos. Este plugin pode ser usado para identificar processos suspeitos com argumentos de aparência estranha passados ​​a eles.
+
+./vol.py -f FS-01.mem linux.psaux.PsAux
+
+A saída do comando já está armazenada no arquivo psaux_output. Examine a saída e veja se consegue encontrar alguns processos com argumentos suspeitos.
+
+Valor Forense
+
+- Fornece a linha de comando completa para cada processo em execução (como ps aux).
+- Revela o uso de comandos ou sinalizadores suspeitos (por exemplo, nc -e, curl http, bash -i).
+- Útil para detecção reversa de shell, execução de scripts maliciosos ou roubo de credenciais.
+- Permite a correlação entre PID e comportamento observado em outros plugins (por exemplo, netstat ou maps).
+- Ajuda a diferenciar binários legítimos de binários usados ​​indevidamente.
+
+Mapeamento de Processos
+
+O plugin proc.Maps enumera mapeamentos de memória para processos em um dump de memória do Linux. Ele imita o conteúdo de /proc/<pid>/maps em um sistema ativo, mostrando como cada processo mapeia arquivos executáveis, bibliotecas compartilhadas, regiões de heap/pilha e alocações de memória potencialmente maliciosas em seu espaço de endereço.
+
+./vol.py -f FS-01.mem linux.proc.Maps
+
+Como o processamento leva tempo, a saída do comando é armazenada no arquivo procmap_output. Examine a saída e veja se consegue encontrar alguns processos com argumentos suspeitos.
+
+Valor Forense
+
+- Revela como cada processo mapeia regiões da memória (executáveis, bibliotecas, heap, pilha, regiões anônimas).
+- Detecta malware na memória (por exemplo, payloads descompactados, shellcode injetado).
+- Sinaliza permissões suspeitas, como rwxp (leitura-gravação-execução-privado), frequentemente usadas para shellcode.
+- Ajuda a identificar malware sem arquivo, pois segmentos de memória podem conter código ativo.
+- Detecta processos carregando binários de caminhos suspeitos (por exemplo, /tmp/).
+- Permite a reconstrução do layout do processo para correlacionar com comportamento ou anomalia.
+- Essencial para confirmar o processo de esvaziamento ou injeção.
+
+
+Responda às perguntas:
+
+a) Qual é o hash MD5 da imagem que estamos investigando?
+b) Qual é o PID do processo suspeito do Netcat?
+c) Qual é o nome do processo suspeito em execução no diretório oculto tmp?
+d) Qual número de porta foi usado durante a configuração de um servidor Python para transferir arquivos?
+e) Um processo suspeito com PID 821 foi encontrado em execução no sistema. Qual é o caminho completo do processo?
+
+
+
+Busca por Atividades Suspeitas de Rede
+
+Analisar a memória em busca de conexões de rede suspeitas é crucial ao investigar malware, persistência ou movimentação lateral. Os invasores costumam usar shells reversos, backdoors ou túneis; a memória pode ser o único lugar para detectá-los. Na memória, podemos procurar os rastros das conexões de rede e procurar as suspeitas.
+
+Algumas das principais informações que podemos procurar em termos de conexão de rede na memória do Linux são:
+
+- Conexões de Rede Abertas
+- Shell Reverso
+- Detalhes do Socket
+- Interfaces de Rede
+- Identificar Informações de IP
+
+Vamos começar nossa busca por conexões de rede explorando as interfaces e o endereço IP associado à máquina Linux infectada, usando o seguinte comando:
+
+./vol.py -f FS-01.mem linux.ip.Addr
+
+A saída do comando já está no arquivo ip.addr_output. Este comando fornece informações sobre as interfaces de rede, os endereços MAC correspondentes e os endereços IP associados.
+
+Identificar Informações da Interface de Rede
+
+O comando a seguir mostrará as informações da interface da camada dois da imagem de memória. Ele mostra os dispositivos/interfaces de rede reconhecidos pelo kernel.
+
+./vol.py -f FS-01.mem linux.ip.Link
+
+A saída do comando já está no arquivo ip.link_output. Do ponto de vista forense, podemos examinar as informações da interface de rede para identificar algum tunelamento VPN ou interfaces suspeitas.
+
+Explorar Detalhes do Socket
+
+Podemos extrair as estatísticas de uso do socket da perspectiva do kernel usando o seguinte comando:
+
+./vol.py -f FS-01.mem linux.sockstat.Sockstat
+
+Observação: O comando leva cerca de 2 minutos para ser executado completamente. Você também pode encontrar as informações armazenadas no arquivo socket_output.
+
+
+Vamos analisar algumas informações importantes que obtemos deste comando:
+
+- Nome do Processo: Nome do processo que usa o socket (de /proc/<pid>/comm).
+- PID: ID do processo que possui o socket.
+- Endereço de Origem: o caminho do arquivo vinculado ao socket.
+- ESTADO: Estado do socket: ESCUTA, ESTABELECIDO, DESCONECTADO, etc.
+- Porta de Origem/Porta de Destino: Porta de Origem/Porta de Destino associada ao socket.
+
+Valor Forense
+
+- Detecta a atividade geral da rede a partir da visão do kernel, ajudando a confirmar se o sistema estava conectado a conexões ativas durante a captura de memória.
+- Identifica potenciais backdoors ou shells reversos, revelando o uso inesperado do socket.
+- Ajuda a examinar e detectar contagens anormais de sockets ou uso excessivo de memória alocada para conexões de rede.
+- Investigar os rastros da atividade de rede na memória é uma parte importante da análise forense. Ele fornece visibilidade em todas as camadas de rede: interfaces, configurações de IP e comportamento em nível de soquete.
+
+Examine as conexões de rede e veja se consegue encontrar conexões suspeitas e processos associados.
+
+
+
+Responda às perguntas:
+
+f) Qual é o endereço IP do servidor remoto com o qual uma conexão TCP foi estabelecida usando Python?
+g) Qual foi o endereço IP do host infectado encontrado no registro?
+h) Qual é o endereço MAC da interface de rede associada ao dispositivo infectado?
+i) Qual é o número da porta aberta para o shell reverso pelo adversário no host infectado?
+
+
+Buscando Atividades do Usuário
+
+Quando um sistema é comprometido, os invasores normalmente interagem com ele por meio de ferramentas de linha de comando como bash, sh ou python. Seus rastros geralmente são deixados na memória muito tempo depois que os processos são encerrados. Analisando o histórico do shell, o uso do terminal e os metadados relacionados, podemos reconstruir quais comandos foram executados, por quem e em que contexto.
+
+Histórico do Bash
+
+Podemos usar o seguinte comando para localizar os rastros do histórico de comandos das sessões Bash dos usuários (estruturas .bash_history ou na memória), oferecendo uma visão direta sobre quais ações um usuário realizou.
+
+./vol.py -f FS-01.mem linux.bash.Bash
+
+A saída do comando já está armazenada no arquivo bash_output. A saída mostra os comandos que o usuário executou no terminal bash. Alguns dos comandos suspeitos executados estavam relacionados à criação de contas suspeitas, configuração de SSH, configuração de uma tarefa cron, etc.
+
+Valor Forense
+
+- Revela o comportamento do invasor em texto simples.
+- Identifica roubo de credenciais, mecanismos de persistência e execução de payload.
+- Mesmo que o histórico seja apagado do disco, a memória pode preservá-lo.
+- Verificar Variáveis ​​de Ambiente
+- Também podemos extrair os rastros das variáveis ​​de ambiente da memória. Isso pode ser útil se o invasor tiver implantado binários suspeitos em um local personalizado e alterado a variável PATH para priorizar a execução.
+
+./vol.py -f FS-01.mem linux.envars.Envars
+
+A saída do comando já está armazenada no arquivo envars_output.
+
+Valor Forense:
+
+- Revela o contexto de execução dos processos, incluindo diretórios, shells e configurações do usuário.
+- Detecta manipulação maliciosa do ambiente, como PATH modificado.
+- Revela mecanismos de persistência por meio de configurações de inicialização baseadas no ambiente.
+- Correlaciona-se com outros artefatos do processo para enriquecer o contexto da investigação.
+
+Concluindo, compreender o comportamento do usuário é fundamental para identificar acessos não autorizados, ações maliciosas e rastros pós-exploração.
+
+Responda às perguntas:
+
+j)A equipe de rede detectou uma tentativa suspeita de criar uma nova conta no sistema. Você consegue investigar e encontrar o nome da conta backdoor criada?
+k) O histórico do bash mostra um comando suspeito que estabeleceu um shell reverso. Qual é o endereço IP do invasor?
+
