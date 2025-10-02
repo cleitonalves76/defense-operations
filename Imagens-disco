@@ -1,0 +1,125 @@
+
+
+Em Forense Digital, a geração de imagens é o processo de criação de uma cópia exata, bit a bit, de uma mídia de armazenamento digital. Esse processo garante que todos os dados, incluindo arquivos excluídos, arquivos ocultos e espaço não alocado, sejam capturados. Ao gerar uma imagem forense, preservamos os dados originais, permitindo uma análise completa.
+
+Preparação
+
+O processo de criação de imagens de um disco começa com a identificação da unidade de destino, a preparação para a criação de imagens e a criação do arquivo de imagem, cuja integridade é posteriormente verificada. Isso precisa ser realizado em um ambiente que nos permita executar essas tarefas e também garanta que o processo seja devidamente registrado.
+
+Bloqueadores de Gravação
+
+Os bloqueadores de gravação funcionam interceptando fisicamente todos os comandos da unidade que gravam dados enviados entre o disco que está sendo criado e o sistema operacional conectado a ele.
+
+Trilha de Auditoria
+
+Uma trilha de auditoria é um registro cronológico que rastreia ações e eventos dentro de um sistema, fornecendo um histórico detalhado para fins de responsabilização e segurança. 
+
+
+Ativa o histórico de comandos no shell, permitindo que ele registre os comandos que você digitar.
+set -o history
+
+Garante que o histórico de comandos seja anexado ao arquivo de histórico em vez de sobrescrevê-lo quando o shell for encerrado.
+shopt -s histappend
+
+Limpa todas as configurações que controlam quais comandos são salvos no histórico, garantindo que todos os comandos sejam registrados.
+export HISTCONTROL=
+
+Limpa todas as configurações que ignoram padrões específicos de comandos, para que todos os comandos sejam salvos no histórico.
+export HISTIGNORE=
+
+
+Define o arquivo onde o histórico de comandos é salvo.
+export HISTFILE=~/.bash_history
+
+
+Não define limite para o número de linhas armazenadas no arquivo de histórico.
+export HISTFILESIZE=-1
+
+Não define limite para o número de comandos retidos no histórico do shell.
+export HISTSIZE=-1
+
+Acessando o Sistema de Arquivos
+
+Embora o disco e os dispositivos utilizados possam variar dependendo dos requisitos e do ambiente, o processo é semelhante para todos os discos conectados física ou virtualmente ao sistema operacional Linux. 
+
+O comando df exibe informações sobre espaço, livre e ocupado, das partições do sistema. 
+df
+df -h
+
+O comando lsblk lista dispositivos de bloco com a opção -a para listar todos os dispositivos.
+lsblk -a
+
+Criando uma Imagem Forense
+
+Agora que identificamos o dispositivo, queremos criar uma imagem. Vamos prosseguir e copiar este disco para um arquivo de imagem raw para inspeção posterior. 
+
+Isso também pode ser feito em outro disco, se necessário, o que é uma prática comum, mas, neste caso, faremos isso em um arquivo local em nosso sistema com a extensão .img para identificar o arquivo como uma imagem.
+
+Algumas ferramentas comuns usadas para criar imagens:
+
+sudo dd if=/dev/sda1 of=/home/investigator/image.img bs=4M status=progress
+
+
+Criando um Arquivo de Imagem de Disco Vazio:
+  truncate -s 1G disk_vazio.img
+
+Formata o arquivo disk_vazio.img com o sistema de arquivos ext4.
+  mkfs -t ext4 disk_vazio.img
+
+VM Windows
+
+****
+FTK Imager
+
+O FTK Imager é uma ferramenta forense que permite que especialistas forenses adquiram dados de computador e realizem análises sem afetar as evidências originais, preservando sua autenticidade, integridade e validade.
+****
+
+PASSO 1: Detectando Criptografia EFS com o FTK Imager
+
+IMPORTANTE: O sistema de arquivos da unidade deve ser NTFS para utilizar a criptografia EFS. A criptografia EFS não é compatível com sistemas de arquivos FAT32 ou exFAT.
+
+Para detectar a presença de criptografia EFS em uma unidade física:
+
+1. Abra o FTK Imager e navegue até File > Add Evidence Item
+
+2. Selecione Physical Drive na janela Select Source e clique em Avançar.
+
+3. Selecione "\\PHYSICALDRIVE0 - VMWare..." na janela Select Drive e clique em Concluir.
+
+4. Navegue e clique em File > Detect EFS Encryption para verificar a unidade e detectar a presença de criptografia.
+
+  * EFS (sigla para Encrypting File System, ou Sistema de Arquivos Criptografados) é um recurso de segurança integrado aos sistemas operacionais Windows (a partir do Windows 2000) que permite a criptografia de arquivos e pastas individuais em volumes formatados com o sistema de arquivos NTFS.
+ 
+5. Uma caixa de mensagem indicará se a criptografia EFS está ou não na unidade anexada.
+
+
+PASSO 2: Criando uma Imagem de Disco Forense com o FTK Imager
+
+Execute as seguintes etapas para criar uma imagem de disco forense a partir de uma unidade física:
+
+1. Abra o FTK Imager e navegue até File > Create Disk Image
+
+2. Escolha  Physical Drive na janela Select Source e clique em Next.
+
+3. Escolha "\\PHYSICALDRIVE0 - VMWare..." na janela Select Drive e clique em Finish.
+
+4. Certifique-se de marcar 
+  "Verify images after they are created" e "Create directory listings of all files in the image after they are created" na janela Create Image. Pressione Add para abrir a janela Select Image Type, escolha Raw (dd) e clique em Next.
+
+5. Insira os detalhes do caso na janela  Evidence Item Information e clique em Next.
+
+6. Insira a Image Destination Folder e Image Filename, e clique em Finish.
+
+7. Pressione Start para começar a criar a imagem de disco forense.
+
+  Ao marcar "Verify images after they are created", o FTK Imager criará o hash da unidade física e da imagem de disco forense após a criação da imagem de disco. Em seguida, ele validará se ambos os hashes são iguais para confirmar a correspondência.
+
+Perguntas:
+a) Qual é o hash MD5 e SHA1 da unidade física e da imagem forense?
+b) Incluindo arquivos ocultos, quantos arquivos estão armazenados atualmente no drive?
+c) Quantos arquivos foram excluídos no total?
+d) Quantos arquivos recuperados estão corrompidos (por exemplo, tamanho de arquivo 0)?
+
+
+
+
