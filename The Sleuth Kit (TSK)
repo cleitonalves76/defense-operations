@@ -1,0 +1,115 @@
+Fundamentos da Análise Forense Digital com TSK
+
+1.1 O que é o The Sleuth Kit (TSK)?
+•	Definição: Uma biblioteca e coleção de utilitários de linha de comando baseados em Unix e Windows para facilitar a análise forense de sistemas de arquivos e volumes.
+•	Objetivo: Permitir a investigação de imagens de disco (cópias bit a bit), analisando a estrutura de volumes, sistemas de arquivos, metadados e conteúdo de arquivos, incluindo dados alocados e não alocados (deletados).
+•	Integração: O TSK é o motor por trás de ferramentas gráficas populares, como o Autopsy.
+
+1.2 Camadas de Análise Forense no TSK
+
+O TSK opera em diferentes níveis de abstração de dados:
+•	Camada de Imagem/Mídia: Lida com a imagem forense bruta do disco (ex: formato dd/raw, E01, AFF).
+•	Camada de Volume/Partição: Analisa a estrutura de partições (MBR, GPT, etc.).
+•	Camada de Sistema de Arquivos: Interpreta o formato do sistema de arquivos (NTFS, FAT/ExFAT, Ext2/3/4, HFS+).
+•	Camada de Metadados (Inodes/MFT): Lida com as estruturas que descrevem os arquivos (tamanho, permissões, timestamps).
+•	Camada de Dados (Conteúdo): Onde o conteúdo real dos arquivos reside (blocos/clusters).
+
+1.3 Sistemas de Arquivos Suportados
+
+•	Estudar como o TSK interage com:
+  o	NTFS (Windows)
+  o	FAT/ExFAT (Dispositivos removíveis, antigos Windows)
+  o	Ext2/3/4 (Linux)
+  o	HFS+ (macOS)
+  o	Outros (UFS, ISO 9660)
+
+2. Conceitos Chave na Prática
+2.1 Imagens Forenses e Offset
+•	Imagem Forense: Cópia bit a bit (dd, .img, .E01). Todas as análises do TSK são feitas na imagem, nunca no disco original.
+•	Offset: O endereço de início (em setores) de uma partição dentro da imagem de disco. O TSK precisa deste valor (-o [offset]) para saber onde o sistema de arquivos começa. O mmls é a ferramenta para descobrir isso.
+
+2.2 Metadados vs. Dados
+•	Metadados (Inode/MFT Entry): Contêm todas as informações sobre um arquivo, exceto seu conteúdo (nome, tamanho, permissões, timestamps, e a lista de blocos de dados). O istat e ils analisam isso.
+•	Dados (Blocos/Clusters): O conteúdo real do arquivo. O icat recupera este conteúdo.
+
+2.3 Recuperação de Arquivos Deletados
+•	Arquivos Deletados (conceito): Na maioria dos sistemas de arquivos, deletar um arquivo desaloca sua entrada no diretório e marca seus blocos de dados como não alocados, mas o conteúdo (blocos) e os metadados (inode) podem permanecer intactos até serem sobrescritos.
+•	Recuperação com TSK:
+  1.	Usar fls para listar arquivos deletados (sinalizados com *).
+  2.	Usar istat no inode do arquivo deletado para ver quais blocos de dados ele aponta.
+  3.	Usar icat com o inode para recuperar o conteúdo, se os blocos ainda existirem e não tiverem sido sobrescritos.
+
+2.4 Análise de Espaço Não Alocado
+  •	Espaço Não Alocado: Áreas do disco que não estão sendo usadas por nenhum arquivo alocado. É onde o conteúdo de arquivos deletados ou fragmentos de dados podem ser encontrados.
+
+Busca por Palavras-Chave (Grep): Usar blkls para extrair o espaço não alocado e depois aplicar ferramentas de busca como o grep (ou strings) para encontrar evidências.
+
+3. Ferramentas de Linha de Comando (TSK Tools)
+O TSK é dividido em grupos de ferramentas, cada um com uma função específica.
+
+3.1 Ferramentas de Gerenciamento de Mídia (Volume)
+Responsáveis por analisar a tabela de partições de uma imagem de disco.
+
+Lista as partições/volumes na imagem de disco. Essencial para descobrir onde o sistema de arquivos começa.	
+  mmls imagem.dd
+  A saída mostrará as partições. O campo Start (Início) da partição de interesse é o offset (ex: 0000002048).
+
+Exibe detalhes sobre a tabela de volumes/partições.	
+  mmstat imagem.dd
+
+Extrai o conteúdo de um volume específico para a saída padrão (stdout).	
+  mmcat imagem.dd 1 (Extrai volume 1)
+  
+Analisar a Partição. Confirma o tipo de sistema de arquivos (ex: NTFS), a data de criação, e o intervalo de números de inode. (O -o 2048 usa o offset encontrado acima).
+  fsstat -o 2048 evidencia.img
+  O sistema de arquivos de interesse é NTFS e começa no offset 2048.
+
+3.2 Ferramentas de Sistema de Arquivos
+Responsáveis por analisar a estrutura de um sistema de arquivos dentro de um volume/partição.
+
+Exibe informações detalhadas sobre o sistema de arquivos (tipo, tamanho, contagem de inodes, etc.).
+  fsstat -o 2048 imagem.dd (O -o é o offset da partição)
+
+  Lista nomes de arquivos e diretórios (alocados e deletados).	
+  fls -r -l -d -m imagem.dd 2048
+  fls -r -d -o 2048 imagem.dd
+  -r: recursivo; -d: lista entradas de diretório deletadas. Procure por entradas marcadas com * ou d/d (deletado/diretório).
+
+Procurar por um Arquivo Deletado: fls com grep
+  fls -r -o 2048 image.dd | grep "Relatorio_Secreto"
+  Se o nome do arquivo for encontrado (ex: * r/r 12345-128-0: Relatorio_Secreto.doc), anote seu número de metadados (Inode: 12345).
+
+Exibe os metadados (inode/MFT entry) de um arquivo ou diretório.
+  istat -o 2048 imagem.dd 12345 (12345 é o número do inode)
+
+Extrai o conteúdo de um arquivo usando seu número de metadados (inode).
+  icat -o 2048 imagem.dd 12345 > arquivo_recuperado
+  O TSK usa os endereços dos blocos do Inode 12345 para extrair o conteúdo e direcioná-lo (>) para um novo arquivo na sua máquina.
+
+Lista todos os metadados (inodes) do sistema de arquivos.	
+  ils -o 2048 imagem.dd
+
+Encontrar o Inode pelo Nome: Retorna diretamente o número do inode (ex: 12345), mesmo se estiver deletado.
+  ifind -o 2048 imagem.dd Relatorio_Secreto.doc
+
+3.3 Ferramentas de Unidades de Dados (Blocos/Clusters)
+Responsáveis por analisar blocos de dados brutos, incluindo o espaço não alocado.
+
+Extrai os blocos de dados de uma região, muitas vezes o espaço não alocado.	
+  blkls -o 2048 imagem.dd
+
+Exibe estatísticas sobre um bloco ou cluster específico.	
+  blkstat -o 2048 imagem.dd 1024
+
+Converte endereços de blocos para offsets na imagem de disco.	(Útil para mapear dados recuperados para a imagem original)
+  blkcalc
+
+3.4 Ferramentas de Linha do Tempo
+Usadas para criar linhas do tempo de atividades (MAC Time - Modification, Access, Creation).
+
+  Cria uma linha do tempo unificada a partir de um "body file" gerado pelo fls.	
+  fls -m -o 2048 imagem.dd > body.txt
+  O -m (MAC-only) formata a saída em um "body file" (formato mactime), que é um arquivo de texto com metadados de tempo de cada arquivo/inode.
+
+  mactime -d body.txt > timeline.csv
+  Resultado: Arquivo CSV ordenado cronologicamente, mostrando a atividade (mactime) de todos os arquivos no sistema, permitindo visualizar a sequência de eventos (ex: Criação do arquivo X, Modificação do arquivo Y, Acesso ao arquivo Z).
