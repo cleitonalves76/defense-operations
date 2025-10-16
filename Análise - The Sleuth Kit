@@ -4,6 +4,7 @@ Artefato: disco.dd
 https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
 Senha: blueTeam
 
+The Sleuth Kit
 
 mmls é utilizado para listar as partições presentes em uma imagem de disco.
   mmls disco.dd
@@ -36,3 +37,22 @@ sorter -i raw -o 57 -md5 -d assinaturas disco.dd
 
 tsk_recover recupera arquivos
   tsk_recover -o 57 disco.dd recuperados
+
+
+---------
+Extração de Dados - Data Carving
+---------
+Data carving, também conhecido como file carving ou carving de arquivos, é uma
+técnica utilizada em análise forense de dados para recuperar arquivos que foram
+apagados, fragmentados ou corrompidos. Esse processo não depende das
+informações do sistema de arquivos, como a tabela de alocação de arquivos (FAT)
+ou a tabela mestre de arquivos (MFT), mas sim da análise direta do conteúdo dos
+dados no disco.
+
+Artefato: 11-carve-fat.zip
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+Comando para recuperar arquivos
+  foremost 11-carve-fat.dd
+
