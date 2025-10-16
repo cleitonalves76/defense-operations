@@ -1,5 +1,19 @@
 Desafios: The Sleuth Kit
 
+Kali Purple
+Artefato: /home/investigator/Artefatos/NTFS
+a) Em qual setor inicia a partição NTFS ?
+b) Quantos arquivos ou diretórios foram excluídos?
+c) A quem pertence o INODE 239 ?
+d) Em que data e horário o arquivo de INODE 239 foi criado ?
+e) Qual é o conteúdo do arquivo contendo o INODE 170?
+f) A que arquivo pertence o hash MD5 d7751989d00deae795af4e6437367f2f ?
+
+Kali Purple
+Artefato: /home/investigator/Artefatos/NTFS
+a) Qual é o documento mais recente acessado por Albert ?
+
+
 Artefato: espia.001.zip
 https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
 Senha: blueTeam
