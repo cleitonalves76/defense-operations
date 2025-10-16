@@ -1,0 +1,38 @@
+Analisando Imagem Forense com TSK
+
+Artefato: disco.dd
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+
+mmls é utilizado para listar as partições presentes em uma imagem de disco.
+  mmls disco.dd
+
+fls usado para listar arquivos e diretórios em uma imagem de disco ou uma partição específica.
+  fls -o 57 disco.dd
+
+A opção -r instrui o "fls" a recursivamente listar o conteúdo dos diretórios.
+  fls -r -o 57 disco.dd
+
+Outras opções, como -d para listar entradas excluídas
+  fls -d -o 57 disco.dd
+
+A opção -F instrui o "fls" a mostrar somente arquivos
+  fls -F -o 57 disco.dd
+
+A opção -D instrui o "fls" a mostrar somente diretórios
+  fls -D -o 57 disco.dd
+
+icat é utilizado para recuperar arquivos
+  icat -o 57 disco.dd inode > saida
+
+mactime é utilizado para gerar linha do tempo
+  fls -m -r -o 57 disco.dd > linha_tempo
+
+mactime -b linha_tempo > linha_formatada
+
+Sorter analisa e ordena arquivos baseados em assinaturas
+sorter -i raw -o 57 -md5 -d assinaturas disco.dd
+
+tsk_recover recupera arquivos
+  tsk_recover -o 57 disco.dd recuperados
