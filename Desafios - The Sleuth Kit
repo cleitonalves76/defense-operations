@@ -1,6 +1,7 @@
 Desafios: The Sleuth Kit
 
 Kali Purple
+
 Artefato: /home/investigator/Artefatos/NTFS
 a) Em qual setor inicia a partição NTFS ?
 b) Quantos arquivos ou diretórios foram excluídos?
@@ -10,25 +11,26 @@ e) Qual é o conteúdo do arquivo contendo o INODE 170?
 f) A que arquivo pertence o hash MD5 d7751989d00deae795af4e6437367f2f ?
 
 Kali Purple
+
 Artefato: /home/investigator/Artefatos/NTFS
 a) Qual é o documento mais recente acessado por Albert ?
 
+Desafio: O Espião
 
 Artefato: espia.001.zip
 https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
 Senha: blueTeam
 
-Desafio: O Espião
 Um espião foi capturado pelo inimigo. Ele estava de posse de um laptop e, neste computador existe uma foto de uma aeronave cinza em pleno exercício de ataque,
 sobrevoando algum lugar. O espião se recusa a revelar detalhes sobre o que viu e o que há na foto. Sua missão é descobrir onde o avião está sobrevoando e
 aproximadamente quantos projéteis está dispersando.
 
+Desafio: Undeleted
 
 Artefato: 6-fat-undel.dd
 https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
 Senha: blueTeam
 
-Desafio: Undeleted
 1. Qual os nomes dos arquivos e diretórios frag1.dat, frag2.dat, sing.dat, mult1.dat e dir1 no diretório raiz?
 2. Qual os nomes dir2 e mult2.dat no diretório dir1?
 3. Qual o nome frag3.dat no diretório dir1\dir2?
@@ -40,11 +42,11 @@ Desafio: Undeleted
 9. É possível recuperar o arquivo dir1\dir2\frag3.dat? Ele tem o MD5 correto?
 
 
+Desafio: Teste NTFS
+
 Artefatos em: 10-ntfs-disk.zip
 https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
 Senha: blueTeam
-
-Desafio: Teste NTFS
 
 1. Importe a imagem 10-ntfs-disk.dd para sua ferramenta de análise.
   1a. A ferramenta avisa que existem vários sistemas de arquivos na
@@ -58,3 +60,25 @@ Caso contrário, qual sistema de arquivos é exibido?
 Se não, qual sistema de arquivos é exibido?
 
 
+***** Extras *****
+
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+Para os seguintes artefatos, você consegue:
+  dfr-01-ntfs.dd.bz2
+  dfr-08-ntfs.dd.bz2
+
+1. Lista de arquivos excluídos
+2. Horários de MAC imediatamente antes da exclusão do arquivo
+3. Horários de exclusão do arquivo
+4. Etapas para criar uma imagem
+5. Setores alocados para cada arquivo
+
+**** Pendrive ****
+Para os artefatos em pendrive.zip
+
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+1. Você pode realizar análises nas imagens de pendrives e tentar descobrir algo interessante.
