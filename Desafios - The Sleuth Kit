@@ -1,10 +1,46 @@
-The Sleuth Kit
-
-Desafio: O Espião
-Um espião foi capturado pelo inimigo. Ele estava de posse de um laptop e, neste
-computador existe uma foto de uma aeronave cinza em pleno exercício de ataque,
-sobrevoando algum lugar. O espião se recusa a revelar detalhes sobre o que viu e o
-que há na foto. Sua missão é descobrir onde o avião está sobrevoando e
-aproximadamente quantos projéteis está dispersando.
+Desafios: The Sleuth Kit
 
 Artefato: espia.001.zip
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+Desafio: O Espião
+Um espião foi capturado pelo inimigo. Ele estava de posse de um laptop e, neste computador existe uma foto de uma aeronave cinza em pleno exercício de ataque,
+sobrevoando algum lugar. O espião se recusa a revelar detalhes sobre o que viu e o que há na foto. Sua missão é descobrir onde o avião está sobrevoando e
+aproximadamente quantos projéteis está dispersando.
+
+
+Artefato: 6-fat-undel.dd
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+Desafio: Undeleted
+1. Qual os nomes dos arquivos e diretórios frag1.dat, frag2.dat, sing.dat, mult1.dat e dir1 no diretório raiz?
+2. Qual os nomes dir2 e mult2.dat no diretório dir1?
+3. Qual o nome frag3.dat no diretório dir1\dir2?
+4. Você consegue recuperar o arquivo sing.dat? Ele tem o MD5 correto?
+5. Você consegue recuperar o arquivo mult1.dat? Ele tem o MD5 correto?
+6. Você consegue recuperar o arquivo dir1\mult2.dat? Ele tem o MD5 correto?
+7. Você consegue recuperar o arquivo frag1.dat? Ele tem o MD5 correto?
+8. É possível recuperar o arquivo frag2.dat? Ele tem o MD5 correto?
+9. É possível recuperar o arquivo dir1\dir2\frag3.dat? Ele tem o MD5 correto?
+
+
+Artefatos em: 10-ntfs-disk.zip
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
+
+Desafio: Teste NTFS
+
+1. Importe a imagem 10-ntfs-disk.dd para sua ferramenta de análise.
+  1a. A ferramenta avisa que existem vários sistemas de arquivos na
+primeira partição? Caso contrário, qual sistema de arquivos é exibido (você pode facilmente determinar isso com base no nome do arquivo no diretório raiz)?
+  1b. A ferramenta avisa que existem vários sistemas de arquivos na segunda partição? Caso contrário, qual sistema de arquivos é exibido?
+2. Importe a imagem 10-ntfs-part1.dd para sua ferramenta de análise. A ferramenta avisa que existem vários sistemas de arquivos na partição?
+Caso contrário, qual sistema de arquivos é exibido?
+3. Importe a imagem 10-ntfs-part2.dd para sua ferramenta de análise. A ferramenta avisa que existem vários sistemas de arquivos na partição?
+Caso contrário, qual sistema de arquivos é exibido?
+4. Importe a imagem 10-ntfs-part3.dd para a sua ferramenta de análise. A ferramenta avisa que existem vários sistemas de arquivos na partição?
+Se não, qual sistema de arquivos é exibido?
+
+
