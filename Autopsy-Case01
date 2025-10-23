@@ -2,25 +2,26 @@
 
 🧩 1. Configurando o Autopsy e criando um novo caso
 
-
 Artefato: Ch01InChap01.dd
+https://drive.proton.me/urls/DAKY5MRXC8#eb7VnpCSusbq
+Senha: blueTeam
 
-Inicie o Autopsy for Windows.
+Inicie o Autopsy for Windows
 
 Na janela principal do Autopsy, clique no botão Create New Case.
-Na janela New Case Information, digite InChap01 na caixa Case Name e clique em Browse ao lado da caixa Base Directory.
-Navegue até a sua pasta de trabalho e clique nela.
+Na janela New Case Information, digite Case01 na caixa Case Name e clique em Browse ao lado da caixa Base Directory.
+Navegue até a sua pasta de trabalho (se não existir, você pode criá-la), em seguida selecione a pasta.
 Certifique-se de que a opção Single-user esteja selecionada em Case Type, e então clique em Next.
 
-Na janela Additional Information, digite InChap01 na caixa Case Number e o seu nome na caixa Examiner, depois clique em Finish para iniciar o Assistente de Adição de Fonte de Dados (Add Data Source Wizard).
+Na janela Optional Information, digite Case01 na caixa Case Number e o seu nome na caixa Examiner, depois clique em Finish para iniciar o Assistente de Adição de Fonte de Dados (Add Data Source Wizard).
 
 💾 2. Adicionando a imagem de disco
-
-Na janela Select Data Source, clique na seta da lista Select data source type e selecione Disk Image or VM file.
-Clique em Browse ao lado da caixa Browse for an image file, navegue até a sua pasta de trabalho, clique no arquivo Ch01InChap01.dd e depois em Open.
+Na janela Add Data Source, 
+1. Select Host, seleciona Generate a new host name based on data source name, depois clique em Next.
+2. Select Data Source Type, selecione Disk Image or VM file, depois clique em Next.
+3. Select Data Source, clique em Browse e navegue até a sua pasta de trabalho, clique no arquivo Ch01Case01.dd e depois em Open.
 Clique em Next.
-
-Mantenha as configurações padrão na janela Configure Ingest Modules.
+4. Mantenha as configurações padrão na janela Configure Ingest Modules.
 Clique em Next e depois em Finish.
 
 📂 3. Exibindo o conteúdo dos dados adquiridos
@@ -37,11 +38,11 @@ Na janela Create Tag, clique em New Tag Name.
 Na seção New Tag, digite Recovered Office Documents na caixa Tag Name, clique em OK, e depois clique em OK novamente.
 
 No painel Result Viewer, pressione Ctrl e clique em Billing Letter.doc, Income.xls, Regrets.doc, f0000000.doc e f0000049.doc para selecioná-los.
-Solte Ctrl, clique com o botão direito nos arquivos selecionados, aponte para Tag File → Quick Tag e clique em Recovered Office Documents.
+Solte Ctrl, clique com o botão direito nos arquivos selecionados, aponte para Tag File → e clique em Recovered Office Documents.
 
 Em Documents no Tree Viewer, clique em Plain Text para exibir mais arquivos recuperados.
 
-No Result Viewer, selecione novamente os arquivos listados no passo 5, clique com o botão direito, aponte para Tag File → Quick Tag e clique em Follow Up.
+No Result Viewer, selecione os arquivos listados, clique com o botão direito, aponte para Tag File → e clique em Follow Up.
 Deixe o Autopsy em execução para a próxima atividade.
 
 🔎 4. Analisando os dados e pesquisando informações
@@ -51,17 +52,12 @@ A análise de dados pode ser a tarefa mais demorada, mesmo quando se sabe exatam
 
 O método para localizar artefatos de evidência é buscar valores de dados específicos, que podem ser:
 
-Palavras únicas
-
-Caracteres não imprimíveis (como códigos hexadecimais)
-
-Caracteres especiais que não podem ser digitados (por exemplo, © e ™)
-
-Muitos programas de análise forense digital podem procurar cadeias de caracteres (letras e números) e valores hexadecimais, como:
-
-0xA9 para o símbolo de copyright (©)
-
-0xAE para o símbolo de marca registrada (™)
+- Palavras únicas
+- Caracteres não imprimíveis (como códigos hexadecimais)
+- Caracteres especiais que não podem ser digitados (por exemplo, © e ™)
+- Muitos programas de análise forense digital podem procurar cadeias de caracteres (letras e números) e valores hexadecimais, como:
+- 0xA9 para o símbolo de copyright (©)
+- 0xAE para o símbolo de marca registrada (™)
 
 Esses valores pesquisáveis são chamados de “palavras-chave” (keywords).
 
@@ -80,12 +76,13 @@ Clique no botão Keyword Lists no canto superior direito, marque a caixa Email A
 
 No Result Viewer, uma nova guia chamada Keyword search 2 será aberta.
 Clique em cada arquivo para visualizar o conteúdo e examine todos os endereços de e-mail encontrados.
+
 Deixe o Autopsy aberto para aprender mais sobre suas funcionalidades na próxima seção.
 
 📊 6. Examinando e exportando arquivos
 
 Se quiser examinar um arquivo do Office, como uma planilha do Excel, clique com o botão direito sobre ele e selecione Open in External Viewer.
-Para usar essa opção, o software correspondente (por exemplo, Microsoft Office) deve estar instalado no computador.
+Para usar essa opção, o software correspondente (por exemplo, Microsoft Office) deve estar instalado no computador. ** Nessa VM não temos **
 
 Para exportar um arquivo do Autopsy:
 
@@ -95,21 +92,16 @@ Na janela Save, escolha a pasta de trabalho onde deseja copiar o arquivo.
 
 🧾 7. Finalizando o caso
 
-Após analisar o disco, é possível recuperar arquivos excluídos, e-mails e itens ocultos — procedimentos detalhados nos Capítulos 8, 9 e 11.
+Após analisar o disco, é possível recuperar arquivos excluídos, e-mails e itens ocultos. 
 
 Os arquivos na unidade USB de George indicam que ele estava realizando um negócio paralelo no computador da empresa.
-
 Agora que as evidências foram recuperadas e analisadas, responda às seguintes perguntas para redigir o relatório final:
 
-Como o gerente de George obteve o disco?
-
-George realizou o trabalho em um laptop de sua propriedade? Se sim, ele fez isso durante o intervalo ou horário de almoço?
-
-Em que horários do dia George acessava arquivos não relacionados ao trabalho? Como essa informação foi obtida?
-
-Quais políticas da empresa se aplicam?
-
-Há outros fatores que devem ser considerados?
+a) Como o gerente de George obteve o disco?
+b) George realizou o trabalho em um laptop de sua propriedade? Se sim, ele fez isso durante o intervalo ou horário de almoço?
+c) Em que horários do dia George acessava arquivos não relacionados ao trabalho? Como essa informação foi obtida?
+d) Quais políticas da empresa se aplicam?
+e) Há outros fatores que devem ser considerados?
 
 Ao escrever o relatório, descreva o que foi feito e o que foi encontrado.
 O relatório gerado pela ferramenta forense deve registrar as etapas executadas.
@@ -121,27 +113,19 @@ Essa capacidade é chamada de achados reproduzíveis (repeatable findings) — s
 
 O Autopsy permite gerar vários tipos de relatórios, incluindo:
 
-Arquivo de texto simples (TXT)
-
-Página da Web em HTML com links para artefatos
-
-Planilha Excel
+- Arquivo de texto simples (TXT)
+- Página da Web em HTML com links para artefatos
+- Planilha Excel
 
 Para gerar um relatório:
 
-Se o Autopsy estiver fechado, abra-o novamente e clique em Open Recent Case.
-Selecione InChap01 e clique em Open na janela Recent Case.
-Na janela principal do Autopsy, clique no botão Generate Report.
+Na janela principal do Autopsy, clique no menu Tools e opção Generate Report.
 
 Na janela Generate Report, escolha o formato desejado em Report Modules.
 Por exemplo:
-
-Results - HTML → cria uma página da Web com links clicáveis para artefatos
-
-Files - Text → gera um arquivo de texto simples
-
+  Results - HTML → cria uma página da Web com links clicáveis para artefatos
+  Files - Text → gera um arquivo de texto simples
 Em seguida, clique em Next.
 
-Se selecionar Results - HTML, será aberta a janela Configure Artifacts Report,
-onde você pode escolher quais dados incluir no relatório.
+Se selecionar Results - HTML, será aberta a janela Configure Artifacts Report, onde você pode escolher quais dados incluir no relatório.
 Após fazer suas seleções, clique em Finish para gerar o relatório.
