@@ -129,3 +129,35 @@ Em seguida, clique em Next.
 
 Se selecionar Results - HTML, será aberta a janela Configure Artifacts Report, onde você pode escolher quais dados incluir no relatório.
 Após fazer suas seleções, clique em Finish para gerar o relatório.
+
+
+
+
+Gabarito: respostas das perguntas para o relatório final
+
+O gerente de George adquiriu o disco em seu espaço de trabalho, provavelmente após receber reclamações sobre o desempenho de George. 
+Não está claro se George usava seu laptop pessoal para trabalhar, mas os metadados de um arquivo mostram um horário de modificação por volta das 6h50, 
+o que poderia ser considerado uso pessoal durante o horário de trabalho, se não em um intervalo, violando a política da empresa. 
+O arquivo não relacionado ao trabalho foi usado por volta das 6h50, conforme indicado pelo último horário de modificação encontrado nos metadados recuperados pela equipe de TI. 
+As políticas da empresa sobre uso pessoal de equipamentos da empresa durante o horário de trabalho e manuseio adequado de dados seriam aplicáveis, 
+e outros itens a serem considerados incluem se George tinha permissão para usar arquivos não relacionados ao trabalho em um dispositivo de propriedade da empresa e 
+as implicações legais de quaisquer transações comerciais realizadas em um computador da empresa.
+
+Como o gerente adquiriu o disco
+  - O gerente adquiriu o disco em seu espaço de trabalho.
+
+Hábitos de trabalho de George
+  - Não está claro se George estava usando seu laptop pessoal para trabalhar.
+  -  Se George utilizou seu laptop pessoal, ele pode ter violado a política da empresa ao realizar transações comerciais pessoais durante o horário de trabalho, dependendo de quando o fez (por exemplo, durante o almoço ou intervalo).
+
+Uso de arquivos não relacionados ao trabalho
+  - O arquivo não relacionado ao trabalho foi modificado pela última vez por volta das 6h50.
+  - Essas informações foram recuperadas por meio da revisão dos metadados do arquivo recuperado pela equipe de TI.
+
+Políticas aplicáveis ​​da empresa
+  - Políticas sobre o uso de equipamentos e recursos da empresa durante o horário de trabalho.
+  - Políticas sobre o uso pessoal versus profissional de dispositivos e redes da empresa.
+
+Outros itens a serem considerados
+  - Se George tinha permissão para usar arquivos não relacionados ao trabalho em um computador da empresa.
+  - As implicações legais de quaisquer transações comerciais pessoais realizadas em um computador da empresa, especialmente se envolverem recursos da empresa.
