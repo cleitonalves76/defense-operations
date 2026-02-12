@@ -241,29 +241,6 @@ Aprendizado
 Parte 8	- Vamos evoluir?
 **************
 
-12	Nível Avançado (Ideias)
-Você pode evoluir para:
-•	Ler arquivos .log reais
-•	Usar pandas para análise de grandes volumes
-•	Criar dashboard simples
-•	Simular SIEM básico
-•	Alertas por e-mail
-•	Detecção de anomalias com scikit-learn
-________________________________________
-Esses exercícios treinam exatamente o que o NIST enfatiza:
-•	Detecção rápida
-•	Análise estruturada
-•	Contenção eficiente
-•	Medição de desempenho
-•	Automação de resposta
-É praticamente um mini-laboratório de SOC em Python.
-
-
-Perfeito — vamos “subir o nível” 🚀
-A ideia agora é sair de exemplos simples e chegar em algo mais próximo de um mini-SOC em Python: leitura de arquivos reais, análise com pandas (manipulação e análise de dado), geração de alertas e relatórios.
-________________________________________
-
-
 Exercício 1 – Ler um Arquivo de Log Real
 Objetivo: Analisar um .log externo em vez de lista fixa.
 
