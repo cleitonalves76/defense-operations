@@ -122,7 +122,6 @@ Parte 6 – Exercício de Reflexão
 2.	Qual o maior risco de não documentar incidentes?
 3.	Segurança é mais técnica ou mais processual? Justifique.
 
-
 **************
 Parte 7	- Que tal simular incidentes ?
 **************
@@ -154,20 +153,22 @@ contagem = Counter(ips)
 for ip, tentativas in contagem.items():
     if tentativas >= 3:
         print(f"ALERTA: Possível força bruta do IP {ip}")
+
 Aprendizado NIST
 •	Fase: Detecção e Análise
 •	Correlação de eventos
 •	Identificação de padrões
-________________________________________
-8	Exercício 2 – Identificar Malware por Extensão de Arquivo
-Objetivo
-Detectar arquivos suspeitos em uma lista de downloads.
+
+
+Exercício 2 – Identificar Malware por Extensão de Arquivo
+Objetivo: Detectar arquivos suspeitos em uma lista de downloads.
 arquivos = [
     "relatorio.pdf",
     "planilha.xlsx",
     "foto.jpg",
     "invoice.exe",
-    "atualizacao.scr"
+    "atualizacao.scr",
+    "notasfiap.bat"
 ]
 
 suspeitos = [a for a in arquivos if a.endswith((".exe", ".scr", ".bat"))]
@@ -175,14 +176,15 @@ suspeitos = [a for a in arquivos if a.endswith((".exe", ".scr", ".bat"))]
 print("Arquivos suspeitos encontrados:")
 for s in suspeitos:
     print(s)
+
 Aprendizado NIST
 •	Fase: Detecção
 •	Análise de comportamento suspeito
 •	Classificação de severidade
-________________________________________
-9	Exercício 3 – Simulação de Vazamento de Dados
-Objetivo
-Detectar acessos externos a arquivos confidenciais.
+
+Exercício 3 – Simulação de Vazamento de Dados
+Objetivo: Detectar acessos externos a arquivos confidenciais.
+
 acessos = [
     {"usuario": "joao", "arquivo": "clientes.xlsx", "origem": "interna"},
     {"usuario": "maria", "arquivo": "financeiro.xlsx", "origem": "externa"},
@@ -192,14 +194,16 @@ acessos = [
 for a in acessos:
     if a["origem"] == "externa" and "xlsx" in a["arquivo"]:
         print("Possível vazamento:", a)
+
 Aprendizado
 •	Pilar afetado: Confidencialidade
 •	Fase: Contenção
 •	Importância de classificação de dados
-________________________________________
-10	Exercício 4 – Métricas de Incidentes (MTTD / MTTR)
-Objetivo
-Calcular tempo médio de detecção e resposta.
+
+
+Exercício 4 – Métricas de Incidentes (MTTD / MTTR)
+Objetivo: Calcular tempo médio de detecção e resposta.
+
 incidentes = [
     {"detectado": 2, "resolvido": 6},
     {"detectado": 1, "resolvido": 4},
@@ -211,25 +215,32 @@ mttr = sum(i["resolvido"] for i in incidentes) / len(incidentes)
 
 print("MTTD:", mttd)
 print("MTTR:", mttr)
+
 Aprendizado
 •	Fase: Pós-Incidente
 •	Indicadores de maturidade
 •	Justificativa de investimento
-________________________________________
-11	Exercício 5 – Simulação de Resposta Automatizada
-Objetivo
-Criar uma “ação de contenção” automática.
+
+Exercício 5 – Simulação de Resposta Automatizada
+Objetivo: Criar uma “ação de contenção” automática.
+
 ip_suspeito = "192.168.0.10"
 
 def bloquear_ip(ip):
     print(f"Firewall: IP {ip} bloqueado com sucesso.")
 
 bloquear_ip(ip_suspeito)
+
 Aprendizado
 •	Fase: Contenção
 •	Automação de resposta
 •	Redução de tempo de reação
-________________________________________
+
+
+**************
+Parte 8	- Vamos evoluir?
+**************
+
 12	Nível Avançado (Ideias)
 Você pode evoluir para:
 •	Ler arquivos .log reais
@@ -249,15 +260,19 @@ Esses exercícios treinam exatamente o que o NIST enfatiza:
 
 
 Perfeito — vamos “subir o nível” 🚀
-A ideia agora é sair de exemplos simples e chegar em algo mais próximo de um mini-SOC em Python: leitura de arquivos reais, análise com pandas, geração de alertas e relatórios.
+A ideia agora é sair de exemplos simples e chegar em algo mais próximo de um mini-SOC em Python: leitura de arquivos reais, análise com pandas (manipulação e análise de dado), geração de alertas e relatórios.
 ________________________________________
-13	Exercício 6 – Ler um Arquivo de Log Real
-Objetivo
-Analisar um .log externo em vez de lista fixa.
+
+
+Exercício 1 – Ler um Arquivo de Log Real
+Objetivo: Analisar um .log externo em vez de lista fixa.
+
 Exemplo de log (auth.log)
+
 2026-02-01 10:00:01 login_fail 192.168.0.10
 2026-02-01 10:00:03 login_fail 192.168.0.10
 2026-02-01 10:00:08 login_success 192.168.0.20
+
 Código
 from collections import Counter
 
@@ -270,11 +285,12 @@ contagem = Counter(ips_falha)
 for ip, qtd in contagem.items():
     if qtd >= 5:
         print(f"[ALERTA] Força bruta detectada: {ip} ({qtd} tentativas)")
+
 NIST: Detecção e Análise + Correlação de Eventos.
-________________________________________
-14	Exercício 7 – Análise com Pandas (Volume Grande)
-Objetivo
-Trabalhar com muitos registros.
+
+Exercício 2 – Análise com Pandas (Volume Grande)
+Objetivo: Trabalhar com muitos registros.
+
 import pandas as pd
 
 df = pd.read_csv("logs.csv")  
@@ -285,11 +301,12 @@ top_ips = falhas["ip"].value_counts().head(5)
 
 print("IPs mais suspeitos:")
 print(top_ips)
+
 Aprendizado: priorização, estatística básica, visão de tendência.
-________________________________________
-15	Exercício 8 – Classificação de Severidade
-Objetivo
-Transformar eventos em níveis de risco.
+
+Exercício 3 – Classificação de Severidade
+Objetivo: Transformar eventos em níveis de risco.
+
 def severidade(evento):
     if evento == "ransomware":
         return "CRÍTICO"
@@ -303,11 +320,12 @@ eventos = ["phishing", "login_fail", "ransomware"]
 
 for e in eventos:
     print(e, "->", severidade(e))
+
 NIST: Priorização de incidentes.
-________________________________________
-16	Exercício 9 – Alerta Automático (Simulação de SIEM)
-Objetivo
-Gerar alerta quando condição é atingida.
+
+Exercício 4 – Alerta Automático (Simulação de SIEM)
+Objetivo: Gerar alerta quando condição é atingida.
+
 def alerta(msg):
     print(f"[ALERTA SOC] {msg}")
 
@@ -315,14 +333,14 @@ tentativas = 12
 
 if tentativas > 10:
     alerta("Possível ataque de força bruta detectado")
+
 Você pode evoluir para:
 •	enviar e-mail (smtplib)
-•	webhook
 •	Telegram/Slack bot
-________________________________________
-17	Exercício 10 – Dashboard Simples de Incidentes
-Objetivo
-Visualizar dados rapidamente.
+
+Exercício 5 – Dashboard Simples de Incidentes
+Objetivo: Visualizar dados rapidamente.
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -334,9 +352,11 @@ df = pd.DataFrame(dados)
 df["tipo"].value_counts().plot(kind="bar")
 plt.title("Incidentes por Tipo")
 plt.show()
+
 NIST: Pós-Incidente / Métricas / Relatórios.
-________________________________________
-18	Exercício 11 – Geração de Relatório Automático (TXT)
+
+Exercício 6 – Geração de Relatório Automático (necessário arquivo TXT)
+
 incidentes = [
     {"tipo": "phishing", "severidade": "MÉDIO"},
     {"tipo": "ransomware", "severidade": "CRÍTICO"},
