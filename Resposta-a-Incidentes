@@ -2,7 +2,25 @@ Exercícios – Resposta a Incidentes de Segurança (NIST 800-61)
 
 Publicação disponível em: <https://csrc.nist.gov/pubs/sp/800/61/r2/final>
 
-Parte 1 – Exercícios Teóricos
+**************
+Parte 1 – Eita... um incidente
+**************
+Importante: Iniciar quando o professor autorizar, blz
+
+1. Se acontecer um incidente de segurança?
+  https://www.menti.com/alwnqm5j6kit
+
+**************
+Parte 2 – Bora pensar
+**************
+Importante: Iniciar quando o professor autorizar, blz
+
+1. Perguntinhas básicas para um desafio.
+  https://www.menti.com/al49nogfs9gq
+
+**************
+Parte 3 – Exercícios Teóricos
+**************
 
 1. Conceitos Fundamentais
 1.1 Qual a principal diferença entre evento e incidente de segurança?
@@ -38,20 +56,293 @@ Parte 1 – Exercícios Teóricos
 7.2 O que é MTTR?
 7.3 Por que medir tempo de recuperação é relevante para o negócio?
 
-****
-Iniciar quando o professor autorizar, blz
-****
-Parte 2 – Bora pensar
+**************
+Parte 4 – Exercícios Práticos (Simulações)
+**************
 
-1. Se acontecer um incidente de segurança?
-  https://www.menti.com/alwnqm5j6kit
+Exercício 1 – Análise de Incidente Simples
+Cenário: Às 02:30 da manhã, o servidor registra 500 tentativas de login falhas vindas do mesmo IP.
 
-****
-Iniciar quando o professor autorizar, blz
-****
+Perguntas:
+1.	Isso é evento ou incidente?
+2.	Qual fase do ciclo está sendo aplicada?
+3.	Que ações imediatas você tomaria?
+4.	Que ferramentas ajudariam na análise?
 
-Parte 3 – Bora pensar
+Exercício 2 – Phishing
+Cenário: Vários funcionários relatam e-mails pedindo redefinição de senha com um link externo.
+Tarefas:
+•	Classifique a severidade (baixo/médio/alto/crítico). 
+•	Defina ações de contenção.
+•	Liste comunicações internas necessárias.
+•	Indique ações de prevenção futura.
 
-1. Perguntinhas básicas para um desafio
-  https://www.menti.com/al49nogfs9gq
+Exercício 3 – Vazamento de Dados
+Cenário: Uma planilha com dados de clientes foi compartilhada publicamente por engano.
+Perguntas:
+1.	Qual pilar da CIA foi afetado?
+2.	Quem deve ser acionado?
+3.	Que fase do NIST é crítica nesse momento?
+4.	Que medidas de recuperação são necessárias?
+
+Exercício 4 – Ransomware
+Cenário: Computadores começam a exibir mensagem de resgate.
+Atividades:
+•	Definir contenção imediata.
+•	Listar passos de erradicação.
+•	Definir plano de recuperação.
+•	Identificar lições aprendidas.
+
+Exercício Prático 5 – Estrutura de Equipe
+Situação: Uma empresa pequena sofre ataques frequentes e não possui equipe dedicada.
+Tarefa:
+Propor:
+•	modelo de equipe adequado
+•	ferramentas mínimas
+•	políticas iniciais
+•	treinamento essencial
+
+**************
+Parte 5 – Exercício de Planejamento
+**************
+
+Desafio: Monte um mini Plano de Resposta a Incidentes contendo:
+•	Definição de incidente
+•	Lista de contatos
+•	Ferramentas disponíveis
+•	Fluxo de comunicação
+•	Checklist de resposta
+•	Métricas de sucesso
+
+**************
+Parte 6 – Exercício de Reflexão
+**************
+
+1.	O que aconteceria se a fase de pós-incidente fosse ignorada?
+2.	Qual o maior risco de não documentar incidentes?
+3.	Segurança é mais técnica ou mais processual? Justifique.
+
+
+**************
+Parte 7	- Que tal simular incidentes ?
+**************
+
+Usar Python como ferramenta de simulação é excelente para treinar resposta a incidentes, porque permite trabalhar com logs, detecção, análise e automação, que são pontos centrais do NIST 800-61.
+Abaixo estão exercícios práticos guiados, que você pode rodar em Python.
+
+Exercício 1 – Detecção de Força Bruta em Logs
+Objetivo: Identificar múltiplas tentativas de login falhas a partir de um arquivo de log.
+Cenário: Você recebeu um log de autenticação e precisa detectar possíveis ataques.
+
+Passo 1 – Criar um log simulado
+
+logs = [
+    "2026-01-01 10:00:01 login_fail 192.168.0.10",
+    "2026-01-01 10:00:05 login_fail 192.168.0.10",
+    "2026-01-01 10:00:07 login_success 192.168.0.20",
+    "2026-01-01 10:00:09 login_fail 192.168.0.10",
+    "2026-01-01 10:00:12 login_fail 192.168.0.10",
+]
+
+Passo 2 – Detectar IP suspeito
+
+from collections import Counter
+
+ips = [log.split()[-1] for log in logs if "login_fail" in log]
+contagem = Counter(ips)
+
+for ip, tentativas in contagem.items():
+    if tentativas >= 3:
+        print(f"ALERTA: Possível força bruta do IP {ip}")
+Aprendizado NIST
+•	Fase: Detecção e Análise
+•	Correlação de eventos
+•	Identificação de padrões
+________________________________________
+8	Exercício 2 – Identificar Malware por Extensão de Arquivo
+Objetivo
+Detectar arquivos suspeitos em uma lista de downloads.
+arquivos = [
+    "relatorio.pdf",
+    "planilha.xlsx",
+    "foto.jpg",
+    "invoice.exe",
+    "atualizacao.scr"
+]
+
+suspeitos = [a for a in arquivos if a.endswith((".exe", ".scr", ".bat"))]
+
+print("Arquivos suspeitos encontrados:")
+for s in suspeitos:
+    print(s)
+Aprendizado NIST
+•	Fase: Detecção
+•	Análise de comportamento suspeito
+•	Classificação de severidade
+________________________________________
+9	Exercício 3 – Simulação de Vazamento de Dados
+Objetivo
+Detectar acessos externos a arquivos confidenciais.
+acessos = [
+    {"usuario": "joao", "arquivo": "clientes.xlsx", "origem": "interna"},
+    {"usuario": "maria", "arquivo": "financeiro.xlsx", "origem": "externa"},
+    {"usuario": "ana", "arquivo": "publico.pdf", "origem": "externa"},
+]
+
+for a in acessos:
+    if a["origem"] == "externa" and "xlsx" in a["arquivo"]:
+        print("Possível vazamento:", a)
+Aprendizado
+•	Pilar afetado: Confidencialidade
+•	Fase: Contenção
+•	Importância de classificação de dados
+________________________________________
+10	Exercício 4 – Métricas de Incidentes (MTTD / MTTR)
+Objetivo
+Calcular tempo médio de detecção e resposta.
+incidentes = [
+    {"detectado": 2, "resolvido": 6},
+    {"detectado": 1, "resolvido": 4},
+    {"detectado": 3, "resolvido": 8},
+]
+
+mttd = sum(i["detectado"] for i in incidentes) / len(incidentes)
+mttr = sum(i["resolvido"] for i in incidentes) / len(incidentes)
+
+print("MTTD:", mttd)
+print("MTTR:", mttr)
+Aprendizado
+•	Fase: Pós-Incidente
+•	Indicadores de maturidade
+•	Justificativa de investimento
+________________________________________
+11	Exercício 5 – Simulação de Resposta Automatizada
+Objetivo
+Criar uma “ação de contenção” automática.
+ip_suspeito = "192.168.0.10"
+
+def bloquear_ip(ip):
+    print(f"Firewall: IP {ip} bloqueado com sucesso.")
+
+bloquear_ip(ip_suspeito)
+Aprendizado
+•	Fase: Contenção
+•	Automação de resposta
+•	Redução de tempo de reação
+________________________________________
+12	Nível Avançado (Ideias)
+Você pode evoluir para:
+•	Ler arquivos .log reais
+•	Usar pandas para análise de grandes volumes
+•	Criar dashboard simples
+•	Simular SIEM básico
+•	Alertas por e-mail
+•	Detecção de anomalias com scikit-learn
+________________________________________
+Esses exercícios treinam exatamente o que o NIST enfatiza:
+•	Detecção rápida
+•	Análise estruturada
+•	Contenção eficiente
+•	Medição de desempenho
+•	Automação de resposta
+É praticamente um mini-laboratório de SOC em Python.
+
+
+Perfeito — vamos “subir o nível” 🚀
+A ideia agora é sair de exemplos simples e chegar em algo mais próximo de um mini-SOC em Python: leitura de arquivos reais, análise com pandas, geração de alertas e relatórios.
+________________________________________
+13	Exercício 6 – Ler um Arquivo de Log Real
+Objetivo
+Analisar um .log externo em vez de lista fixa.
+Exemplo de log (auth.log)
+2026-02-01 10:00:01 login_fail 192.168.0.10
+2026-02-01 10:00:03 login_fail 192.168.0.10
+2026-02-01 10:00:08 login_success 192.168.0.20
+Código
+from collections import Counter
+
+with open("auth.log", "r") as f:
+    linhas = f.readlines()
+
+ips_falha = [l.split()[-1] for l in linhas if "login_fail" in l]
+contagem = Counter(ips_falha)
+
+for ip, qtd in contagem.items():
+    if qtd >= 5:
+        print(f"[ALERTA] Força bruta detectada: {ip} ({qtd} tentativas)")
+NIST: Detecção e Análise + Correlação de Eventos.
+________________________________________
+14	Exercício 7 – Análise com Pandas (Volume Grande)
+Objetivo
+Trabalhar com muitos registros.
+import pandas as pd
+
+df = pd.read_csv("logs.csv")  
+# colunas: data, evento, ip
+
+falhas = df[df["evento"] == "login_fail"]
+top_ips = falhas["ip"].value_counts().head(5)
+
+print("IPs mais suspeitos:")
+print(top_ips)
+Aprendizado: priorização, estatística básica, visão de tendência.
+________________________________________
+15	Exercício 8 – Classificação de Severidade
+Objetivo
+Transformar eventos em níveis de risco.
+def severidade(evento):
+    if evento == "ransomware":
+        return "CRÍTICO"
+    if evento == "vazamento_dados":
+        return "ALTO"
+    if evento == "phishing":
+        return "MÉDIO"
+    return "BAIXO"
+
+eventos = ["phishing", "login_fail", "ransomware"]
+
+for e in eventos:
+    print(e, "->", severidade(e))
+NIST: Priorização de incidentes.
+________________________________________
+16	Exercício 9 – Alerta Automático (Simulação de SIEM)
+Objetivo
+Gerar alerta quando condição é atingida.
+def alerta(msg):
+    print(f"[ALERTA SOC] {msg}")
+
+tentativas = 12
+
+if tentativas > 10:
+    alerta("Possível ataque de força bruta detectado")
+Você pode evoluir para:
+•	enviar e-mail (smtplib)
+•	webhook
+•	Telegram/Slack bot
+________________________________________
+17	Exercício 10 – Dashboard Simples de Incidentes
+Objetivo
+Visualizar dados rapidamente.
+import pandas as pd
+import matplotlib.pyplot as plt
+
+dados = {
+    "tipo": ["phishing", "ransomware", "phishing", "vazamento"],
+}
+df = pd.DataFrame(dados)
+
+df["tipo"].value_counts().plot(kind="bar")
+plt.title("Incidentes por Tipo")
+plt.show()
+NIST: Pós-Incidente / Métricas / Relatórios.
+________________________________________
+18	Exercício 11 – Geração de Relatório Automático (TXT)
+incidentes = [
+    {"tipo": "phishing", "severidade": "MÉDIO"},
+    {"tipo": "ransomware", "severidade": "CRÍTICO"},
+]
+
+with open("relatorio.txt", "w") as f:
+    for i in incidentes:
+        f.write(f"{i['tipo']} - {i['severidade']}\n")
 
