@@ -74,5 +74,8 @@ Limitação
 - Em resumo, o SP 800-61 é menos uma “norma” e mais um manual operacional de maturidade em resposta a incidentes. Ele não diz qual ferramenta usar, mas define como pensar e estruturar o processo.
 
 
+Referências
+Incident Response Recommendations and Considerations for Cybersecurity Risk Management. Disponível em <https://csrc.nist.gov/pubs/sp/800/61/r2/final>
+
 * Frameworks SOC (Security Operations Center) são estruturas de processos, tecnologias e metodologias utilizadas por equipes de segurança para monitorar, detectar e responder a ameaças cibernéticas. 
 Eles organizam a operação 24/7 para proteger ativos digitais, sendo os principais o NIST CSF, MITRE ATT&CK, CIS Controls e SOC 2 Type 2. 
