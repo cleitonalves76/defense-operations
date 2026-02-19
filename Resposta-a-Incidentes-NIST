@@ -1,0 +1,78 @@
+Resumão sobre Resposta a Incidente - NIST 800-61 Revision 2
+
+O NIST Special Publication 800-61 Revision 2 é um dos guias mais utilizados no mundo para resposta a incidentes de segurança da informação. Foi publicada pelo National Institute of Standards and Technology (NIST) e serve como referência prática tanto para equipes técnicas quanto para gestores.
+
+Objetivo principal
+
+Fornecer boas práticas estruturadas para que organizações consigam:
+- Preparar-se para incidentes
+- Detectar e analisar eventos de segurança
+- Conter e erradicar ameaças
+- Recuperar sistemas
+- Aprender com o ocorrido
+
+As 4 Fases do Modelo do NIST 800-61
+
+1. Preparação (Preparation)
+
+É a fase mais importante. Inclui:
+
+- Definir políticas e procedimentos
+- Criar equipe de resposta a incidentes (CSIRT / SOC)
+- Ferramentas de monitoramento e logs
+- Treinamentos e simulações
+- Plano de comunicação
+
+Sem preparação, as demais fases ficam caóticas.
+
+2. Detecção e Análise (Detection & Analysis)
+
+Aqui o foco é identificar que um incidente realmente ocorreu.
+
+Exemplos de atividades:
+- Analisar alertas de SIEM / IDS / antivírus
+- Correlacionar logs
+- Classificar severidade
+- Determinar escopo do impacto
+- Registrar evidências
+
+3. Contenção, Erradicação e Recuperação (Containment, Eradication & Recovery)
+
+Três subetapas práticas:
++ Contenção
+  - Isolar máquinas
+  - Bloquear IPs
+  - Desativar contas
++ Erradicação
+  - Remover malware
+  - Corrigir vulnerabilidades
+  - Atualizar sistemas
++ Recuperação
+  - Restaurar backups
+  - Validar integridade
+  - Monitorar possíveis recaídas
+
+4. Pós-Incidente (Post-Incident Activity)
+
+Muitas empresas ignoram essa fase, e é onde está o maior valor estratégico.
+
+Inclui:
+- Lessons Learned
+- Atualização de políticas
+- Relatórios executivos
+- Ajustes de controles
+- Métricas de melhoria
+
+Pontos Fortes do SP 800-61
+- Linguagem prática
+- Equilíbrio entre técnico e gestão
+- Aplicável a empresas de qualquer porte
+- Compatível com ISO 27035 (Gestão de Incidentes de Segurança da Informação) e *frameworks SOC
+
+Limitação
+- A revisão 2 é de 2012. Conceitos continuam válidos, mas ferramentas e cenários evoluíram (cloud, ransomware moderno, zero trust).
+- Em resumo, o SP 800-61 é menos uma “norma” e mais um manual operacional de maturidade em resposta a incidentes. Ele não diz qual ferramenta usar, mas define como pensar e estruturar o processo.
+
+
+* Frameworks SOC (Security Operations Center) são estruturas de processos, tecnologias e metodologias utilizadas por equipes de segurança para monitorar, detectar e responder a ameaças cibernéticas. 
+Eles organizam a operação 24/7 para proteger ativos digitais, sendo os principais o NIST CSF, MITRE ATT&CK, CIS Controls e SOC 2 Type 2. 
