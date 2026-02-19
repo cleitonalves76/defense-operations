@@ -1,0 +1,315 @@
+Exercícios Práticos – Simulação de Resposta a Incidentes
+
+**************
+Parte 1 – Proposta do guia NIST
+**************
+
+Exercício 1 – Alerta de Malware em Estação de Trabalho
+Cenário: O antivírus detectou um arquivo suspeito em um notebook do setor financeiro às 10:15.
+Tarefas: 
+- Classificar o incidente (baixo, médio, alto)
+- Definir primeira ação em até 5 minutos
+- Quais evidências coletar?
+- Quem deve ser notificado?
+- O equipamento deve ser desligado?
+
+Objetivo Avaliado:
+ Detecção, priorização e contenção inicial.
+
+Exercício 2 – Vazamento de Credenciais
+Cenário: Usuários relatam acessos indevidos em suas contas de e-mail corporativo.
+Tarefas:
+- Quais logs analisar?
+- Quais sistemas podem estar comprometidos?
+- Definir ações imediatas de contenção
+- Existe obrigação de comunicação externa?
+
+Objetivo Avaliado: Análise de escopo e impacto.
+
+Exercício 3 – Ransomware em Servidor
+Cenário:  Servidor de arquivos exibe mensagem de resgate e arquivos estão criptografados.
+Tarefas:
+- Primeira decisão: isolar ou manter ligado?
+- Restaurar backup imediatamente ou investigar antes?
+- Quais equipes envolver?
+- Quais riscos de pagar o resgate?
+
+Objetivo Avaliado: Tomada de decisão sob pressão.
+
+Exercício 4 – Ataque DDoS em Site Corporativo
+Cenário: O site institucional está fora do ar por alto volume de requisições.
+Tarefas:
+- Identificar se é incidente de segurança ou disponibilidade
+- Medidas técnicas imediatas
+- Comunicação com provedores
+- Registro de evidências
+
+Objetivo Avaliado: Coordenação técnica e comunicação.
+
+Exercício 5 – Pós-Incidente (Lessons Learned)
+Cenário: Um incidente de phishing foi resolvido com sucesso.
+Tarefas:
+- Elaborar relatório executivo (1 página)
+- Listar 3 melhorias de processo
+- Definir métrica de prevenção futura
+- Identificar falha raiz
+
+Objetivo Avaliado: Maturidade e melhoria contínua.
+
+Exercício 6 – Classificação de Incidentes (Dinâmica Rápida)
+Leia os seguintes itens:
+
+- Porta 22 aberta externamente
+- Funcionário perdeu notebook
+- Tentativas de login falhas repetidas
+- Atualização de sistema falhou
+- E-mail com link suspeito
+
+Tarefa:
+-Classificar os itens anteriores em Evento, Incidente ou Falso Positivo
+
+Objetivo Avaliado: Raciocínio e critérios de classificação.
+
+
+—------------------------------------
+Como Aplicar na Prática
+—------------------------------------
+
+Papéis possíveis e/ou envolvidos:
+- Analista SOC
+- Gestor de TI
+- Jurídico / Compliance
+- Comunicação
+- Diretor Executivo
+
+Critérios de Avaliação:
+- Tempo de resposta
+- Clareza de comunicação
+- Priorização correta
+- Preservação de evidências
+- Aderência ao processo
+
+Importante: Esse tipo de exercício que você acabou de fazer, simula exatamente o que o guia do NIST propõe:
+
+processo + decisão + comunicação + aprendizado, não apenas conhecimento técnico isolado.
+
+
+**************
+Parte 2 – Mini-laboratórios de Resposta a Incidentes
+**************
+
+Você pode usar Python para criar mini-laboratórios de resposta a incidentes, simulando logs, alertas e decisões, alinhado às práticas da NIST Special Publication 800-61 Revision 2.
+A seguir exitem exercícios práticos que podem ser executados localmente e estimulam análise, detecção e tomada de decisão.
+
+Exercício 1 – Detecção de Tentativas de Login Suspeitas
+
+Objetivo: Identificar possível força bruta a partir de logs.
+Descrição: Você recebeu um arquivo de log e deve:
+- Ler o arquivo
+- Contar tentativas de login por IP
+- Identificar IPs com mais de X falhas
+- Classificar como incidente ou não
+
+Código Base
+
+logs = [
+    "2026-02-10 10:01:23 LOGIN_FAIL 192.168.0.10",
+    "2026-02-10 10:01:25 LOGIN_FAIL 192.168.0.10",
+    "2026-02-10 10:01:29 LOGIN_SUCCESS 10.0.0.2",
+    "2026-02-10 10:02:10 LOGIN_FAIL 192.168.0.10",
+    "2026-02-10 10:03:11 LOGIN_FAIL 172.16.0.5"
+]
+
+tentativas = {}
+
+for linha in logs:
+    partes = linha.split()
+    status = partes[2]
+    ip = partes[3]
+
+    if status == "LOGIN_FAIL":
+        tentativas[ip] = tentativas.get(ip, 0) + 1
+
+for ip, qtd in tentativas.items():
+    if qtd >= 3:
+        print(f"Possível ataque de força bruta: {ip} ({qtd} falhas)")
+
+Perguntas:
+- Qual IP é suspeito?
+- Isso é um evento ou incidente?
+- Qual seria a ação de contenção?
+
+
+Exercício 2 – Identificação de Arquivos Suspeitos
+Objetivo: Simular análise de integridade de arquivos.
+
+Código Base
+
+import hashlib
+
+arquivos = {
+    "relatorio.pdf": "abc123",
+    "financeiro.xlsx": "def456",
+    "sistema.exe": "zzz999"
+}
+
+hashes_legitimos = ["abc123", "def456"]
+
+for nome, h in arquivos.items():
+    if h not in hashes_legitimos:
+        print(f"Arquivo suspeito detectado: {nome}")
+
+Perguntas: 
+- Qual arquivo deve ser isolado?
+- Isso entra em qual fase do NIST?
+- Que evidências registrar?
+
+Exercício 3 – Simulação de Alerta de Ransomware
+Objetivo: Treinar tomada de decisão.
+
+Código Base
+
+import random
+
+eventos = [
+    "Arquivo criptografado detectado",
+    "Processo desconhecido em execução",
+    "Backup recente encontrado",
+    "Usuário reportou lentidão"
+]
+
+alerta = random.choice(eventos)
+print("ALERTA:", alerta)
+
+decisao = input("Qual sua ação inicial? ")
+print("Ação registrada:", decisao)
+
+Perguntas: 
+- Sua decisão foi contenção ou análise?
+- Quem deveria ser notificado?
+- O sistema deve ser desligado?
+
+Esses exercícios permitem que você pense como analista SOC/CSIRT.
+ah tá
+Como autoavaliar os resultados dos exercício anteriores?
+
+Você pode pontuar:
+- Identificação correta do incidente
+- Tempo de resposta
+- Justificativa da decisão
+- Aderência às fases (Preparação, Detecção, Contenção, Pós-Incidente)
+
+
+**************
+Parte 3 – Mini-laboratório para "mini-SIEM" de Resposta a Incidentes
+**************
+
+Simulando um incidente de segurança com uso de um “mini-SIEM” em Python, inspirado no fluxo proposto pela NIST Special Publication 800-61 Revision 2.
+
+Exercício 1 – Simulação de Incidente com Mini-SIEM em Python
+
+Cenário: Você é analista SOC.
+O SIEM recebeu eventos de três fontes (múltiplas fontes de log):
+- Firewall
+- Autenticação
+- Antivírus
+
+Seu objetivo é identificar IPs com comportamento suspeito e decidir se há um incidente ou não.
+
+Objetivos de Aprendizado:
+- Correlação de logs
+- Classificação de severidade
+- Análise de múltiplas fontes
+- Tomada de decisão automatizada
+
+Código Base – Mini SIEM
+
+from collections import defaultdict
+
+# Simulação de logs
+logs_firewall = [
+    ("10.0.0.5", "ALLOW"),
+    ("192.168.1.10", "BLOCK"),
+    ("10.0.0.5", "ALLOW"),
+]
+
+logs_auth = [
+    ("10.0.0.5", "LOGIN_FAIL"),
+    ("10.0.0.5", "LOGIN_FAIL"),
+    ("172.16.0.8", "LOGIN_SUCCESS"),
+]
+
+logs_antivirus = [
+    ("10.0.0.5", "MALWARE_DETECTED"),
+]
+
+# Pontuação de risco
+pesos = {
+    "BLOCK": 2,
+    "LOGIN_FAIL": 3,
+    "MALWARE_DETECTED": 10
+}
+
+score_risco = defaultdict(int)
+
+# Processamento Firewall
+for ip, evento in logs_firewall:
+    if evento in pesos:
+        score_risco[ip] += pesos[evento]
+
+# Processamento Auth
+for ip, evento in logs_auth:
+    if evento in pesos:
+        score_risco[ip] += pesos[evento]
+
+# Processamento Antivirus
+for ip, evento in logs_antivirus:
+    if evento in pesos:
+        score_risco[ip] += pesos[evento]
+
+# Classificação final
+for ip, score in score_risco.items():
+    if score >= 12:
+        nivel = "CRÍTICO"
+    elif score >= 6:
+        nivel = "ALTO"
+    else:
+        nivel = "MÉDIO"
+
+    print(f"IP: {ip} | Score: {score} | Severidade: {nivel}")
+
+
+Tarefas:
+
+1. Identificação
+- Qual IP apresenta maior risco?
+- Esse IP representa evento ou incidente?
+
+2. Análise
+- Por que múltiplas fontes aumentam severidade?
+- Um único malware seria suficiente para classificar como crítico?
+
+3. Decisão
+Definir ação automática:
+- Bloquear IP?
+- Isolar máquina?
+- Apenas monitorar?
+
+Desafios: Evolução do Exercício
+
+- Exportar relatório em CSV
+- Adicionar horário aos logs
+- Criar ranking de IPs
+- Criar função de bloqueio automático
+- Implementar janela de tempo (últimos 5 minutos)
+- Adicionar “falso positivo”
+
+Por fim: O que isso simula na vida real?
+
+- Funcionamento bemmmm básico de um SIEM
+- Análise SOC Nível 1 e 2
+- Correlação de eventos
+- Triagem de alertas
+- Processo de Detecção e Análise do NIST
+
+Esse exercício treina a pensar como analista, pois o foco é raciocínio de segurança e decisão estruturada.
