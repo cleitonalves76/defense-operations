@@ -1,6 +1,6 @@
-----
+-----------------------------
 Seção 1: Locais comuns de arquivos de log
-----
+-----------------------------
 
 Um aspecto crucial da análise de log é entender onde localizar os arquivos de log gerados por vários aplicativos e sistemas. Embora os caminhos dos arquivos de log possam variar devido às configurações do sistema, versões de software e configurações personalizadas, conhecer os locais comuns dos arquivos de log é essencial para uma investigação eficiente e detecção de ameaças.
 
@@ -33,17 +33,18 @@ Um aspecto crucial da análise de log é entender onde localizar os arquivos de 
         Snort:
             Snort Logs: /var/log/snort/
 
-Tarefa: 
-	Em sua VM Linux
+-----------------------------
+Tarefa 1: Em sua VM Linux
+-----------------------------
 
 1. Verifique o conteúdo dos arquivos mencionados anteriormente (* dos existentes)
 
 2. Existe um padrão dos dados armazenados nos logs?
 
-----
+-----------------------------
 Seção 2
 Prática: Log Collection com rsyslog
-----
+-----------------------------
 
 1. Ver status do rsyslog
 	sudo systemctl status rsyslog
