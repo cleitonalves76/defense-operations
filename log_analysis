@@ -70,53 +70,9 @@ Para que ele serve:
 Em ambientes corporativos, ele é peça-chave da arquitetura de logging centralizado.
 
 -----------------------------
-Prática: Log Collection com rsyslog
------------------------------
-
-1. Ver status do rsyslog
-	sudo systemctl status rsyslog
-
-	Se necessário:
-	sudo apt install rsyslog        # Instalar rsyslog
-	sudo systemctl start rsyslog    # Start o service
-	sudo tail -f /var/log/syslog   # Visualizar logs em real-time
-
-2. Criar arquivos e diretório
-	cd /va/log
-	sudo mkdir /websrv-02
-	sudo touch rsyslog_sshd.log
-	
-	sudo vim /etc/rsyslog.d/98-websrv-02-sshd.conf
-	
-3. Adicionar conteúdo
-	$FileCreateMode 0644
-	:programname, isequal, "sshd" /var/log/websrv-02/rsyslog_sshd.log
-
-4. Status rsyslog
-	sudo systemctl status rsyslog
-	sudo systemctl restart syslog.socket rsyslog.service
-
-5. Acessar diretório
-	cd /var/log/websrv-02
-
-6. Conectar remoto
-	sudo ssh kali@localhost -p 22
-
-7. Visualizar conteúdo do arquivo
-	cat rsyslog_sshd.log
-
-----
-Perguntas
-----
-
-1. Após configurar o rsyslog para sshd, qual nome de usuário aparece nos logs do sshd em /var/log/websrv-02/rsyslog_sshd.log?
-2. Existe algo indicando tentativas de login com falha ou força bruta?
-3. Qual é o endereço IP aparece no conteúdo do arquivo de /var/log/websrv-02/rsyslog_sshd.log?
-4. Com base nos logs gerados em /var/log/websrv-02/rsyslog_sshd.log, existe algum comando executado pelo usuário root?
-
------------------------------
 Laboratório Prático — Centralização de Logs com rsyslog
 -----------------------------
+Lab 1:
 
 Objetivos:
 - configurar servidor de logs
@@ -176,7 +132,6 @@ sudo systemctl restart rsyslog
 		sudo ufw allow 514/tcp
 		sudo ufw allow 514/udp
 
-
 Parte 2 — Configurar o Cliente (Sender)
 
 1. Editar configuração
@@ -233,65 +188,49 @@ Você concluiu se:
 	- evento de segurança visível
 	- monitoramento em tempo real funciona
 
-Quer o próximo nível?
 
-Posso montar:
-
-🔐 rsyslog com TLS (produção)
-
-📊 integração com Elasticsearch/Kibana
-
-🕵️ detecção automática de brute force
-
-🧪 laboratório com docker-compose
-
-Qual nível você quer agora?
-
-exemplo para evento de servidor apache com rsyslog
-
-Perfeito — vamos montar um exemplo prático e realista de evento do Apache sendo processado pelo rsyslog, no nível que um SOC realmente usa.
+--------------------
+Lab 2: Laboratório prático e realista de evento do Apache sendo processado pelo rsyslog, no nível que um SOC realmente usa.
+--------------------
 
 A ideia é:
 
-✅ Apache gera log
-✅ rsyslog coleta
-✅ rsyslog envia para servidor central
-✅ você detecta evento
+- Apache gera log
+- rsyslog coleta
+- rsyslog envia para servidor central
+- você detecta evento
 
-🧪 Cenário do laboratório
-Apache → access.log → rsyslog → servidor de logs
-📋 Pré-requisitos
+Cenário do laboratório
+	Apache --> access.log --> rsyslog --> servidor de logs
+
+Pré-requisitos
 
 No cliente web:
-
-sudo apt install apache2 rsyslog -y
+	sudo apt install apache2 rsyslog -y
 
 Verificar Apache:
+	systemctl status apache2
 
-systemctl status apache2
-🔍 PASSO 1 — Confirmar logs do Apache
+Passo 1 — Confirmar logs do Apache
 
 Os logs padrão ficam em:
-
-/var/log/apache2/access.log
-/var/log/apache2/error.log
+	/var/log/apache2/access.log
+	/var/log/apache2/error.log
 
 Gerar tráfego de teste:
-
-curl http://localhost
+	curl http://localhost
 
 Verificar:
+	tail -f /var/log/apache2/access.log
 
-tail -f /var/log/apache2/access.log
+Você deve ver requisições HTTP.
 
-✅ Você deve ver requisições HTTP.
-
-⚙️ PASSO 2 — Fazer rsyslog ler o log do Apache
+Passo 2 — Fazer rsyslog ler o log do Apache
 
 Por padrão o rsyslog não lê arquivos arbitrários, então precisamos do módulo imfile.
 
-1️⃣ Criar arquivo de configuração
-sudo nano /etc/rsyslog.d/apache.conf
+1. Criar arquivo de configuração
+	sudo vim /etc/rsyslog.d/apache.conf
 
 Adicionar:
 
@@ -309,75 +248,67 @@ input(type="imfile"
       Severity="error"
       Facility="local6")
 
-✅ Agora o rsyslog passa a ingerir logs do Apache.
+- Agora o rsyslog passa a ingerir logs do Apache.
 
-🔄 PASSO 3 — Reiniciar rsyslog
-sudo systemctl restart rsyslog
-🧪 PASSO 4 — Validar ingestão local
+Passo 3 - Reiniciar rsyslog
+	sudo systemctl restart rsyslog
+
+Passo 4 - Validar ingestão local
 
 Gerar requisição:
-
-curl http://localhost/testersyslog
+	curl http://localhost/testersyslog
 
 Ver no syslog:
+	grep apache-access /var/log/syslog
 
-grep apache-access /var/log/syslog
+Se apareceu algo --> ingestão OK.
 
-✅ Se apareceu → ingestão OK.
-
-🚀 PASSO 5 — Enviar para servidor remoto
+Passo 5 — Enviar para servidor remoto
 
 No cliente, adicione em /etc/rsyslog.conf:
+	local6.* @@IP_DO_SERVIDOR:514
 
-local6.* @@IP_DO_SERVIDOR:514
+Boa prática: enviar só facility do Apache.
 
-🔴 Boa prática: enviar só facility do Apache.
+Reiniciar serviço:
+	sudo systemctl restart rsyslog
 
-Reiniciar:
-
-sudo systemctl restart rsyslog
-🔍 PASSO 6 — Validar no servidor de logs
+Passo 6 — Validar no servidor de logs
 
 No servidor:
-
-grep apache-access -R /var/log/remote
+	grep apache-access -R /var/log/remote
 
 ou tempo real:
+	tail -f /var/log/remote/*/*
 
-tail -f /var/log/remote/*/*
-🚨 PASSO 7 — Simulações de segurança (muito útil em aula)
-🔴 1. Scan de diretório suspeito
+Passo 7 — Simulações de segurança
+
+7.1. Scan de diretório suspeito
 
 No cliente:
 
-curl http://localhost/admin
-curl http://localhost/phpmyadmin
-curl http://localhost/.env
+	curl http://localhost/admin
+	curl http://localhost/phpmyadmin
+	curl http://localhost/.env
 
 Detectar no servidor:
+	grep -E "admin|phpmyadmin|.env" -R /var/log/remote
 
-grep -E "admin|phpmyadmin|.env" -R /var/log/remote
-🔴 2. User-Agent suspeito
-curl -A "sqlmap" http://localhost
+7.2. User-Agent suspeito
+	curl -A "sqlmap" http://localhost
 
 Detectar:
+	grep -i sqlmap -R /var/log/remote
 
-grep -i sqlmap -R /var/log/remote
+Deu certo? 
+	- Ufa...
 
-🔥 Excelente exercício de SOC.
+Desafio: Consegue fazer algo semelhante para coletar logs do serviço ssh?
 
-
-
-
-
-
-
-xxxx
-
-----
+--------------------
 Seção 3
 Pratica: Log Management com logrotate
-----
+--------------------
 
 logrotate: ferramenta que automatiza a rotação, compressão e gerenciamento de arquivos de log, garantindo que os arquivos de log sejam manipulados sistematicamente.
 
