@@ -211,6 +211,9 @@ No cliente web:
 Verificar Apache:
 	systemctl status apache2
 
+Se não estiver rodando
+	systemctl start apache2
+
 Passo 1 — Confirmar logs do Apache
 
 Os logs padrão ficam em:
@@ -294,10 +297,10 @@ No cliente:
 Detectar no servidor:
 	grep -E "admin|phpmyadmin|.env" -R /var/log/remote
 
-7.2. User-Agent suspeito
+7.2. User-Agent suspeito - Cliente
 	curl -A "sqlmap" http://localhost
 
-Detectar:
+Detectar no servidor:
 	grep -i sqlmap -R /var/log/remote
 
 Deu certo? 
