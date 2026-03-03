@@ -1,7 +1,5 @@
 
------------------------------
-Seção 9: Anatomia do Log de Eventos do Windows
------------------------------
+Seção 1: Anatomia do Log de Eventos do Windows
 
 Os logs de eventos do Windows fornecem informações detalhadas sobre o sistema, a segurança e os aplicativos instalados em um sistema operacional Windows. 
 
@@ -62,9 +60,10 @@ Mais informações sobre IDs:
 https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx
 https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor
 
-----
-Seção 10: logs de eventos CLI
-----
+----------------------------
+Seção 2: logs de eventos CLI
+----------------------------
+
 Ferramentas para consultar logs de eventos por meio da linha de comando e/ou PowerShell.
 
 1. wevtutil.exe: permite recuperar informações sobre logs de eventos e publicadores. (também pode usado para instalar e desinstalar manifestos de eventos, executar consultas e exportar, arquivar e limpar logs).
@@ -99,11 +98,11 @@ Obter logs de eventos de um servidor
 Mais exemplos:
 	https://learn.microsoft.com/pt-br/powershell/module/microsoft.powershell.diagnostics/get-winevent?view=powershell-7.4
 
-----
-Seção 11: Sysmon
-----
-	Monitorar e registrar endpoints e ambientes - Ambientes Windows
-	Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-config (https://github.com/SwiftOnSecurity/sysmon-config)
+----------------------------
+Seção 3: Sysmon
+----------------------------
+Monitorar e registrar endpoints e ambientes - Ambientes Windows
+Download do SysInternalse da configuração do Sysmon SwiftOnSecurity sysmon-config (https://github.com/SwiftOnSecurity/sysmon-config)
 
 Iniciando o Sysmon
 	Sysmon.exe -accepteula -i sysmonconfig-export.xml
@@ -112,14 +111,14 @@ Iniciando o Sysmon
 Uso do Sysmon
 ----
 
-Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente em um esforço para identificar ameaças.
+Como a maioria das atividades normais ou "ruídos" vistos em uma rede são excluídos ou filtrados com o Sysmon, podemos nos concentrar em eventos significativos. 
+Isso nos permite identificar e investigar rapidamente atividades suspeitas. Ao monitorar ativamente uma rede, você poderá usar várias detecções e técnicas simultaneamente 
+em um esforço para identificar ameaças.
 
 Vamos entender Sysmon Event ID: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001
-
 Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
 
-
-Baixar arquivos do respositório do Teams
+Baixar arquivos do respositório XXXX
 
 Exemplo de uso de Get-WinEvent para procurar conexões de rede vindas da porta 4444.
 
