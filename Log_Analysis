@@ -308,59 +308,119 @@ Deu certo?
 
 Desafio: Consegue fazer algo semelhante para coletar logs do serviço ssh?
 
---------------------
-Seção 3
-Pratica: Log Management com logrotate
---------------------
+-----------------------------
+Seção 3: Detecção de Ataque Web no Apache
+-----------------------------
 
-logrotate: ferramenta que automatiza a rotação, compressão e gerenciamento de arquivos de log, garantindo que os arquivos de log sejam manipulados sistematicamente.
+Laboratório - Detecção de Ataque Web no Apache
+Objetivo: Detectar nos logs
+- scanning web
+- path traversal
+- SQL injection
+- fuzzing
+- brute force web
 
-1. Acessa o diretório:
-	cd /var/log/websrv-02
+Passo 1: Preparar monitoramento em tempo real
+Abra um terminal:
+Deixe rodando:
+	sudo tail -f /var/log/apache_syslog.log
 
-2. Criar arquivo conf:
-	sudo vim /etc/logrotate.d/98-websrv-02_sshd.conf
+Passo 2: Simular ataques controlados
+Execute em outro terminal.
 
-	/var/log/websrv-02/rsyslog_sshd.log {
-	    daily
-	    rotate 30
-	    compress
-	    lastaction
-	        DATE=$(date +"%Y-%m-%d")
-	        echo "$(date)" >> "/var/log/websrv-02/hashes_"$DATE"_rsyslog_sshd.txt"
-	        for i in $(seq 1 30); do
-	            FILE="/var/log/websrv-02/rsyslog_sshd.log.$i.gz"
-	            if [ -f "$FILE" ]; then
-	                HASH=$(/usr/bin/sha256sum "$FILE" | awk '{ print $1 }')
-	                echo "rsyslog_sshd.log.$i.gz "$HASH"" >> "/var/log/websrv-02/hashes_"$DATE"_rsyslog_sshd.txt"
-	            fi
-	        done
-	        systemctl restart rsyslog
-	    endscript
-	}
+2.1 Web scanning
+	curl http://localhost/wp-admin
+	curl http://localhost/phpmyadmin
+	curl http://localhost/.env
+	curl http://localhost/config.php
 
-3. Executar a configuração:
-	sudo logrotate -f /etc/logrotate.d/98-websrv-02_sshd.conf
-	
-4. Visualizar conteúdo do diretório:
-	ls -lsa
+Espera-se identificar algo.
 
-5. Verificar conteúdo do arquivo:
-	cat hashes_2025-03-09_rsyslog_sshd.txt 
+2.2 Path Traversal
+	curl "http://localhost/../../../../etc/passwd"
+	curl "http://localhost/%2e%2e/%2e%2e/%2e%2e/etc/passwd"
 
-----
-Perguntas:
-----
+2.3 SQL Injection
+	curl "http://localhost/index.php?id=1' OR '1'='1"
+	curl "http://localhost/login.php?user=admin'--"
+	curl "http://localhost/product?id=1 UNION SELECT NULL"
 
-1. Com base na configuração do logrotate /etc/logrotate.d/98-websrv-02_sshd.conf, quantas versões de cópias antigas de arquivos de log compactados serão mantidas?
+2.4 Fuzzing simples
+	for i in admin test backup old dev; do
+  		curl -s http://localhost/$i > /dev/null
+	done
 
-2. Com base na configuração do logrotate, qual é a frequência de rotação do log?
+2.5 Brute force web (simulado)
+	for i in {1..20}; do
+ 		curl -s "http://localhost/login.php?user=admin&pass=test$i" > /dev/null
+	done
+
+Passo 3 - Hunting manual (modo analista SOC)
+Agora vamos caçar.
+
+Detectar scanning comum
+	grep -Ei "wp-admin|phpmyadmin|\.env|config\.php" /var/log/apache_syslog.log
+
+Detectar path traversal
+	grep -Ei "\.\./|\%2e\%2e" /var/log/apache_syslog.log
+
+Detectar SQL injection
+	grep -Ei "union select|or '1'='1|--|information_schema" /var/log/apache_syslog.log
+
+Detectar brute force (muitas tentativas)
+	grep "login.php" /var/log/apache_syslog.log | wc -l
+
+Passo 4 - Criar regra automática (nível SOC)
+Vamos criar um detector simples.
+
+Criar script
+	sudo vim /usr/local/bin/detect_web_attacks.sh
+
+Conteúdo:
+
+#!/bin/bash
+LOG="/var/log/apache_syslog.log"
+ALERT="/var/log/web_alerts.log"
+
+PATTERN="wp-admin|phpmyadmin|\.env|union select|\.\./|passwd|/admin|login"
+
+grep -Ei "$PATTERN" "$LOG" > /tmp/web_hits.tmp
+if [ -s /tmp/web_hits.tmp ]; then
+    cat /tmp/web_hits.tmp >> "$ALERT"
+fi
+rm -f /tmp/web_hits.tmp
+
+Dar permissão:
+	sudo chmod +x /usr/local/bin/detect_web_attacks.sh
+
+Testar:
+	sudo /usr/local/bin/detect_web_attacks.sh
+
+Ver alertas:
+	sudo tail /var/log/web_alerts.log
+
+Passo 5 - Automatizar (estilo SOC)
+
+Adicionar no cron:
+	sudo crontab -e
+
+Adicionar:
+	*/5 * * * * /usr/local/bin/detect_web_attacks.sh
+
+Verifica a cada 5 minutos.
+
+Passo 6 - Detecção por IP suspeito (nível mais real)
+Top IPs:
+	awk '{print $NF}' /var/log/apache_syslog.log | sort | uniq -c | sort -nr | head
+
+IPs com muitos erros:
+	grep " 404 " /var/log/apache_syslog.log | awk '{print $NF}' | sort | uniq -c | sort -nr | head
 
 
-----
+-----------------------------
 Seção 4
 Prática: Trabalhando com logs - LogViewer e ULogViewer
-----
+-----------------------------
 
 LogViewer é um aplicativo Web para monitorar logs do servidor em tempo real no navegador.
 
@@ -383,10 +443,10 @@ Tarefa: Abrir e analisar arquivos (repositório do Teams)
 	Apache-Error.log
 	linux.log
 
-----
+-----------------------------
 Seção 5
 Pratica: Log Analysis Tools: Command Line
----
+-----------------------------
 
 Utilize o arquivo: apache-ex.log
 
@@ -421,10 +481,10 @@ Não contém um padrão (-v invert)
 Tarefa: 
 	Analise o arquivo access.log e descubra se houve tentativa de bruteforce
 
-----
+-----------------------------
 Seção 6
 Prática: análise de logs
-----
+-----------------------------
 
 Criação de arquivo de log analisado e consolidado usando ferramentas Unix como cat, grep, sed, sort, uniq e awk
 
@@ -466,9 +526,9 @@ Tarefa:
 	http://MACHINE_IP:8111/log?path=%2Ftmp%2Funiq_sort_parsed_consolidated.log
 
 
-----
+-----------------------------
 Seção 7: Log Analysis Tools: Regular Expressions
-----
+-----------------------------
 
 Regular Expressions usando grep
 	Utilize o arquivo: apache-ex2.log
@@ -484,9 +544,9 @@ Opção -E para indicar que estamos pesquisando um padrão e não apenas uma str
 Tarefa: 
 	Usando o arquivo apache-ex2.log, crie 3 regex com grep
 
-----
+-----------------------------
 Seção 8: Regular Expressions para Log Parsing
----
+-----------------------------
 
 Expressões regulares também desempenham um papel crucial na análise de log, que é o processo de dividir entradas de log em componentes estruturados e extrair informações relevantes deles. 
 
@@ -538,12 +598,9 @@ Mais:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Cheatsheet
 https://support.kaspersky.com/cyber-trace/4.4/171633
 
-
-
-
-----
+-----------------------------
 Seção 8: Regex com CyberChef
-----
+-----------------------------
 
 https://cyberchef.org
 
@@ -553,9 +610,9 @@ https://cyberchef.org
 
 No cyberchef, escolha uma das opções de regex existentes e analise a saída
 
-----
+-----------------------------
 Seção 9: Anatomia do Log de Eventos do Windows
-----
+-----------------------------
 
 Os logs de eventos do Windows fornecem informações detalhadas sobre o sistema, a segurança e os aplicativos instalados em um sistema operacional Windows. 
 
@@ -715,9 +772,9 @@ Para detectar comportamento via PS
 	Get-WinEvent -Path .\Hunting_Rats.evtx -FilterXPath '*/System/EventID=3 and */EventData/Data[@Name="DestinationPort"] and */EventData/Data=8080'
 
 
-----
+-----------------------------
 Tarefa
-----
+-----------------------------
 
 Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github. E também estão disponíveis no repositório do Teams.
 
