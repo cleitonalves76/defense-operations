@@ -118,7 +118,9 @@ em um esforço para identificar ameaças.
 Vamos entender Sysmon Event ID: https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001
 Use Get-WinEvent (PowerShell) ou wevutil.exe (cmd) para acessar e filtrar logs de forma manual. No entanto, o mais adequado é incorporar o Sysmon ao SIEM ou outras soluções de detecção. 
 
-Baixar arquivos do respositório XXXX
+Artefatos disponíveis em:
+	https://drive.proton.me/urls/PN0P6N7GNG#IBGRJEcCmxq9
+	Senha: blueTeam
 
 Exemplo de uso de Get-WinEvent para procurar conexões de rede vindas da porta 4444.
 
@@ -161,10 +163,11 @@ Para detectar comportamento via PS
 
 
 -----------------------------
-Tarefa
+Tarefa: Logs suspeitos
 -----------------------------
-
-Os arquivos de eventos usados ​​nesta tarefa devem ser obtidos dos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github. E também estão disponíveis no repositório do Teams.
+Artefatos disponíveis em:
+	https://drive.proton.me/urls/PN0P6N7GNG#IBGRJEcCmxq9
+	Senha: blueTeam
 
 Alguns logs suspeitos foram obtidos e atribuiram a você executar a investigação.
 
@@ -208,3 +211,10 @@ Investigação 4 - Construiram uma botnet!
 	- Qual é o IP do adversário na Investigação 4?
 	- Em qual porta o adversário está operando na Investigação 4?
 	- Qual C2 o adversário está utilizando na Investigação 4?
+
+
+Nos repositórios EVTX-ATTACK-SAMPLES (https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/tree/master) e SysmonResources (https://github.com/jymcheong/SysmonResources) do Github
+existem vários outros arquivos que você pode bricar ;)
+
+#ficaadica
+
