@@ -148,5 +148,248 @@ echo "User: admin"
 echo "Senha: $SPLUNK_PASS"
 echo "==================================="
 
+*********************************
+
+Depois de salvar o script
+
+  chmod +x install_splunk.sh
+  sudo ./install_splunk.sh
+
+Quando terminar, acesse a interface Web do Splunk, via navegador:
+  http://IP_DO_SERVIDOR:8000
 
 
+
+*********************************
+Ajustes específicos para Kali Linux
+*********************************
+
+O Kali tem algumas diferenças importantes:
+Logs SSH podem não aparecer
+
+Se não houver /var/log/auth.log, rode:
+
+  sudo systemctl enable ssh
+  sudo systemctl start ssh
+
+Testar geração de log
+  ssh localhost
+
+Depois, pode buscar no Splunk:
+  index=linux sourcetype=linux_secure
+
+*********************************
+Continuando o Laboratório
+*********************************
+
+Agora, com o ambiente com Splunk Enterprise, vamos simular de forma prática ataque --> log -->  detecção.
+  - Brute Force
+  - Persistence
+  - “Ransomware-like behavior” (seguro para laboratório)
+Tudo focado em Debian/Kali + logs reais + SPL de SOC.
+
+Antes de seguir, devemos observar que arquiterura adequada, deve consta com um Fowarder, mas vamos deixar esse tema para a próxima aula.
+
+No Splunk local é possível ler logs locais tranquilamente, porém a única exigência é  configurar a coleta (input).
+
+1. Forma mais simples (recomendado)
+
+Usando o próprio Splunk instalado (ou Universal Forwarder), adicionar um monitor:
+
+  /opt/splunk/bin/splunk add monitor /var/log/auth.log
+
+Isso faz o Splunk:
+
+  - Ler o arquivo continuamente
+  - Indexar novos eventos automaticamente
+
+2. Verificando no Splunk
+
+Depois de adicionar, pesquise: - spl
+  index=* sourcetype=*
+
+Note que não temos dados coletados pelo Splunk. A sintaxe a seguir resolve o problema.
+
+  chmod 644 /var/log/auth.log   
+
+Consegue dizer porque?
+
+*********************************
+Vamos práticar com outros exemplo:
+*********************************
+
+BRUTE FORCE (T1110)
+Ataque (simulação)
+
+for i in {1..10}; do ssh fakeuser@localhost; done
+
+Digite senha errada várias vezes
+Logs gerados
+
+Arquivo: /var/log/auth.log
+
+Eventos:
+- Failed password
+- Invalid user
+
+Detecção no Splunk - spl
+
+Para IPv4 - spl
+
+index=linux sourcetype=linux_secure "Failed password"
+| stats count by src_ip, user
+| where count > 5
+
+Para IPv6 - spl
+
+index=* "Failed password"
+| rex "from (?<src_ip>[^\s]+)"
+| bin _time span=1m
+| stats count by _time, src_ip
+| where count > 5
+
+ Detecção avançada - spl
+
+index=linux sourcetype=linux_secure ("Failed password" OR "Invalid user")
+| bucket _time span=1m
+| stats count by _time, src_ip
+| where count > 10
+
+Outra versão - spl
+
+index=* ("Failed password" OR "Invalid user")
+| rex "from (?<src_ip>[^\s]+)"
+| bucket _time span=1m
+| stats count by _time, src_ip
+| where count > 10
+
+Aida, outra versão - spl
+
+index=* ("Failed password" OR "Invalid user")
+| rex "from (?<src_ip>[^\s]+)"
+| rex "for (invalid user )?(?<user>\S+)"
+| bucket _time span=1m
+| stats count by _time, src_ip, user
+| where count > 5
+
+
+Ver extração de IP  - spl
+index=* "Failed password"
+| rex "from (?<src_ip>[^\s]+)"
+| table src_ip
+
+
+Ver contagem  - spl
+index=* "Failed password"
+| rex "from (?<src_ip>[^\s]+)"
+| stats count by src_ip
+
+
+2. PERSISTÊNCIA (T1136 – Create Account)
+
+Ataque
+sudo useradd hacker
+sudo passwd hacker
+
+Logs gerados
+  - useradd
+  - passwd change
+
+Detecção simples - spl
+
+index=linux "useradd"
+
+Detecção SOC – spl
+
+index=linux ("useradd" OR "new user")
+| stats count by host, user, _time
+
+Monitorar alteração de senha – spl
+
+index=linux "password changed"
+
+3. PRIVILEGE ESCALATION (sudo abuse)
+Ataque
+  sudo su
+ou:
+  sudo cat /etc/shadow
+
+Detecção – spl
+
+index=linux sourcetype=linux_secure "sudo"
+
+SOC (mais realista) - spl
+
+index=linux sourcetype=linux_secure "sudo"
+| stats count by user, command
+
+4. “RANSOMWARE-LIKE” (seguro para LAB)
+
+Não vamos usar ransomware real, mas sim comportamento detectável.
+
+Simulação: Criar arquivos e “criptografar” – bash
+
+mkdir /tmp/teste_ransom
+cd /tmp/teste_ransom
+
+for i in {1..50}; do
+  echo "dados importantes" > file$i.txt
+done
+
+# Simular criptografia
+for f in *.txt; do
+  base64 $f > $f.enc
+done
+
+O que isso gera
+- Alta criação de arquivos
+- Modificação em massa
+
+Detecção (heurística) – spl
+
+index=linux
+| stats count by host
+| where count > 100
+
+Detecção estilo SOC (comportamental) – spl
+
+index=linux
+| bucket _time span=1m
+| stats count by _time, host
+| where count > 200
+
+5. MOVIMENTO LATERAL (simples)
+
+Ataque – bash
+
+ssh usuario@outro_host
+
+Detecção – spl
+
+index=linux "Accepted password"
+
+Correlação (falha + sucesso) – spl
+
+index=linux sourcetype=linux_secure
+("Failed password" OR "Accepted password")
+| transaction user maxspan=5m
+| search eventcount > 5
+
+ 6. DASHBOARD SOC (ideias)
+
+Crie painéis com:
+
+Top IPs atacantes
+Usuários atacados
+Eventos por minuto
+Uso de sudo
+Criação de usuários
+
+
+7. MAPEAMENTO MITRE ATT&CK
+Ataque		Técnica
+Brute Force	T1110
+Persistence	T1136
+Sudo Abuse	T1068
+Ransomware	T1486
+Lateral Move	T1021
