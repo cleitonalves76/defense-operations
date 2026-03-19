@@ -1,0 +1,152 @@
+Implementação de SIEM com Splunk
+
+Objetivo 1: Entender o que um SIEM faz e como logs são coletados.
+Conceitos
+•	O que é SIEM
+•	Tipos de logs:
+  o	Windows Event Logs
+  o	Linux Syslog
+  o	Logs de firewall
+  o	Logs de aplicações
+•	Conceitos:
+  o	Parsing
+  o	Normalização
+  o	Correlação
+  o	Alertas
+
+Ferramentas para entender o ecossistema
+•	Splunk Enterprise
+•	Elastic Stack
+•	Microsoft Sentinel
+
+*****************************
+Objetivo 2: Instalação do Splunk
+*****************************
+
+Ambiente mínimo, podem ser:
+  2 VMs Linux
+  1 VM Windows
+
+Download do site oficial: Splunk Enterprise
+
+2	Script de instalação automática do Splunk
+
+  Salve como install_splunk.sh
+
+#!/bin/bash
+
+# ===============================
+# SPLUNK INSTALL - DEBIAN/KALI
+# ===============================
+
+SPLUNK_VERSION="9.0.9"
+SPLUNK_BUILD="6315942c563f"
+SPLUNK_URL="https://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/linux/splunk-${SPLUNK_VERSION}-${SPLUNK_BUILD}-Linux-x86_64.tgz"
+
+INSTALL_DIR="/opt"
+SPLUNK_USER="splunk"
+SPLUNK_PASS="Splunk@123"   #se necessario altere aqui
+
+echo "==================================="
+echo "Splunk Install (Debian/Kali)"
+echo "==================================="
+
+# Verificar root
+if [ "$EUID" -ne 0 ]; then
+  echo "[ERRO] Execute como root"
+  exit 1
+fi
+
+# Atualizar sistema
+echo "[+] Atualizando sistema..."
+apt update -y
+
+# Dependências essenciais
+echo "[+] Instalando dependências..."
+apt install -y wget tar sudo net-tools curl
+
+# Criar usuário splunk (caso não exista)
+echo "[+] Criando usuário splunk..."
+id "$SPLUNK_USER" &>/dev/null || useradd -m -s /bin/bash $SPLUNK_USER
+
+# Ir para /opt
+cd /opt
+
+# Download
+echo "[+] Baixando Splunk..."
+wget -O splunk.tgz $SPLUNK_URL
+
+if [ ! -f splunk.tgz ]; then
+    echo "[ERRO] Download falhou"
+    exit 1
+fi
+
+# Extração
+echo "[+] Extraindo..."
+tar -xzf splunk.tgz
+
+# Permissões
+chown -R $SPLUNK_USER:$SPLUNK_USER /opt/splunk
+
+# ===============================
+# SEED DE SENHA
+# ===============================
+echo "[+] Configurando senha inicial..."
+
+SEED_FILE="/opt/splunk/etc/system/local/user-seed.conf"
+
+cat <<EOF > $SEED_FILE
+[user_info]
+USERNAME = admin
+PASSWORD = $SPLUNK_PASS
+EOF
+
+chown $SPLUNK_USER:$SPLUNK_USER $SEED_FILE
+chmod 600 $SEED_FILE
+
+# ===============================
+# START
+# ===============================
+echo "[+] Iniciando Splunk..."
+
+sudo -u $SPLUNK_USER /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt
+
+# ===============================
+# CONFIG SOC
+# ===============================
+echo "[+] Configurando ingestão..."
+
+# Porta forwarder
+sudo -u $SPLUNK_USER /opt/splunk/bin/splunk enable listen 9997 -auth admin:$SPLUNK_PASS
+
+# Criar index
+sudo -u $SPLUNK_USER /opt/splunk/bin/splunk add index linux -auth admin:$SPLUNK_PASS
+
+# Monitor auth.log (importante no Kali/Debian)
+echo "[+] Configurando monitor de logs..."
+
+cat <<EOF > /opt/splunk/etc/system/local/inputs.conf
+[monitor:///var/log/auth.log]
+index = linux
+sourcetype = linux_secure
+EOF
+
+chown $SPLUNK_USER:$SPLUNK_USER /opt/splunk/etc/system/local/inputs.conf
+
+# Boot start
+echo "[+] Habilitando auto start..."
+/opt/splunk/bin/splunk enable boot-start -user $SPLUNK_USER --accept-license --answer-yes
+
+# Restart final
+echo "[+] Reiniciando Splunk..."
+/opt/splunk/bin/splunk restart
+
+echo "==================================="
+echo "INSTALAÇÃO FINALIZADA"
+echo "Acesse: http://IP:8000"
+echo "User: admin"
+echo "Senha: $SPLUNK_PASS"
+echo "==================================="
+
+
+
