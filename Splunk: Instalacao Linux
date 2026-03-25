@@ -158,8 +158,6 @@ Depois de salvar o script
 Quando terminar, acesse a interface Web do Splunk, via navegador:
   http://IP_DO_SERVIDOR:8000
 
-
-
 *********************************
 Ajustes específicos para Kali Linux
 *********************************
@@ -179,8 +177,112 @@ Depois, pode buscar no Splunk:
   index=linux sourcetype=linux_secure
 
 *********************************
-Continuando o Laboratório
+Continuando o Laboratório: Fowarder
 *********************************
+Forwarder é um agente de software, instalado nos endpoints (servidores, desktops ou dispositivos de rede), cuja única função é coletar dados
+e encaminhá-los para um servidor Splunk centralizado (o Indexer)
+
+No cenário que montamos:
+
+1. O Universal Forwarder monitora o arquivo /var/log/auth.log no seu Kali.
+2. Sempre que uma linha nova é escrita (alguém tenta logar), o UF detecta a alteração.
+3.Ele empacota essa linha e a despacha para o IP do seu servidor Splunk na porta 9997.
+
+Hoje nosso laboratório conta com a instalação do servidor Splunk no Windows, então:
+
+1. Localizar o arquivo inputs.conf
+No Windows, o diretório padrão do Splunk é C:\Program Files\Splunk\etc\system\local\
+Abra o arquivo inputs.conf. Se ele não existir, crie um novo arquivo de texto com este nome na mesma pasta.
+
+2. Configurar a porta com SSL
+Adicione o seguinte conteúdo ao arquivo:
+
+[splunktcp-ssl:9997]
+disabled = 0
+
+[SSL]
+serverCert = C:\Program Files\Splunk\etc\auth\server.pem
+sslPassword = password
+
+3. Reiniciar o Serviço do Splunk
+Para que a alteração tenha efeito no Windows:
+Pressione Win + R, digite services.msc e dê Enter.
+Procure por Splunkd Service.
+Clique com o botão direito e selecione Reiniciar
+
+
+====
+
+
+Habilitar recebimento de logs
+No Splunk:
+Settings → Forwarding and Receiving
+Enable Receiver → Porta: 9997
+
+
+Instalar Forwarder no Kali
+Baixe o forwarder:
+wget -O splunkforwarder.deb "https://download.splunk.com/products/universalforwarder/releases/9.x/linux/splunkforwarder.deb"
+dpkg -i splunkforwarder.deb
+
+Conectar ao Splunk (Windows)
+/opt/splunkforwarder/bin/splunk add forward-server <IP_WINDOWS>:9997
+/opt/splunkforwarder/bin/splunk start
+
+Coletar logs do Kali
+Edite:
+/opt/splunkforwarder/etc/system/local/inputs.conf
+
+[monitor:///var/log/auth.log]
+index=linux
+[monitor:///var/log/syslog]
+index=linux
+
+[monitor:///var/log/kern.log]
+index=linux
+
+---------
+Reinicie:
+/opt/splunkforwarder/bin/splunk restart
+
+Validação no Splunk
+
+Search:
+index=linux
+
+**** Se aparecer logs = funcionando ****
+
+Se não aparecer logs, vamos fazer o seguinte:
+
+No Kali Linux (Forwarder)
+Agora, certifique-se de que o seu Kali aponte corretamente para o IP do Windows. No terminal do Kali:
+
+Edite o arquivo: vim /opt/splunkforwarder/etc/system/local/outputs.conf
+
+Configure assim:
+
+[tcpout]
+defaultGroup = win_server_ssl
+
+[tcpout:win_server_ssl]
+server = IP_DO_WINDOWS:9997
+clientCert = /opt/splunkforwarder/etc/auth/server.pem
+sslPassword = password
+sslVerifyServerCert = false
+
+-----
+
+Reinicie o forwarder
+  sudo /opt/splunkforwarder/bin/splunk restart
+
+Como validar se funcionou?
+Para validar, vamos nos logs internos do próprio Splunk. No seu navegador (Windows), vá em Search & Reporting e digite:
+
+  index="_internal" sourcetype="splunkd" "TcpInputProc" ssl
+
+Se você vir mensagens como "SSL handshake with client... has been completed", parabéns: seu túnel criptografado entre o Kali e o Windows está operacional!
+
+*********************
 
 Agora, com o ambiente com Splunk Enterprise, vamos simular de forma prática ataque --> log -->  detecção.
   - Brute Force
@@ -196,6 +298,7 @@ No Splunk local é possível ler logs locais tranquilamente, porém a única exi
 
 Usando o próprio Splunk instalado (ou Universal Forwarder), adicionar um monitor:
 
+0000000000
   /opt/splunk/bin/splunk add monitor /var/log/auth.log
 
 Isso faz o Splunk:
