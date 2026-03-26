@@ -213,17 +213,160 @@ Clique com o botão direito e selecione Reiniciar
 
 ====
 
+Ainda no servidor Splunk (Windows)
 
 Habilitar recebimento de logs
 No Splunk:
-Settings → Forwarding and Receiving
-Enable Receiver → Porta: 9997
+Settings --> Forwarding and Receiving
+Receive data --> Configure receiving
+New Receiving Port --> Porta: 9997
 
-
+***************************************
 Instalar Forwarder no Kali
-Baixe o forwarder:
-wget -O splunkforwarder.deb "https://download.splunk.com/products/universalforwarder/releases/9.x/linux/splunkforwarder.deb"
-dpkg -i splunkforwarder.deb
+
+***************************************
+Script completo (coleta multi-log)
+  Salve como: splunk_forwarder_multilog.sh
+***************************************
+#!/bin/bash
+
+set -e
+
+# ================================
+# CONFIG
+# ================================
+SPLUNK_VERSION="9.4.9"
+SPLUNK_BUILD="03bb451d4e07"
+SPLUNK_USER="splunkfwd"
+SPLUNK_PASS="SenhaForte123!"
+SPLUNK_IP="192.168.1.100"
+SPLUNK_PORT="9997"
+
+SPLUNK_HOME="/opt/splunkforwarder"
+SPLUNK_BIN="$SPLUNK_HOME/bin/splunk"
+
+# ================================
+# USER
+# ================================
+echo "[+] Garantindo usuário..."
+
+if ! id "$SPLUNK_USER" &>/dev/null; then
+    sudo useradd -m -r -s /bin/false $SPLUNK_USER
+fi
+
+# ================================
+# INSTALL
+# ================================
+if [ ! -d "$SPLUNK_HOME" ]; then
+    echo "[+] Instalando Splunk UF..."
+
+    wget -O splunkforwarder.deb \
+    "https://download.splunk.com/products/universalforwarder/releases/${SPLUNK_VERSION}/linux/splunkforwarder-${SPLUNK_VERSION}-${SPLUNK_BUILD}-linux-amd64.deb"
+
+    sudo dpkg -i splunkforwarder.deb
+fi
+
+# ================================
+# PERMISSIONS
+# ================================
+echo "[+] Ajustando permissões..."
+sudo chown -R $SPLUNK_USER:$SPLUNK_USER $SPLUNK_HOME
+
+# ================================
+# USER-SEED (OFICIAL)
+# ================================
+echo "[+] Criando usuário automático..."
+
+sudo mkdir -p $SPLUNK_HOME/etc/system/local
+
+sudo tee $SPLUNK_HOME/etc/system/local/user-seed.conf > /dev/null <<EOF
+[user_info]
+USERNAME = admin
+PASSWORD = $SPLUNK_PASS
+EOF
+
+sudo chown -R $SPLUNK_USER:$SPLUNK_USER $SPLUNK_HOME/etc/system/local
+
+# ================================
+# INPUTS.CONF (PADRÃO SOC)
+# ================================
+echo "[+] Configurando inputs.conf..."
+
+sudo tee $SPLUNK_HOME/etc/system/local/inputs.conf > /dev/null <<EOF
+[monitor:///var/log/auth.log]
+sourcetype=linux_secure
+index=linux
+
+[monitor:///var/log/syslog]
+sourcetype=syslog
+index=linux
+
+[monitor:///var/log/kern.log]
+sourcetype=linux_kernel
+index=linux
+
+[monitor:///var/log/apache2/access.log]
+sourcetype=apache_access
+index=web
+
+[monitor:///var/log/apache2/error.log]
+sourcetype=apache_error
+index=web
+
+[monitor:///var/log/audit/audit.log]
+sourcetype=linux_audit
+index=security
+EOF
+
+# ================================
+# OUTPUTS.CONF
+# ================================
+echo "[+] Configurando outputs.conf..."
+
+sudo tee $SPLUNK_HOME/etc/system/local/outputs.conf > /dev/null <<EOF
+[tcpout]
+defaultGroup = splunk_group
+
+[tcpout:splunk_group]
+server = ${SPLUNK_IP}:${SPLUNK_PORT}
+EOF
+
+# ================================
+# START
+# ================================
+echo "[+] Iniciando Splunk..."
+
+sudo -u $SPLUNK_USER $SPLUNK_BIN start \
+--accept-license \
+--answer-yes \
+--no-prompt
+
+# ================================
+# BOOT START
+# ================================
+echo "[+] Ativando auto-start..."
+
+sudo $SPLUNK_BIN enable boot-start -user $SPLUNK_USER
+
+# ================================
+# RESTART FINAL
+# ================================
+echo "[+] Reiniciando..."
+
+sudo -u $SPLUNK_USER $SPLUNK_BIN restart
+
+echo "[✔] SPLUNK FORWARDER ENTERPRISE PRONTO!"
+
+***************************************
+
+Alterar permissões:
+  chmod +x splunk_forwarder_multilog.sh
+
+Executar o script:
+  ./splunk_forwarder_multilog.sh
+
+chown -R splunkfwd:splunkfwd /opt/splunkforwarder
+
 
 Conectar ao Splunk (Windows)
 /opt/splunkforwarder/bin/splunk add forward-server <IP_WINDOWS>:9997
