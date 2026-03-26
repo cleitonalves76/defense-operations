@@ -125,7 +125,7 @@ sudo -u $SPLUNK_USER /opt/splunk/bin/splunk add index linux -auth admin:$SPLUNK_
 # Monitor auth.log (importante no Kali/Debian)
 echo "[+] Configurando monitor de logs..."
 
-cat <<EOF > /opt/splunk/etc/system/local/inputs.conf
+sudo tee /opt/splunkforwarder/etc/system/local/inputs.conf > /dev/null <<EOF
 [monitor:///var/log/auth.log]
 index = linux
 sourcetype = linux_secure
