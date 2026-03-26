@@ -361,9 +361,27 @@ Conectar ao Splunk (Windows)
     senha: SenhaForte123!
 /opt/splunkforwarder/bin/splunk start
 
+
+*******************
+FIREWALL DO WINDOWS
+*******************
+
+No Windows:
+  netstat -an | findstr 9997
+
+Deve mostrar: LISTENING ou OPEN
+Se não estiver
+
+liberar firewall:
+
+New-NetFirewallRule -DisplayName "Splunk 9997" -Direction Inbound -Protocol TCP -LocalPort 9997 -Action Allow
+
+
+*******************
 Coletar logs do Kali
+*******************
 Edite:
-/opt/splunkforwarder/etc/system/local/inputs.conf
+  /opt/splunkforwarder/etc/system/local/inputs.conf
 
 [monitor:///var/log/auth.log]
 index=linux
@@ -402,8 +420,7 @@ clientCert = /opt/splunkforwarder/etc/auth/server.pem
 sslPassword = password
 sslVerifyServerCert = false
 
------
-
+*******************
 Reinicie o forwarder
   sudo /opt/splunkforwarder/bin/splunk restart
 
@@ -415,8 +432,8 @@ Para validar, vamos nos logs internos do próprio Splunk. No seu navegador (Wind
 Se você vir mensagens como "SSL handshake with client... has been completed", parabéns: seu túnel criptografado entre o Kali e o Windows está operacional!
 
 *********************
-
 Agora, com o ambiente com Splunk Enterprise, vamos simular de forma prática ataque --> log -->  detecção.
+*********************
   - Brute Force
   - Persistence
   - “Ransomware-like behavior” (seguro para laboratório)
@@ -447,6 +464,12 @@ Note que não temos dados coletados pelo Splunk. A sintaxe a seguir resolve o pr
   chmod 644 /var/log/auth.log   
 
 Consegue dizer porque?
+
+Ainda é possível fazer o processo manual:
+
+  /opt/splunk/bin/splunk add forward-server 192.168.x.x:9997
+  /opt/splunk/bin/splunk add monitor /var/log
+
 
 *********************************
 Vamos práticar com outros exemplo:
