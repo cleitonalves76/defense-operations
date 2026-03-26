@@ -235,127 +235,115 @@ set -e
 # ================================
 # CONFIG
 # ================================
-SPLUNK_VERSION="9.4.9"
-SPLUNK_BUILD="03bb451d4e07"
-SPLUNK_USER="splunkfwd"
-SPLUNK_PASS="SenhaForte123!"
-SPLUNK_IP="192.168.1.100"
-SPLUNK_PORT="9997"
+VERSION="9.4.9"
+BUILD="03bb451d4e07"
+PKG="splunkforwarder-${VERSION}-${BUILD}-linux-amd64.deb"
+URL="https://download.splunk.com/products/universalforwarder/releases/${VERSION}/linux/${PKG}"
 
 SPLUNK_HOME="/opt/splunkforwarder"
-SPLUNK_BIN="$SPLUNK_HOME/bin/splunk"
+SPLUNK_USER="splunkfwd"
+SPLUNK_PASS="SenhaForte123!"
+SPLUNK_IP="192.168.x.x"
+SPLUNK_PORT="9997"
+
+echo "[+] INICIANDO INSTALAÇÃO BLINDADA..."
 
 # ================================
-# USER
+# 1. LIMPEZA SEGURA
 # ================================
-echo "[+] Garantindo usuário..."
+echo "[+] Limpando instalação antiga..."
 
-if ! id "$SPLUNK_USER" &>/dev/null; then
-    sudo useradd -m -r -s /bin/false $SPLUNK_USER
-fi
+sudo systemctl stop SplunkForwarder.service 2>/dev/null || true
+sudo $SPLUNK_HOME/bin/splunk stop 2>/dev/null || true
 
-# ================================
-# INSTALL
-# ================================
-if [ ! -d "$SPLUNK_HOME" ]; then
-    echo "[+] Instalando Splunk UF..."
+sudo dpkg --purge splunkforwarder 2>/dev/null || true
 
-    wget -O splunkforwarder.deb \
-    "https://download.splunk.com/products/universalforwarder/releases/${SPLUNK_VERSION}/linux/splunkforwarder-${SPLUNK_VERSION}-${SPLUNK_BUILD}-linux-amd64.deb"
+sudo rm -rf $SPLUNK_HOME
+sudo rm -f /etc/systemd/system/SplunkForwarder.service
 
-    sudo dpkg -i splunkforwarder.deb
-fi
+sudo userdel $SPLUNK_USER 2>/dev/null || true
 
 # ================================
-# PERMISSIONS
+# 2. USUÁRIO DEDICADO
+# ================================
+echo "[+] Criando usuário dedicado..."
+
+sudo useradd -m -r -s /bin/false $SPLUNK_USER
+
+# ================================
+# 3. DOWNLOAD
+# ================================
+echo "[+] Baixando pacote..."
+
+wget -q --show-progress -O $PKG $URL
+
+# ================================
+# 4. INSTALAÇÃO
+# ================================
+echo "[+] Instalando pacote..."
+
+sudo dpkg -i $PKG
+
+# ================================
+# 5. PERMISSÕES CORRETAS
 # ================================
 echo "[+] Ajustando permissões..."
+
 sudo chown -R $SPLUNK_USER:$SPLUNK_USER $SPLUNK_HOME
 
 # ================================
-# USER-SEED (OFICIAL)
+# 6. CRIAR USUÁRIO SPLUNK (seed)
 # ================================
-echo "[+] Criando usuário automático..."
+echo "[+] Criando credenciais automáticas..."
 
 sudo mkdir -p $SPLUNK_HOME/etc/system/local
 
-sudo tee $SPLUNK_HOME/etc/system/local/user-seed.conf > /dev/null <<EOF
+cat <<EOF | sudo tee $SPLUNK_HOME/etc/system/local/user-seed.conf > /dev/null
 [user_info]
 USERNAME = admin
 PASSWORD = $SPLUNK_PASS
 EOF
 
-sudo chown -R $SPLUNK_USER:$SPLUNK_USER $SPLUNK_HOME/etc/system/local
+sudo chown $SPLUNK_USER:$SPLUNK_USER $SPLUNK_HOME/etc/system/local/user-seed.conf
 
 # ================================
-# INPUTS.CONF (PADRÃO SOC)
+# 7. START CORRETO (SEM ROOT)
 # ================================
-echo "[+] Configurando inputs.conf..."
+echo "[+] Iniciando Splunk como $SPLUNK_USER..."
 
-sudo tee $SPLUNK_HOME/etc/system/local/inputs.conf > /dev/null <<EOF
-[monitor:///var/log/auth.log]
-sourcetype=linux_secure
-index=linux
-
-[monitor:///var/log/syslog]
-sourcetype=syslog
-index=linux
-
-[monitor:///var/log/kern.log]
-sourcetype=linux_kernel
-index=linux
-
-[monitor:///var/log/apache2/access.log]
-sourcetype=apache_access
-index=web
-
-[monitor:///var/log/apache2/error.log]
-sourcetype=apache_error
-index=web
-
-[monitor:///var/log/audit/audit.log]
-sourcetype=linux_audit
-index=security
-EOF
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk start --accept-license --answer-yes --no-prompt
 
 # ================================
-# OUTPUTS.CONF
+# 8. CONFIG FORWARD
 # ================================
-echo "[+] Configurando outputs.conf..."
+echo "[+] Configurando envio..."
 
-sudo tee $SPLUNK_HOME/etc/system/local/outputs.conf > /dev/null <<EOF
-[tcpout]
-defaultGroup = splunk_group
-
-[tcpout:splunk_group]
-server = ${SPLUNK_IP}:${SPLUNK_PORT}
-EOF
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk add forward-server ${SPLUNK_IP}:${SPLUNK_PORT} -auth admin:$SPLUNK_PASS
 
 # ================================
-# START
+# 9. MONITORAMENTO
 # ================================
-echo "[+] Iniciando Splunk..."
+echo "[+] Adicionando logs..."
 
-sudo -u $SPLUNK_USER $SPLUNK_BIN start \
---accept-license \
---answer-yes \
---no-prompt
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk add monitor /var/log/auth.log -auth admin:$SPLUNK_PASS
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk add monitor /var/log/syslog -auth admin:$SPLUNK_PASS
 
 # ================================
-# BOOT START
+# 10. BOOTSTART CORRETO
 # ================================
-echo "[+] Ativando auto-start..."
+echo "[+] Configurando inicialização automática..."
 
-sudo $SPLUNK_BIN enable boot-start -user $SPLUNK_USER
+sudo $SPLUNK_HOME/bin/splunk enable boot-start -user $SPLUNK_USER
 
 # ================================
-# RESTART FINAL
+# 11. VALIDAÇÃO FINAL
 # ================================
-echo "[+] Reiniciando..."
+echo "[+] Validando instalação..."
 
-sudo -u $SPLUNK_USER $SPLUNK_BIN restart
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk status
+sudo -u $SPLUNK_USER $SPLUNK_HOME/bin/splunk list forward-server -auth admin:$SPLUNK_PASS
 
-echo "[✔] SPLUNK FORWARDER ENTERPRISE PRONTO!"
+echo "[✔] INSTALAÇÃO BLINDADA CONCLUÍDA!"
 
 ***************************************
 
@@ -367,9 +355,10 @@ Executar o script:
 
 chown -R splunkfwd:splunkfwd /opt/splunkforwarder
 
-
 Conectar ao Splunk (Windows)
-/opt/splunkforwarder/bin/splunk add forward-server <IP_WINDOWS>:9997
+  /opt/splunkforwarder/bin/splunk add forward-server <IP_WINDOWS>:9997
+    usuário: admin
+    senha: SenhaForte123!
 /opt/splunkforwarder/bin/splunk start
 
 Coletar logs do Kali
@@ -441,7 +430,6 @@ No Splunk local é possível ler logs locais tranquilamente, porém a única exi
 
 Usando o próprio Splunk instalado (ou Universal Forwarder), adicionar um monitor:
 
-0000000000
   /opt/splunk/bin/splunk add monitor /var/log/auth.log
 
 Isso faz o Splunk:
