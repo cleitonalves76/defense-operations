@@ -55,63 +55,23 @@ c) Classificar risco
 Exercício 5: Query no Splunk
 
 Objetivo: Detectar e-mails com assunto suspeito
-Tarefa: Escrever uma query para:
+Tarefa: 
+a) Escrever uma query para:
 
 Subject contendo "invoice" ou "payment"
 Agrupar por remetente
 
-✅ Resposta esperada:
-index=email
-| search subject="*invoice*" OR subject="*payment*"
-| stats count by sender
-🔴 Nível 3 — Investigação Completa (SOC N3 / IR)
-🎯 Exercício 6: Campanha de phishing
-📊 Dados:
-50 usuários receberam o mesmo e-mail
-Mesmo domínio suspeito
-5 usuários clicaram
-🧩 Tarefas:
-Identificar tipo de incidente
-Definir impacto
-Ações imediatas
-✅ Esperado:
-Campanha de phishing
-Possível comprometimento
-Ações:
-Reset de credenciais
-Bloqueio de domínio
-Awareness
-🎯 Exercício 7: Correlação no SIEM
-📊 Objetivo:
+Nível 3 — Investigação Completa (SOC N3 / IR)
 
-Detectar usuários que clicaram no link
+Exercício 6: Campanha de phishing
+Dados: 
+  50 usuários receberam o mesmo e-mail
+  Mesmo domínio suspeito
+  5 usuários clicaram
 
-🧩 Tarefa:
+Tarefas:
+a) Identificar tipo de incidente
+b) Definir impacto
+c) Ações imediatas
 
-Criar lógica de correlação:
 
-Logs de e-mail + proxy
-✅ Exemplo:
-index=email
-| join user [
-    search index=proxy "verify-user.ru"
-]
-| stats count by user
-🎯 Exercício 8: Decisão de Resposta
-📊 Cenário:
-SPF: FAIL
-DKIM: NONE
-URL maliciosa confirmada
-Usuário clicou
-🧩 Tarefa:
-
-Definir:
-
-Severidade
-Ações
-✅ Esperado:
-Severidade: Alta
-Ações:
-Reset de senha
-Verificar endpoint
-Caça lateral (lateral movement)
