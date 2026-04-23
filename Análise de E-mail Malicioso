@@ -98,7 +98,6 @@ Preencha uma tabela com os seguintes dados:
 Email	    Tipo	  Justificativa
 
 Exercício 8: Análise Técnica de Header
-
 Objetivo: Analisar origem real do e-mail
 
 Tarefas:
@@ -116,8 +115,7 @@ Encontrar e-mails com:
 a) spoofing avançado
 b) domínio legítimo falsificado
 
-Exercício 8: Análise de URL
-
+Exercício 9: Análise de URL
 Objetivo: Detectar phishing sofisticado
 
 Tarefas:
@@ -130,5 +128,19 @@ b) Identificar:
 Exemplo esperado:
 microsoft.verify-user.ru -> domínio real: verify-user.ru
 
+Exercício 10: Todos os e-mails
+
+Detecção Inicial (N1)
+Missão: Classificar e-mails
+
+Quais e-mails contém: 
+a) Phishing
+b) Malware
+
+Análise Técnica (N2)
+Missão: Extrair IOCs
+
+a) IPs suspeitos
+b) Domínios maliciosos
 
 
