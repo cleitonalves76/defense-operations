@@ -1,4 +1,9 @@
 Exercícios Práticos — Análise de E-mail Malicioso
+
+***************************************
+Parte 1: Desafios iniciais
+***************************************
+
 Nível 1 — Triagem Inicial (SOC N1)
 
 Exercício 1: Identificação de Phishing
@@ -73,5 +78,57 @@ Tarefas:
 a) Identificar tipo de incidente
 b) Definir impacto
 c) Ações imediatas
+
+***************************************
+Parte 2: Novos desafios
+***************************************
+Artefatos no arquivo compactado: email_lab_dataset.zip
+
+  https://drive.proton.me/urls/CXCTHHQMHC#j4R5A2SwzT7B
+  Senha: blueTeam
+
+Exercício 7: Triagem Inicial (SOC N1)
+
+Tarefa: Escolha no minímo 10 arquivos .eml e identifique:
+- spoofing
+- phishing
+- suspeitos vs legítimos
+
+Preencha uma tabela com os seguintes dados:
+Email	    Tipo	  Justificativa
+
+Exercício 8: Análise Técnica de Header
+
+Objetivo: Analisar origem real do e-mail
+
+Tarefas:
+a) Extrair cadeia Received
+b) Identificar:
+  - IP origem
+  - inconsistência de domínio
+Validar:
+  - SPF
+  - DKIM
+  - DMARC
+
+Desafios:
+Encontrar e-mails com:
+a) spoofing avançado
+b) domínio legítimo falsificado
+
+Exercício 8: Análise de URL
+
+Objetivo: Detectar phishing sofisticado
+
+Tarefas:
+a) Extrair URLs dos .eml
+b) Identificar:
+  - domínio real
+  -  typosquatting
+  -  uso de subdomínio malicioso
+
+Exemplo esperado:
+microsoft.verify-user.ru -> domínio real: verify-user.ru
+
 
 
