@@ -1,0 +1,117 @@
+Exercícios Práticos — Análise de E-mail Malicioso
+Nível 1 — Triagem Inicial (SOC N1)
+
+Exercício 1: Identificação de Phishing
+
+Cenário: Usuário reporta o e-mail:
+
+  From: suporte@paypaI.com
+  Subject: "Sua conta será bloqueada!"
+  Link: http://paypa1-security-check.com/login
+
+Tarefas: Identificar sinais de phishing
+
+Classificar como:
+( ) Legítimo
+( ) Suspeito
+( ) Malicioso
+
+a) O link contém Typosquatting ou URL encurtada?
+b) O domínio é falso no link?
+c) Existem linguagem de urgência?
+
+Exercício 2: Análise rápida de header
+
+From: banco@empresa.com
+Return-Path: attacker@evil.com
+Received: from unknown (45.33.10.5)
+
+Tarefas:
+a) O remetente é confiável?
+b) Qual é o indício principal de fraude?
+
+Nível 2 — Análise Técnica (SOC N2)
+
+Exercício 3: Análise de URL
+
+URL recebida:
+http://secure-login.microsoft.verify-user.ru/auth
+
+Tarefas:
+a) Identificar o domínio real
+b) Classificar risco
+c) Indicar ação
+
+Exercício 4: Anexo suspeito
+
+Arquivo: invoice_2026.pdf
+Hash SHA256: 3f2a9c8b...
+
+Tarefas:
+a) O que fazer primeiro?
+b) Quais ferramentas usar?
+c) Classificar risco
+
+Exercício 5: Query no Splunk
+
+Objetivo: Detectar e-mails com assunto suspeito
+Tarefa: Escrever uma query para:
+
+Subject contendo "invoice" ou "payment"
+Agrupar por remetente
+
+✅ Resposta esperada:
+index=email
+| search subject="*invoice*" OR subject="*payment*"
+| stats count by sender
+🔴 Nível 3 — Investigação Completa (SOC N3 / IR)
+🎯 Exercício 6: Campanha de phishing
+📊 Dados:
+50 usuários receberam o mesmo e-mail
+Mesmo domínio suspeito
+5 usuários clicaram
+🧩 Tarefas:
+Identificar tipo de incidente
+Definir impacto
+Ações imediatas
+✅ Esperado:
+Campanha de phishing
+Possível comprometimento
+Ações:
+Reset de credenciais
+Bloqueio de domínio
+Awareness
+🎯 Exercício 7: Correlação no SIEM
+📊 Objetivo:
+
+Detectar usuários que clicaram no link
+
+🧩 Tarefa:
+
+Criar lógica de correlação:
+
+Logs de e-mail + proxy
+✅ Exemplo:
+index=email
+| join user [
+    search index=proxy "verify-user.ru"
+]
+| stats count by user
+🎯 Exercício 8: Decisão de Resposta
+📊 Cenário:
+SPF: FAIL
+DKIM: NONE
+URL maliciosa confirmada
+Usuário clicou
+🧩 Tarefa:
+
+Definir:
+
+Severidade
+Ações
+✅ Esperado:
+Severidade: Alta
+Ações:
+Reset de senha
+Verificar endpoint
+Caça lateral (lateral movement)
