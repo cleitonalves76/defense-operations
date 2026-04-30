@@ -4,33 +4,20 @@ https://drive.proton.me/urls/9BFB9DXEA0#4e0uAFvqpWe5
 Senha: blueTeam
 Artefatos: pdf-malware-lab.zip
 
-Estrutura do Dataset:
-
-pdf-malware-lab/
-│
-├── 01-basic-js/
-├── 02-obfuscation/
-├── 03-embedded-file/
-├── 04-exploit-simulation/
-├── 05-phishing-pdf/
-├── 06-multi-stage/
-│
-├── answers/
-└── iocs/
-
 CENÁRIO 1 — JavaScript Básico
 Arquivo: invoice_2024.pdf
 
-Técnica
-/OpenAction
-/JavaScript
+Técnica:
+    /OpenAction
+    /JavaScript
 
-Payload (exemplo simplificado)
-app.alert("Processing...");
-this.exportDataObject({
-    cName: "update.exe",
-    nLaunch: 2
-});
+Payload (exemplo simplificado):
+
+    app.alert("Processing...");
+    this.exportDataObject({
+        cName: "update.exe",
+        nLaunch: 2
+    });
 
 Objetivo do atacante: 
   Enganar usuário e tentar exportar arquivo embutido
@@ -43,10 +30,11 @@ O que o analista deve identificar
 CENÁRIO 2 — Ofuscação (clássico)
 Arquivo: payment_receipt.pdf
 
-Técnica
+Técnica:
   eval(unescape())
   Encoding HEX
-Payload
+
+Payload:
   eval(unescape("%68%74%74%70%3a%2f%2f6d616c6963696f7573..."));
 
 Objetivo:
@@ -122,17 +110,38 @@ Técnica:
   Download de payload
   Execução indireta
 
-Fluxo
+Fluxo:
   PDF abre
   JS decodifica URL
   Faz request
   Dropa arquivo
   Executa via LOLBin (Living off the Land Binaries) são ferramentas, executáveis ou scripts legítimos e pré-instalados em um sistema operacional)
 
-Objetivo
+Objetivo:
   Ataque completo
 
-Esperado
+Esperado:
   Cadeia de ataque completa
   Múltiplos IOCs
   Correlação
+
+***********************************
+DESAFIO: Análise de PDFs
+***********************************
+
+https://drive.proton.me/urls/9BFB9DXEA0#4e0uAFvqpWe5
+Senha: blueTeam
+Artefatos: pdf-advanced-lab.zip
+
+Analise a estrutura interna dos arquivos PDF e apresente:
+    - Nomme do arquivo:
+    - Técnica usada:
+    - Indicadores encontrados:
+    - Extração de URL:
+    - Decodificação do payload:
+    - Nível de criticidade:
+    - Recomendação:
+
+Anote as resposta no nosso arquivo de "respostas".
+
+#pracima
