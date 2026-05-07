@@ -205,5 +205,73 @@ a) Qual é o endereço IP do cliente Windows infectado?
 b) Qual é o endereço MAC do cliente Windows infectado?
 c) Qual é o nome do host do cliente Windows infectado?
 d) Qual é o nome da conta de usuário do cliente Windows infectado?
+
+-------------------------------------------------------------------------
+Se chegou até, vamos continuar.
+
+Aproveite mais alguns exemplos:
+-------------------------------------------------------------------------
+
+- Listar protocolos
+tshark -r arquivo.pcap -q -z io,phs
+
+- Extrair HTTP requests
+tshark -r arquivo.pcap -Y "http.request" -T fields -e ip.src -e ip.dst -e http.host -e http.request.method -e http.request.uri
+
+- Extrair DNS
+tshark -r arquivo.pcap -Y "dns.qry.name" -T fields -e ip.src -e dns.qry.name
+
+- Gerar logs Zeek
+zeek -r arquivo.pcap
+
+-------------------------------------------------------------------------
+Desafio 6
+Artefato: N1_01_http_dns_basico.pcap
+
+a) Qual host interno realizou as consultas DNS?
+b) Quais domínios foram consultados?
+c) Qual URL HTTP foi acessada?
+d) Qual User-Agent aparece na sessão HTTP?
+
+-------------------------------------------------------------------------
+Desafio 7
+Artefato: N1_02_dns_tunnel_suspeito.pcap
+
+a) Qual host interno gerou alto volume de DNS?
+b) Qual domínio se destaca como suspeito?
+c) Que característica indica possível tunneling ou exfiltração?
+d) Quantas consultas suspeitas aparecem aproximadamente?
+
+-------------------------------------------------------------------------
+Desafio 8
+Artefato: N2_01_phishing_download_payload.pcap
+
+a) Qual domínio de phishing foi acessado?
+b) Qual IP respondeu pelo domínio?
+c) Qual arquivo foi baixado?
+d) Qual evidência sugere payload executável?
+
+-------------------------------------------------------------------------
+Desafio 9
+Artefato: N2_02_malware_beaconing_http.pcap
+
+a) Qual IP interno está comprometido?
+b) Qual IP externo atua como possível C2?
+c) Qual endpoint HTTP é chamado repetidamente?
+d) Qual intervalo aproximado dos beacons?
+
+-------------------------------------------------------------------------
+Desafio 10
+Artefato: N3_01_incidente_completo_exfiltracao.pcap
+
+a) Qual host interno é a vítima?
+b) Quais domínios fazem parte do comportamento suspeito?
+c) Existe beaconing? Qual destino?
+d) Existe exfiltração via DNS? Justifique.
+e) Existe exfiltração via HTTP POST? Qual endpoint?
+Monte uma timeline resumida do ataque.
 e) Qual é o provável nome de domínio da página falsa do Google Authenticator?
 f) Quais são os endereços IP usados ​​pelos servidores C2 para esta infecção?
+
+
+
