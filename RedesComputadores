@@ -118,13 +118,13 @@ Leitura e filtro por host
 Desafio 1 - tcpdump
 Utilizar arquivo ftp1.cap 
 
-a)Qual é o endereço físico do servidor?
-b)Qual é a versão do servidor?
-c)Qual é o horário de acesso ao servidor?
-d)Qual o hostname do servidor?
-e)Qual é a senha de acesso ao servidor?
+a) Qual é o endereço físico do servidor?
+b) Qual é a versão do servidor?
+c) Qual é o horário de acesso ao servidor?
+d) Qual o hostname do servidor?
+e) Qual é a senha de acesso ao servidor?
 f) Quantos pacotes foram capturados?
-h)Qual é a flag ativa no (décimo sexto pacote)?
+h) Qual é a flag ativa no (décimo sexto pacote)?
 
 -------------------------------------------------------------------------
 Tshark 
@@ -173,9 +173,10 @@ Contabilizr total de user-agent
 Desafio 2
 
 Utilizar arquivo http_obj.cap
-a) Em que data e hora foi feito o download da imagem sydney.jpg ? **b) Qual é o hash SHA256 do arquivo de captura?
-c)Quanto tempo demorou a captura?
-d)Qual é o user-agent do host que mais fez requisições ?
+a) Em que data e hora foi feito o download da imagem sydney.jpg ? 
+b) Qual é o hash SHA256 do arquivo de captura?
+c) Quanto tempo demorou a captura?
+d) Qual é o user-agent do host que mais fez requisições ?
 e) Qual o ip do host que menos transferiu pacotes?
 f) Quantos hosts estão envolvidos na captura?
 
