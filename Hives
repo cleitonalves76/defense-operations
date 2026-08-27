@@ -4,6 +4,12 @@ Cenário
 Durante a investigação do host `WS-FIN-023`, foram preservadas cópias  dos hives SAM, SYSTEM, SECURITY, SOFTWARE e NTUSER.DAT, além de eventos Windows correlacionados.
 
 --------
+Artefatos
+https://drive.proton.me/urls/7YQ0951WYR#SGB1g6Si9i05
+blueTeam
+--------
+
+--------
 Objetivo: Determinar quais informações podem ser extraídas de cada hive e construir uma narrativa forense baseada em múltiplas fontes.
 --------
 
@@ -29,3 +35,6 @@ Perguntas
 19) Qual endereço aparece no histórico de Terminal Server Client?
 20) Aponte achados que dependem de correlação entre hives diferentes.
     Exemplo: SYSTEM + Kernel-PnP: conexão do USB.
+21) Monte uma timeline com pelo menos 4 eventos.
+    Exemplo: 09:31:42 - Kingston DataTraveler conectado.
+
