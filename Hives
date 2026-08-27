@@ -1,0 +1,31 @@
+LAB FORENSE – WINDOWS REGISTRY HIVES
+
+Cenário
+Durante a investigação do host `WS-FIN-023`, foram preservadas cópias  dos hives SAM, SYSTEM, SECURITY, SOFTWARE e NTUSER.DAT, além de eventos Windows correlacionados.
+
+--------
+Objetivo: Determinar quais informações podem ser extraídas de cada hive e construir uma narrativa forense baseada em múltiplas fontes.
+--------
+
+Perguntas
+1) Qual é o nome do computador?
+2) Qual endereço IP estava associado ao host?
+3) Qual fuso horário aparece configurado?
+4) Quais contas locais existem no SAM?
+5) Qual conta suspeita foi criada próximo ao incidente?
+6) Qual é o RID dessa conta?
+7) Essa conta possui privilégio administrativo?
+8) Qual hive ajuda a confirmar a associação ao grupo Administrators?
+9) Qual dispositivo USB foi observado pouco antes do incidente?
+10) Qual letra de unidade foi atribuída ao dispositivo?
+11) Qual aplicação de acesso remoto foi instalada?
+12) Qual hive contém essa informação?
+13) Qual arquivo aparece em RecentDocs do usuário financeiro01?
+14) Qual chave de persistência aparece no perfil do usuário?
+15) Qual executável está configurado nessa persistência?
+16) Há evidência de acesso a compartilhamento de rede?
+17) Qual compartilhamento aparece?
+18) Há indicação de uso de RDP anterior no perfil?
+19) Qual endereço aparece no histórico de Terminal Server Client?
+20) Aponte achados que dependem de correlação entre hives diferentes.
+    Exemplo: SYSTEM + Kernel-PnP: conexão do USB.
