@@ -49,7 +49,7 @@ Recomendo usar o Volatility 2.6 para executar esse desafio
 
 Responda às perguntas:
 
-Qual é a senha de root exposta?
+a) Qual é a senha de root exposta?
 a) E a que horas aproximadamente o arquivo users.db foi acessado? O formato é AAAA-MM-DD HH:MM:SS
 b) Qual é o hash MD5 do arquivo malicioso encontrado?
 c) Qual é o endereço IP e a porta do agente malicioso? O formato é IP:Porta
