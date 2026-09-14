@@ -142,13 +142,17 @@ Alternativa:
 
 Processo tasks
   mkdir dumpfiles/taskse
-  vol.py -f wcry.raw --profile=WinXPSP2x86 dumpfiles -Q 0x0000000001fb2278 -D dumpfiles/taskse
+
+Para encontrar o PID correto associado a esse executável do WannaCry, execute:
+  vol -f wcry.raw windows.pslist | grep -i "WanaDecryptor"
+  vol -f wcry.raw -o dumpfiles/taskse windows.dumpfiles --pid <PID>
 
 É sempre recomendável despejar o espaço de endereço de memória dos processos para verificar entradas suspeitas na memória do processo, em vez de focar apenas no binário em si.
 O plugin de volatilidade memdump foi usado para despejar o espaço de endereço dos processos @WanaDecryptor@ e taskssche.exe em busca de quaisquer indicadores.
 
   mkdir memdumps
-  vol -f wcry.raw -o memdumps windows.memmap --dump --pid 1940 740
+  vol -f wcry.raw -o memdumps windows.memmap --dump --pid 1940
+  vol -f wcry.raw -o memdumps windows.memmap --dump --pid 740
 
 Observando as strings do processo tasksche.exe (PID 1940), foi descoberto que tasksche.exe iniciou o processo @WanaDecryptor@ com argumentos de linha de comando.
   cd memdumps
@@ -162,7 +166,7 @@ Uma análise mais aprofundada das sequências revelou como o ransomware executa 
 
 Observando as strings do dump do processo @WanaDecryptor@ (PID 740), foi descoberto que o malware utiliza serviços ocultos do TOR para comando e controle. A lista de domínios .onion contidos é a seguinte:
 12t9YDPgwueZ9NyMgw519p7AA8isjr6SMwgx7ekbenv2riucmf.onion;57g7spgrzlojinas.onion;xxlvbrloxvriy2c5.onion;76jdd2ir2embyv47.onion;cwwnhwhlz52maqm7.onion;
-  strings 740.dmp -n 6 | head -n 20
+  strings pid.740.dmp -n 6 | head -n 20
 
 Os onion domains são:
 •	gx7ekbenv2riucmf.onion
@@ -173,7 +177,7 @@ Os onion domains são:
 •	cwwnhwhlz52maqm7.onion
 O endereço de bitcoin é:
 •	12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw
-strings 740.dmp -n 6 | grep bitcoin
+strings pid.740.dmp -n 6 | grep bitcoin
 
 IOCs em destaques são:
 
@@ -194,4 +198,9 @@ IOCs em destaques são:
 •	xxlvbrloxvriy2c5.onion
 •	76jdd2ir2embyv47.onion
 •	cwwnhwhlz52maqm7.onion
+
+*************
+Agora que terminou, comente com o professor e alunos da sala sua visão sobre esse laboratório.
+*************
+
 
