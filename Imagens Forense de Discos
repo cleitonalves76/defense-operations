@@ -1,64 +1,65 @@
 
+Imagens Forense de Discos
 
 Em Forense Digital, a geração de imagens é o processo de criação de uma cópia exata, bit a bit, de uma mídia de armazenamento digital. Esse processo garante que todos os dados, incluindo arquivos excluídos, arquivos ocultos e espaço não alocado, sejam capturados. Ao gerar uma imagem forense, preservamos os dados originais, permitindo uma análise completa.
 
 Preparação
-
-O processo de criação de imagens de um disco começa com a identificação da unidade de destino, a preparação para a criação de imagens e a criação do arquivo de imagem, cuja integridade é posteriormente verificada. Isso precisa ser realizado em um ambiente que nos permita executar essas tarefas e também garanta que o processo seja devidamente registrado.
+  O processo de criação de imagens de um disco começa com a identificação da unidade de destino, a preparação para a criação de imagens e a criação do arquivo de imagem, cuja integridade é posteriormente verificada. Isso precisa ser realizado em um ambiente que nos permita executar essas tarefas e também garanta que o processo seja devidamente registrado.
 
 Bloqueadores de Gravação
-
-Os bloqueadores de gravação funcionam interceptando fisicamente todos os comandos da unidade que gravam dados enviados entre o disco que está sendo criado e o sistema operacional conectado a ele.
+  Os bloqueadores de gravação funcionam interceptando fisicamente todos os comandos da unidade que gravam dados enviados entre o disco que está sendo criado e o sistema operacional conectado a ele.
 
 Trilha de Auditoria
+  Uma trilha de auditoria é um registro cronológico que rastreia ações e eventos dentro de um sistema, fornecendo um histórico detalhado para fins de responsabilização e segurança. 
 
-Uma trilha de auditoria é um registro cronológico que rastreia ações e eventos dentro de um sistema, fornecendo um histórico detalhado para fins de responsabilização e segurança. 
-
+------------------------------
+Linux
+------------------------------
 
 Ativa o histórico de comandos no shell, permitindo que ele registre os comandos que você digitar.
-set -o history
+  set -o history
 
 Garante que o histórico de comandos seja anexado ao arquivo de histórico em vez de sobrescrevê-lo quando o shell for encerrado.
-shopt -s histappend
+  shopt -s histappend
 
 Limpa todas as configurações que controlam quais comandos são salvos no histórico, garantindo que todos os comandos sejam registrados.
-export HISTCONTROL=
+  export HISTCONTROL=
 
 Limpa todas as configurações que ignoram padrões específicos de comandos, para que todos os comandos sejam salvos no histórico.
-export HISTIGNORE=
-
+  export HISTIGNORE=
 
 Define o arquivo onde o histórico de comandos é salvo.
-export HISTFILE=~/.bash_history
-
+  export HISTFILE=~/.bash_history
 
 Não define limite para o número de linhas armazenadas no arquivo de histórico.
-export HISTFILESIZE=-1
+  export HISTFILESIZE=-1
 
 Não define limite para o número de comandos retidos no histórico do shell.
-export HISTSIZE=-1
+  export HISTSIZE=-1
 
+------------------------------
 Acessando o Sistema de Arquivos
+------------------------------
 
 Embora o disco e os dispositivos utilizados possam variar dependendo dos requisitos e do ambiente, o processo é semelhante para todos os discos conectados física ou virtualmente ao sistema operacional Linux. 
 
 O comando df exibe informações sobre espaço, livre e ocupado, das partições do sistema. 
-df
-df -h
+  df
+  df -h
 
 O comando lsblk lista dispositivos de bloco com a opção -a para listar todos os dispositivos.
-lsblk -a
+  lsblk -a
 
+------------------------------
 Criando uma Imagem Forense
+------------------------------
 
 Agora que identificamos o dispositivo, queremos criar uma imagem. Vamos prosseguir e copiar este disco para um arquivo de imagem raw para inspeção posterior. 
 
 Isso também pode ser feito em outro disco, se necessário, o que é uma prática comum, mas, neste caso, faremos isso em um arquivo local em nosso sistema com a extensão .img para identificar o arquivo como uma imagem.
 
 Algumas ferramentas comuns usadas para criar imagens:
-
-sudo dd if=/dev/sda1 of=/home/investigator/image.img bs=4M status=progress
-
+  sudo dd if=/dev/sda1 of=/home/investigator/image.img bs=4M status=progress
 
 Criando um Arquivo de Imagem de Disco Vazio:
   truncate -s 1G disk_vazio.img
@@ -66,13 +67,12 @@ Criando um Arquivo de Imagem de Disco Vazio:
 Formata o arquivo disk_vazio.img com o sistema de arquivos ext4.
   mkfs -t ext4 disk_vazio.img
 
-VM Windows
+------------------------------
+Windows
+------------------------------
 
-****
 FTK Imager
-
-O FTK Imager é uma ferramenta forense que permite que especialistas forenses adquiram dados de computador e realizem análises sem afetar as evidências originais, preservando sua autenticidade, integridade e validade.
-****
+  Ferramenta forense que permite que especialistas forenses adquiram dados de computador e realizem análises sem afetar as evidências originais, preservando sua autenticidade, integridade e validade.
 
 PASSO 1: Detectando Criptografia EFS com o FTK Imager
 
@@ -91,7 +91,6 @@ Para detectar a presença de criptografia EFS em uma unidade física:
   * EFS (sigla para Encrypting File System, ou Sistema de Arquivos Criptografados) é um recurso de segurança integrado aos sistemas operacionais Windows (a partir do Windows 2000) que permite a criptografia de arquivos e pastas individuais em volumes formatados com o sistema de arquivos NTFS.
  
 5. Uma caixa de mensagem indicará se a criptografia EFS está ou não na unidade anexada.
-
 
 PASSO 2: Criando uma Imagem de Disco Forense com o FTK Imager
 
